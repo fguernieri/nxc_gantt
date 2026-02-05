@@ -9037,7 +9037,7 @@ ${original}` : meta;
             ]),
             _cache[16] || (_cache[16] = createBaseVNode("div", { class: "header-right" }, [
               createBaseVNode("div", {
-                id: "contactsmenu",
+                id: "gantt-contacts",
                 class: "icon-contacts menutoggle",
                 tabindex: "0",
                 role: "button",
@@ -9048,7 +9048,7 @@ ${original}` : meta;
                 createBaseVNode("span", { class: "hidden-visually" }, "Contacts")
               ]),
               createBaseVNode("div", {
-                id: "settings",
+                id: "gantt-settings",
                 class: "icon-settings menutoggle",
                 tabindex: "0",
                 role: "button",
@@ -9075,7 +9075,7 @@ ${original}` : meta;
               createVNode(unref(Settings), { size: "14" }),
               _cache[17] || (_cache[17] = createTextVNode(" Deck Settings", -1))
             ]),
-            _cache[18] || (_cache[18] = createStaticVNode('<div class="lists-legend" data-v-6f882c3d><span data-v-6f882c3d>Lists: </span><span class="legend-item" data-v-6f882c3d><span class="dot done" data-v-6f882c3d></span> Done</span><span class="legend-item" data-v-6f882c3d><span class="dot progress" data-v-6f882c3d></span> In Progress</span><span class="legend-item" data-v-6f882c3d><span class="dot review" data-v-6f882c3d></span> Review</span><span class="legend-item" data-v-6f882c3d><span class="dot todo" data-v-6f882c3d></span> To Do</span></div>', 1))
+            _cache[18] || (_cache[18] = createStaticVNode('<div class="lists-legend" data-v-f6ef8f98><span data-v-f6ef8f98>Lists: </span><span class="legend-item" data-v-f6ef8f98><span class="dot done" data-v-f6ef8f98></span> Done</span><span class="legend-item" data-v-f6ef8f98><span class="dot progress" data-v-f6ef8f98></span> In Progress</span><span class="legend-item" data-v-f6ef8f98><span class="dot review" data-v-f6ef8f98></span> Review</span><span class="legend-item" data-v-f6ef8f98><span class="dot todo" data-v-f6ef8f98></span> To Do</span></div>', 1))
           ])
         ]),
         isModalOpen.value ? (openBlock(), createElementBlock("div", {
@@ -9212,7 +9212,7 @@ ${original}` : meta;
     };
   }
 };
-const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-6f882c3d"]]);
+const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-f6ef8f98"]]);
 const mountApp = () => {
   const el = document.getElementById("nxc-gantt-root");
   if (el) {

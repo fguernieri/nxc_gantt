@@ -404,10 +404,10 @@ const jumpToToday = () => {
              <button class="icon-only active" title="Gantt View"><Calendar size="16"/></button>
            </div>
        <div class="header-right">
-           <div id="contactsmenu" class="icon-contacts menutoggle" tabindex="0" role="button" aria-haspopup="true" aria-controls="contactsmenu-menu" aria-expanded="false">
+           <div id="gantt-contacts" class="icon-contacts menutoggle" tabindex="0" role="button" aria-haspopup="true" aria-controls="contactsmenu-menu" aria-expanded="false">
                 <span class="hidden-visually">Contacts</span>
             </div>
-            <div id="settings" class="icon-settings menutoggle" tabindex="0" role="button" aria-haspopup="true" aria-controls="settings-menu" aria-expanded="false">
+            <div id="gantt-settings" class="icon-settings menutoggle" tabindex="0" role="button" aria-haspopup="true" aria-controls="settings-menu" aria-expanded="false">
                 <span class="hidden-visually">Settings</span>
             </div>
        </div>
