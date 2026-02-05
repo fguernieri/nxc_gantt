@@ -2,7 +2,7 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import Sidebar from './components/Sidebar.vue'
 import GanttChart from './components/GanttChart.vue'
-import { Search, Bell, Settings, Calendar, User, X } from 'lucide-vue-next'
+import { Settings, Calendar, X } from 'lucide-vue-next'
 import { fetchBoards, fetchBoardStacks, updateCard } from './services/deckApi.js'
 import { format, subDays, parse, parseISO } from 'date-fns'
 
@@ -368,23 +368,7 @@ async function handleTaskDurationChanged(event) {
 <template>
   <div class="app-layout">
     <!-- Top Bar Mock -->
-    <header class="top-bar">
-      <div class="logo-area">
-        <div class="deck-icon">
-          <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><line x1="12" y1="4" x2="12" y2="20"></line></svg>
-        </div>
-        <span class="app-name">Deck</span>
-        <span class="nav-item">Projects <span class="chevron">▼</span></span>
-      </div>
-      <div class="top-actions">
-        <div class="search-box">
-          <Search size="16" />
-          <input type="text" placeholder="Search..." />
-        </div>
-        <Bell size="20" class="icon-btn" />
-        <User size="20" class="icon-btn" />
-      </div>
-    </header>
+    <!-- Top Bar Removed -->
 
     <div class="main-body">
       <Sidebar 
@@ -689,59 +673,7 @@ async function handleTaskDurationChanged(event) {
 
 /* Original styles below */
 
-.top-bar {
-  height: 50px;
-  background-color: var(--color-primary);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 1rem;
-  color: white;
-}
 
-.logo-area {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.app-name {
-  font-weight: bold;
-  font-size: 1.2rem;
-}
-
-.nav-item {
-  opacity: 0.8;
-  cursor: pointer;
-  display: flex;
-  gap: 4px;
-}
-
-.top-actions {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-}
-
-.search-box {
-  background: rgba(255,255,255,0.2);
-  border-radius: 20px;
-  padding: 4px 12px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.search-box input {
-  background: transparent;
-  border: none;
-  color: white;
-  outline: none;
-}
-
-.search-box input::placeholder {
-  color: rgba(255,255,255,0.7);
-}
 
 .main-body {
   display: flex;
