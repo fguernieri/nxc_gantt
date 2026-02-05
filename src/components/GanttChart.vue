@@ -6,40 +6,47 @@ const props = defineProps({
   tasks: {
     type: Array,
     default: () => []
+  },
+  viewMode: {
+    type: String,
+    default: 'Day' // Day, Week, Month
   }
 })
 
-const CELL_WIDTH = 50
-const ROW_HEIGHT = 50
-const HEADER_HEIGHT = 60
+const elementRef = ref(null) // Scroll container
 
-// Helper to parse YYYY-MM-DD as local start of day
+const CELL_WIDTH = computed(() => {
+    switch (props.viewMode) {
+        case 'Month': return 15;
+        case 'Week': return 30;
+        case 'Day': default: return 60;
+    }
+})
+
+const ROW_HEIGHT = 50
+
+// ... (existing helper functions) ...
+
 const parseDateLocal = (dateStr) => {
   if (!dateStr) return new Date()
-  // If it's already a Date
   if (dateStr instanceof Date) return dateStr
-  // If provided as YYYY-MM-DD, append time to force Local
   if (typeof dateStr === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
      return new Date(dateStr + 'T00:00:00')
   }
   return new Date(dateStr)
 }
 
-// Helper to darken a hex color
+// ... (darkenColor) ...
 function darkenColor(hex, percent) {
-  // Remove # if present
   const cleanHex = hex.replace('#', '')
-  
-  // Parse RGB
   const num = parseInt(cleanHex, 16)
   const amt = Math.round(2.55 * percent)
-  
   const R = Math.max(0, (num >> 16) - amt)
   const G = Math.max(0, ((num >> 8) & 0x00FF) - amt)
   const B = Math.max(0, (num & 0x0000FF) - amt)
-  
   return '#' + (0x1000000 + R * 0x10000 + G * 0x100 + B).toString(16).slice(1)
 }
+
 
 // Interactive state
 const hoveredTask = ref(null)
@@ -49,14 +56,14 @@ const startDate = computed(() => {
   if (!props.tasks.length) return new Date()
   const dates = props.tasks.map(t => parseDateLocal(t.start))
   const minDate = min(dates)
-  return addDays(minDate, -5) // buffer
+  return addDays(minDate, -15) // More buffer for zooming
 })
 
 const endDate = computed(() => {
   if (!props.tasks.length) return addDays(new Date(), 30)
   const dates = props.tasks.map(t => parseDateLocal(t.end))
   const maxDate = max(dates)
-  return addDays(maxDate, 10) // buffer
+  return addDays(maxDate, 30) // More buffer
 })
 
 const totalDays = computed(() => {
@@ -73,21 +80,20 @@ const timelineDates = computed(() => {
   return dates
 })
 
-// Helper to get X position
 const getX = (date) => {
   const d = parseDateLocal(date)
   const start = startDate.value
   const diff = differenceInDays(d, start)
-  return diff * CELL_WIDTH
+  return diff * CELL_WIDTH.value
 }
 
 const getWidth = (start, end) => {
   const s = parseDateLocal(start)
   const e = parseDateLocal(end)
-  return (differenceInDays(e, s) + 1) * CELL_WIDTH
+  return (differenceInDays(e, s) + 1) * CELL_WIDTH.value
 }
 
-// Dependency lines
+// ... (connections logic) ...
 const connections = computed(() => {
   const lines = []
   props.tasks.forEach(task => {
@@ -95,8 +101,7 @@ const connections = computed(() => {
       task.dependencies.forEach(depId => {
         const parent = props.tasks.find(t => t.id === depId)
         if (parent) {
-          // Simple ortholinear path calculation
-          const startX = getX(parent.end) + CELL_WIDTH
+          const startX = getX(parent.end) + CELL_WIDTH.value
           const startY = getRowY(parent.id) + ROW_HEIGHT/2
           const endX = getX(task.start)
           const endY = getRowY(task.id) + ROW_HEIGHT/2
@@ -113,21 +118,19 @@ const connections = computed(() => {
 })
 
 const getRowY = (taskId) => {
-  // Assuming tasks are sorted or index based?
-  // Let's us index in props.tasks
   const index = props.tasks.findIndex(t => t.id === taskId)
   return index * ROW_HEIGHT
 }
 
 const emit = defineEmits(['task-updated', 'task-dates-changed', 'task-reordered', 'task-duration-changed', 'task-clicked'])
 
-
+// Dragging logic ... (keep largely same but verify usages of CELL_WIDTH) ...
 // Enhanced Dragging & Resizing Logic
 const isDragging = ref(false)
 const isResizing = ref(false)
 const dragState = ref({
-  mode: null, // 'move' or 'resize'
-  edge: null, // 'left' or 'right' for resize
+  mode: null,
+  edge: null,
   taskId: null,
   startX: 0,
   startY: 0,
@@ -138,8 +141,8 @@ const dragState = ref({
 })
 
 const startDrag = (event, task) => {
-  if (event.button !== 0) return // Left click only
-  event.preventDefault() // prevent text selection
+  if (event.button !== 0) return
+  event.preventDefault()
   
   const taskIndex = props.tasks.findIndex(t => t.id === task.id)
   
@@ -156,7 +159,6 @@ const startDrag = (event, task) => {
     hasMoved: false
   }
   
-  // Attach global listeners
   document.addEventListener('mousemove', onDrag)
   document.addEventListener('mouseup', stopDrag)
 }
@@ -164,7 +166,7 @@ const startDrag = (event, task) => {
 const startResize = (event, task, edge) => {
   if (event.button !== 0) return
   event.preventDefault()
-  event.stopPropagation() // Don't trigger drag
+  event.stopPropagation()
   
   isResizing.value = true
   dragState.value = {
@@ -199,21 +201,20 @@ const onDrag = (event) => {
   if (!task) return
   
   if (dragState.value.mode === 'move') {
-    // Horizontal: Update dates
-    const daysMoved = Math.round(dx / CELL_WIDTH)
+    // USE CELL_WIDTH.value HERE
+    const daysMoved = Math.round(dx / CELL_WIDTH.value)
     if (daysMoved !== 0) {
       const newStart = addDays(dragState.value.initialStart, daysMoved)
       const newEnd = addDays(dragState.value.initialEnd, daysMoved)
       
       emit('task-dates-changed', {
         taskId: task.id,
-        // Preserve time by using full format
         start: format(newStart, "yyyy-MM-dd'T'HH:mm"),
         end: format(newEnd, "yyyy-MM-dd'T'HH:mm")
       })
     }
     
-    // Vertical: Reorder tasks
+    // Vertical Logic remains same
     const rowsMoved = Math.round(dy / ROW_HEIGHT)
     if (rowsMoved !== 0) {
       const newIndex = Math.max(0, Math.min(props.tasks.length - 1, dragState.value.initialIndex + rowsMoved))
@@ -226,11 +227,11 @@ const onDrag = (event) => {
       }
     }
   } else if (dragState.value.mode === 'resize') {
-    const daysDelta = Math.round(dx / CELL_WIDTH)
+     // USE CELL_WIDTH.value HERE
+    const daysDelta = Math.round(dx / CELL_WIDTH.value)
     
     if (dragState.value.edge === 'left') {
       const newStart = addDays(dragState.value.initialStart, daysDelta)
-      // Don't allow start after end
       if (newStart < dragState.value.initialEnd) {
         emit('task-duration-changed', {
           taskId: task.id,
@@ -257,7 +258,6 @@ const stopDrag = () => {
     const task = props.tasks.find(t => t.id === dragState.value.taskId)
     
     if (task && !dragState.value.hasMoved) {
-      // Click without drag - open modal
       emit('task-clicked', task)
     }
   }
@@ -269,38 +269,51 @@ const stopDrag = () => {
   document.removeEventListener('mouseup', stopDrag)
 }
 
+// Public Methods
+const centerOnDate = (date) => {
+    if (!elementRef.value) return
+    const x = getX(date)
+    // Center it: x - half width
+    const containerWidth = elementRef.value.clientWidth
+    elementRef.value.scrollLeft = x - (containerWidth / 2) + (CELL_WIDTH.value / 2)
+}
+
+defineExpose({
+    centerOnDate
+})
+
 </script>
 
 <template>
   <div class="gantt-container">
-    <div class="gantt-header-wrapper">
-      <div class="gantt-header" :style="{ width: `${totalDays * CELL_WIDTH}px` }">
-         <div class="month-row">
-            <!-- Simplified Month/Year rendering could go here -->
-         </div>
+    <div class="gantt-header-wrapper" ref="headerRef">
+      <div class="gantt-header" :style="{ width: `${totalDays * CELL_WIDTH.value}px` }">
+         <div class="month-row"></div>
          <div class="days-row">
            <div 
              v-for="date in timelineDates" 
              :key="date" 
              class="day-cell"
-             :style="{ width: `${CELL_WIDTH}px` }"
+             :style="{ width: `${CELL_WIDTH.value}px` }"
+             :class="{ 'weekend': date.getDay() === 0 || date.getDay() === 6 }"
            >
-             <span class="day-name">{{ format(date, 'EE') }}</span>
-             <span class="day-num">{{ format(date, 'dd') }}</span>
+             <span class="day-name" v-if="CELL_WIDTH.value > 20">{{ format(date, 'EE') }}</span>
+             <span class="day-num" v-if="CELL_WIDTH.value > 10">{{ format(date, 'dd') }}</span>
            </div>
          </div>
       </div>
     </div>
 
-    <div class="gantt-body-scroll">
-      <div class="gantt-body" :style="{ width: `${totalDays * CELL_WIDTH}px`, height: `${tasks.length * ROW_HEIGHT}px` }">
+    <div class="gantt-body-scroll" ref="elementRef" @scroll="$refs.headerRef.scrollLeft = $event.target.scrollLeft">
+      <div class="gantt-body" :style="{ width: `${totalDays * CELL_WIDTH.value}px`, height: `${tasks.length * ROW_HEIGHT}px` }">
         
         <!-- Grid Background -->
         <div 
           v-for="date in timelineDates" 
           :key="'grid-'+date" 
           class="grid-column"
-          :style="{ left: `${getX(date)}px`, width: `${CELL_WIDTH}px` }"
+          :style="{ left: `${getX(date)}px`, width: `${CELL_WIDTH.value}px` }"
+           :class="{ 'weekend': date.getDay() === 0 || date.getDay() === 6 }"
         ></div>
 
         <!-- Dependency Arrows (SVG Layer) -->

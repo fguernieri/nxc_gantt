@@ -8261,27 +8261,34 @@ function validateTimezone(_hours, minutes) {
   return minutes >= 0 && minutes <= 59;
 }
 const _hoisted_1$1 = { class: "gantt-container" };
-const _hoisted_2$1 = { class: "gantt-header-wrapper" };
+const _hoisted_2$1 = {
+  class: "gantt-header-wrapper",
+  ref: "headerRef"
+};
 const _hoisted_3$1 = { class: "days-row" };
-const _hoisted_4$1 = { class: "day-name" };
-const _hoisted_5$1 = { class: "day-num" };
-const _hoisted_6$1 = { class: "gantt-body-scroll" };
-const _hoisted_7$1 = { class: "connections-layer" };
-const _hoisted_8$1 = ["d"];
-const _hoisted_9$1 = ["onMouseenter", "onMousedown"];
-const _hoisted_10$1 = { class: "task-label" };
+const _hoisted_4$1 = {
+  key: 0,
+  class: "day-name"
+};
+const _hoisted_5$1 = {
+  key: 1,
+  class: "day-num"
+};
+const _hoisted_6$1 = { class: "connections-layer" };
+const _hoisted_7$1 = ["d"];
+const _hoisted_8$1 = ["onMouseenter", "onMousedown"];
+const _hoisted_9$1 = { class: "task-label" };
+const _hoisted_10$1 = ["onMousedown"];
 const _hoisted_11$1 = ["onMousedown"];
-const _hoisted_12$1 = ["onMousedown"];
-const _hoisted_13$1 = {
+const _hoisted_12$1 = {
   key: 0,
   class: "tooltip"
 };
-const _hoisted_14$1 = { class: "tooltip-header" };
-const _hoisted_15$1 = { class: "tooltip-dates" };
-const _hoisted_16$1 = { class: "tooltip-status" };
-const _hoisted_17$1 = { class: "status-badge" };
-const _hoisted_18$1 = { class: "progress-text" };
-const CELL_WIDTH = 50;
+const _hoisted_13$1 = { class: "tooltip-header" };
+const _hoisted_14$1 = { class: "tooltip-dates" };
+const _hoisted_15$1 = { class: "tooltip-status" };
+const _hoisted_16$1 = { class: "status-badge" };
+const _hoisted_17$1 = { class: "progress-text" };
 const ROW_HEIGHT = 50;
 const _sfc_main$1 = {
   __name: "GanttChart",
@@ -8289,11 +8296,28 @@ const _sfc_main$1 = {
     tasks: {
       type: Array,
       default: () => []
+    },
+    viewMode: {
+      type: String,
+      default: "Day"
+      // Day, Week, Month
     }
   },
   emits: ["task-updated", "task-dates-changed", "task-reordered", "task-duration-changed", "task-clicked"],
-  setup(__props, { emit: __emit }) {
+  setup(__props, { expose: __expose, emit: __emit }) {
     const props = __props;
+    const elementRef = /* @__PURE__ */ ref(null);
+    const CELL_WIDTH = computed(() => {
+      switch (props.viewMode) {
+        case "Month":
+          return 15;
+        case "Week":
+          return 30;
+        case "Day":
+        default:
+          return 60;
+      }
+    });
     const parseDateLocal = (dateStr) => {
       if (!dateStr) return /* @__PURE__ */ new Date();
       if (dateStr instanceof Date) return dateStr;
@@ -8316,13 +8340,13 @@ const _sfc_main$1 = {
       if (!props.tasks.length) return /* @__PURE__ */ new Date();
       const dates = props.tasks.map((t) => parseDateLocal(t.start));
       const minDate = min(dates);
-      return addDays(minDate, -5);
+      return addDays(minDate, -15);
     });
     const endDate = computed(() => {
       if (!props.tasks.length) return addDays(/* @__PURE__ */ new Date(), 30);
       const dates = props.tasks.map((t) => parseDateLocal(t.end));
       const maxDate = max(dates);
-      return addDays(maxDate, 10);
+      return addDays(maxDate, 30);
     });
     const totalDays = computed(() => {
       return differenceInDays(endDate.value, startDate.value) + 1;
@@ -8340,12 +8364,12 @@ const _sfc_main$1 = {
       const d = parseDateLocal(date);
       const start = startDate.value;
       const diff = differenceInDays(d, start);
-      return diff * CELL_WIDTH;
+      return diff * CELL_WIDTH.value;
     };
     const getWidth = (start, end) => {
       const s = parseDateLocal(start);
       const e = parseDateLocal(end);
-      return (differenceInDays(e, s) + 1) * CELL_WIDTH;
+      return (differenceInDays(e, s) + 1) * CELL_WIDTH.value;
     };
     const connections = computed(() => {
       const lines = [];
@@ -8354,7 +8378,7 @@ const _sfc_main$1 = {
           task.dependencies.forEach((depId) => {
             const parent = props.tasks.find((t) => t.id === depId);
             if (parent) {
-              const startX = getX(parent.end) + CELL_WIDTH;
+              const startX = getX(parent.end) + CELL_WIDTH.value;
               const startY = getRowY(parent.id) + ROW_HEIGHT / 2;
               const endX = getX(task.start);
               const endY = getRowY(task.id) + ROW_HEIGHT / 2;
@@ -8377,9 +8401,7 @@ const _sfc_main$1 = {
     const isResizing = /* @__PURE__ */ ref(false);
     const dragState = /* @__PURE__ */ ref({
       mode: null,
-      // 'move' or 'resize'
       edge: null,
-      // 'left' or 'right' for resize
       taskId: null,
       startX: 0,
       startY: 0,
@@ -8437,13 +8459,12 @@ const _sfc_main$1 = {
       const task = props.tasks.find((t) => t.id === dragState.value.taskId);
       if (!task) return;
       if (dragState.value.mode === "move") {
-        const daysMoved = Math.round(dx / CELL_WIDTH);
+        const daysMoved = Math.round(dx / CELL_WIDTH.value);
         if (daysMoved !== 0) {
           const newStart = addDays(dragState.value.initialStart, daysMoved);
           const newEnd = addDays(dragState.value.initialEnd, daysMoved);
           emit2("task-dates-changed", {
             taskId: task.id,
-            // Preserve time by using full format
             start: format(newStart, "yyyy-MM-dd'T'HH:mm"),
             end: format(newEnd, "yyyy-MM-dd'T'HH:mm")
           });
@@ -8460,7 +8481,7 @@ const _sfc_main$1 = {
           }
         }
       } else if (dragState.value.mode === "resize") {
-        const daysDelta = Math.round(dx / CELL_WIDTH);
+        const daysDelta = Math.round(dx / CELL_WIDTH.value);
         if (dragState.value.edge === "left") {
           const newStart = addDays(dragState.value.initialStart, daysDelta);
           if (newStart < dragState.value.initialEnd) {
@@ -8495,42 +8516,56 @@ const _sfc_main$1 = {
       document.removeEventListener("mousemove", onDrag);
       document.removeEventListener("mouseup", stopDrag);
     };
+    const centerOnDate = (date) => {
+      if (!elementRef.value) return;
+      const x = getX(date);
+      const containerWidth = elementRef.value.clientWidth;
+      elementRef.value.scrollLeft = x - containerWidth / 2 + CELL_WIDTH.value / 2;
+    };
+    __expose({
+      centerOnDate
+    });
     return (_ctx, _cache) => {
       return openBlock(), createElementBlock("div", _hoisted_1$1, [
         createBaseVNode("div", _hoisted_2$1, [
           createBaseVNode("div", {
             class: "gantt-header",
-            style: normalizeStyle({ width: `${totalDays.value * CELL_WIDTH}px` })
+            style: normalizeStyle({ width: `${totalDays.value * CELL_WIDTH.value.value}px` })
           }, [
-            _cache[1] || (_cache[1] = createBaseVNode("div", { class: "month-row" }, null, -1)),
+            _cache[2] || (_cache[2] = createBaseVNode("div", { class: "month-row" }, null, -1)),
             createBaseVNode("div", _hoisted_3$1, [
               (openBlock(true), createElementBlock(Fragment, null, renderList(timelineDates.value, (date) => {
                 return openBlock(), createElementBlock("div", {
                   key: date,
-                  class: "day-cell",
-                  style: normalizeStyle({ width: `${CELL_WIDTH}px` })
+                  class: normalizeClass(["day-cell", { "weekend": date.getDay() === 0 || date.getDay() === 6 }]),
+                  style: normalizeStyle({ width: `${CELL_WIDTH.value.value}px` })
                 }, [
-                  createBaseVNode("span", _hoisted_4$1, toDisplayString(unref(format)(date, "EE")), 1),
-                  createBaseVNode("span", _hoisted_5$1, toDisplayString(unref(format)(date, "dd")), 1)
-                ], 4);
+                  CELL_WIDTH.value.value > 20 ? (openBlock(), createElementBlock("span", _hoisted_4$1, toDisplayString(unref(format)(date, "EE")), 1)) : createCommentVNode("", true),
+                  CELL_WIDTH.value.value > 10 ? (openBlock(), createElementBlock("span", _hoisted_5$1, toDisplayString(unref(format)(date, "dd")), 1)) : createCommentVNode("", true)
+                ], 6);
               }), 128))
             ])
           ], 4)
-        ]),
-        createBaseVNode("div", _hoisted_6$1, [
+        ], 512),
+        createBaseVNode("div", {
+          class: "gantt-body-scroll",
+          ref_key: "elementRef",
+          ref: elementRef,
+          onScroll: _cache[1] || (_cache[1] = ($event) => _ctx.$refs.headerRef.scrollLeft = $event.target.scrollLeft)
+        }, [
           createBaseVNode("div", {
             class: "gantt-body",
-            style: normalizeStyle({ width: `${totalDays.value * CELL_WIDTH}px`, height: `${__props.tasks.length * ROW_HEIGHT}px` })
+            style: normalizeStyle({ width: `${totalDays.value * CELL_WIDTH.value.value}px`, height: `${__props.tasks.length * ROW_HEIGHT}px` })
           }, [
             (openBlock(true), createElementBlock(Fragment, null, renderList(timelineDates.value, (date) => {
               return openBlock(), createElementBlock("div", {
                 key: "grid-" + date,
-                class: "grid-column",
-                style: normalizeStyle({ left: `${getX(date)}px`, width: `${CELL_WIDTH}px` })
-              }, null, 4);
+                class: normalizeClass(["grid-column", { "weekend": date.getDay() === 0 || date.getDay() === 6 }]),
+                style: normalizeStyle({ left: `${getX(date)}px`, width: `${CELL_WIDTH.value.value}px` })
+              }, null, 6);
             }), 128)),
-            (openBlock(), createElementBlock("svg", _hoisted_7$1, [
-              _cache[2] || (_cache[2] = createBaseVNode("defs", null, [
+            (openBlock(), createElementBlock("svg", _hoisted_6$1, [
+              _cache[3] || (_cache[3] = createBaseVNode("defs", null, [
                 createBaseVNode("marker", {
                   id: "arrowhead",
                   markerWidth: "10",
@@ -8553,7 +8588,7 @@ const _sfc_main$1 = {
                   "stroke-width": "2",
                   fill: "none",
                   "marker-end": "url(#arrowhead)"
-                }, null, 8, _hoisted_8$1);
+                }, null, 8, _hoisted_7$1);
               }), 128))
             ])),
             (openBlock(true), createElementBlock(Fragment, null, renderList(__props.tasks, (task, index) => {
@@ -8580,35 +8615,35 @@ const _sfc_main$1 = {
                       background: darkenColor(task.color, 25)
                     })
                   }, null, 4),
-                  createBaseVNode("span", _hoisted_10$1, toDisplayString(task.name), 1),
+                  createBaseVNode("span", _hoisted_9$1, toDisplayString(task.name), 1),
                   createBaseVNode("div", {
                     class: "resize-handle resize-left",
                     onMousedown: ($event) => startResize($event, task, "left"),
                     title: "Resize start date"
-                  }, null, 40, _hoisted_11$1),
+                  }, null, 40, _hoisted_10$1),
                   createBaseVNode("div", {
                     class: "resize-handle resize-right",
                     onMousedown: ($event) => startResize($event, task, "right"),
                     title: "Resize end date"
-                  }, null, 40, _hoisted_12$1),
-                  hoveredTask.value && hoveredTask.value.id === task.id ? (openBlock(), createElementBlock("div", _hoisted_13$1, [
-                    createBaseVNode("div", _hoisted_14$1, toDisplayString(task.name), 1),
-                    createBaseVNode("div", _hoisted_15$1, toDisplayString(unref(format)(new Date(task.start), "yyyy-MM-dd")) + " - " + toDisplayString(unref(format)(new Date(task.end), "yyyy-MM-dd")), 1),
-                    createBaseVNode("div", _hoisted_16$1, [
-                      createBaseVNode("span", _hoisted_17$1, toDisplayString(task.status || "In Progress"), 1),
-                      createBaseVNode("span", _hoisted_18$1, toDisplayString(task.progress) + "%", 1)
+                  }, null, 40, _hoisted_11$1),
+                  hoveredTask.value && hoveredTask.value.id === task.id ? (openBlock(), createElementBlock("div", _hoisted_12$1, [
+                    createBaseVNode("div", _hoisted_13$1, toDisplayString(task.name), 1),
+                    createBaseVNode("div", _hoisted_14$1, toDisplayString(unref(format)(new Date(task.start), "yyyy-MM-dd")) + " - " + toDisplayString(unref(format)(new Date(task.end), "yyyy-MM-dd")), 1),
+                    createBaseVNode("div", _hoisted_15$1, [
+                      createBaseVNode("span", _hoisted_16$1, toDisplayString(task.status || "In Progress"), 1),
+                      createBaseVNode("span", _hoisted_17$1, toDisplayString(task.progress) + "%", 1)
                     ])
                   ])) : createCommentVNode("", true)
-                ], 46, _hoisted_9$1)
+                ], 46, _hoisted_8$1)
               ], 4);
             }), 128))
           ], 4)
-        ])
+        ], 544)
       ]);
     };
   }
 };
-const GanttChart = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-03fa525c"]]);
+const GanttChart = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-233a9c1b"]]);
 const API_BASE = "/index.php/apps/deck/api/v1.0";
 const headers = {
   "OCS-APIRequest": "true",
@@ -8654,30 +8689,34 @@ const _hoisted_4 = { class: "content-header" };
 const _hoisted_5 = { class: "breadcrumb" };
 const _hoisted_6 = { class: "board-title" };
 const _hoisted_7 = { class: "view-controls" };
-const _hoisted_8 = { class: "icon-only active" };
-const _hoisted_9 = { class: "footer-bar" };
-const _hoisted_10 = { class: "deck-settings" };
-const _hoisted_11 = { class: "modal" };
-const _hoisted_12 = { class: "modal-header" };
-const _hoisted_13 = { class: "modal-body" };
-const _hoisted_14 = { class: "form-group" };
-const _hoisted_15 = { class: "form-row" };
-const _hoisted_16 = { class: "form-group" };
+const _hoisted_8 = { class: "btn-group" };
+const _hoisted_9 = {
+  class: "icon-only active",
+  title: "Gantt View"
+};
+const _hoisted_10 = { class: "footer-bar" };
+const _hoisted_11 = { class: "deck-settings" };
+const _hoisted_12 = { class: "modal" };
+const _hoisted_13 = { class: "modal-header" };
+const _hoisted_14 = { class: "modal-body" };
+const _hoisted_15 = { class: "form-group" };
+const _hoisted_16 = { class: "form-row" };
 const _hoisted_17 = { class: "form-group" };
-const _hoisted_18 = { class: "form-row" };
-const _hoisted_19 = { class: "form-group" };
+const _hoisted_18 = { class: "form-group" };
+const _hoisted_19 = { class: "form-row" };
 const _hoisted_20 = { class: "form-group" };
 const _hoisted_21 = { class: "form-group" };
-const _hoisted_22 = { class: "deps-list" };
-const _hoisted_23 = ["onClick"];
-const _hoisted_24 = {
+const _hoisted_22 = { class: "form-group" };
+const _hoisted_23 = { class: "deps-list" };
+const _hoisted_24 = ["onClick"];
+const _hoisted_25 = {
   key: 0,
   class: "no-deps"
 };
-const _hoisted_25 = { class: "add-dep-row" };
-const _hoisted_26 = ["value"];
-const _hoisted_27 = ["disabled"];
-const _hoisted_28 = { class: "modal-footer" };
+const _hoisted_26 = { class: "add-dep-row" };
+const _hoisted_27 = ["value"];
+const _hoisted_28 = ["disabled"];
+const _hoisted_29 = { class: "modal-footer" };
 const _sfc_main = {
   __name: "App",
   setup(__props) {
@@ -8944,10 +8983,17 @@ ${original}` : meta;
         console.error("Failed to update task duration:", err);
       }
     }
+    const ganttChartRef = /* @__PURE__ */ ref(null);
+    const viewMode = /* @__PURE__ */ ref("Day");
+    const jumpToToday = () => {
+      if (ganttChartRef.value) {
+        ganttChartRef.value.centerOnDate(/* @__PURE__ */ new Date());
+      }
+    };
     return (_ctx, _cache) => {
       return openBlock(), createElementBlock("div", _hoisted_1, [
         createBaseVNode("div", _hoisted_2, [
-          _cache[9] || (_cache[9] = createBaseVNode("div", { class: "app-navigation-caption" }, [
+          _cache[12] || (_cache[12] = createBaseVNode("div", { class: "app-navigation-caption" }, [
             createBaseVNode("div", { class: "app-navigation-caption__title" }, "NXC Gantt")
           ], -1)),
           createVNode(Sidebar, {
@@ -8960,23 +9006,36 @@ ${original}` : meta;
           createBaseVNode("div", _hoisted_4, [
             createBaseVNode("div", _hoisted_5, [
               createBaseVNode("span", _hoisted_6, toDisplayString(selectedBoardName.value), 1),
-              _cache[10] || (_cache[10] = createBaseVNode("span", { class: "sep" }, "›", -1)),
-              _cache[11] || (_cache[11] = createBaseVNode("span", { class: "view-title" }, "Gantt Timeline", -1))
+              _cache[13] || (_cache[13] = createBaseVNode("span", { class: "sep" }, "›", -1)),
+              _cache[14] || (_cache[14] = createBaseVNode("span", { class: "view-title" }, "Gantt Timeline", -1))
             ]),
             createBaseVNode("div", _hoisted_7, [
-              _cache[12] || (_cache[12] = createBaseVNode("div", { class: "btn-group" }, [
-                createBaseVNode("button", { class: "active" }, "Day"),
-                createBaseVNode("button", null, "Week"),
-                createBaseVNode("button", null, "Month")
-              ], -1)),
-              _cache[13] || (_cache[13] = createBaseVNode("button", { class: "icon-only" }, [
-                createBaseVNode("span", { class: "circle-icon" })
-              ], -1)),
-              createBaseVNode("button", _hoisted_8, [
+              createBaseVNode("div", _hoisted_8, [
+                createBaseVNode("button", {
+                  class: normalizeClass({ active: viewMode.value === "Day" }),
+                  onClick: _cache[0] || (_cache[0] = ($event) => viewMode.value = "Day")
+                }, "Day", 2),
+                createBaseVNode("button", {
+                  class: normalizeClass({ active: viewMode.value === "Week" }),
+                  onClick: _cache[1] || (_cache[1] = ($event) => viewMode.value = "Week")
+                }, "Week", 2),
+                createBaseVNode("button", {
+                  class: normalizeClass({ active: viewMode.value === "Month" }),
+                  onClick: _cache[2] || (_cache[2] = ($event) => viewMode.value = "Month")
+                }, "Month", 2)
+              ]),
+              createBaseVNode("button", {
+                class: "icon-only",
+                onClick: jumpToToday,
+                title: "Jump to Today"
+              }, [..._cache[15] || (_cache[15] = [
+                createBaseVNode("span", { class: "circle-icon" }, null, -1)
+              ])]),
+              createBaseVNode("button", _hoisted_9, [
                 createVNode(unref(Calendar), { size: "16" })
               ])
             ]),
-            _cache[14] || (_cache[14] = createBaseVNode("div", { class: "header-right" }, [
+            _cache[16] || (_cache[16] = createBaseVNode("div", { class: "header-right" }, [
               createBaseVNode("div", {
                 id: "contactsmenu",
                 class: "icon-contacts menutoggle",
@@ -9002,71 +9061,74 @@ ${original}` : meta;
             ], -1))
           ]),
           createVNode(GanttChart, {
+            ref_key: "ganttChartRef",
+            ref: ganttChartRef,
             tasks: tasks.value,
+            "view-mode": viewMode.value,
             onTaskClicked: openTaskModal,
             onTaskDatesChanged: handleTaskDatesChanged,
             onTaskReordered: handleTaskReordered,
             onTaskDurationChanged: handleTaskDurationChanged
-          }, null, 8, ["tasks"]),
-          createBaseVNode("div", _hoisted_9, [
-            createBaseVNode("div", _hoisted_10, [
+          }, null, 8, ["tasks", "view-mode"]),
+          createBaseVNode("div", _hoisted_10, [
+            createBaseVNode("div", _hoisted_11, [
               createVNode(unref(Settings), { size: "14" }),
-              _cache[15] || (_cache[15] = createTextVNode(" Deck Settings", -1))
+              _cache[17] || (_cache[17] = createTextVNode(" Deck Settings", -1))
             ]),
-            _cache[16] || (_cache[16] = createStaticVNode('<div class="lists-legend" data-v-fad22b06><span data-v-fad22b06>Lists: </span><span class="legend-item" data-v-fad22b06><span class="dot done" data-v-fad22b06></span> Done</span><span class="legend-item" data-v-fad22b06><span class="dot progress" data-v-fad22b06></span> In Progress</span><span class="legend-item" data-v-fad22b06><span class="dot review" data-v-fad22b06></span> Review</span><span class="legend-item" data-v-fad22b06><span class="dot todo" data-v-fad22b06></span> To Do</span></div>', 1))
+            _cache[18] || (_cache[18] = createStaticVNode('<div class="lists-legend" data-v-6f882c3d><span data-v-6f882c3d>Lists: </span><span class="legend-item" data-v-6f882c3d><span class="dot done" data-v-6f882c3d></span> Done</span><span class="legend-item" data-v-6f882c3d><span class="dot progress" data-v-6f882c3d></span> In Progress</span><span class="legend-item" data-v-6f882c3d><span class="dot review" data-v-6f882c3d></span> Review</span><span class="legend-item" data-v-6f882c3d><span class="dot todo" data-v-6f882c3d></span> To Do</span></div>', 1))
           ])
         ]),
         isModalOpen.value ? (openBlock(), createElementBlock("div", {
           key: 0,
           class: "modal-overlay",
-          onClick: _cache[8] || (_cache[8] = withModifiers(($event) => isModalOpen.value = false, ["self"]))
+          onClick: _cache[11] || (_cache[11] = withModifiers(($event) => isModalOpen.value = false, ["self"]))
         }, [
-          createBaseVNode("div", _hoisted_11, [
-            createBaseVNode("div", _hoisted_12, [
-              _cache[17] || (_cache[17] = createBaseVNode("h3", null, "Edit Task", -1)),
+          createBaseVNode("div", _hoisted_12, [
+            createBaseVNode("div", _hoisted_13, [
+              _cache[19] || (_cache[19] = createBaseVNode("h3", null, "Edit Task", -1)),
               createBaseVNode("button", {
                 class: "close-btn",
-                onClick: _cache[0] || (_cache[0] = ($event) => isModalOpen.value = false)
+                onClick: _cache[3] || (_cache[3] = ($event) => isModalOpen.value = false)
               }, [
                 createVNode(unref(X), { size: "20" })
               ])
             ]),
-            createBaseVNode("div", _hoisted_13, [
-              createBaseVNode("div", _hoisted_14, [
-                _cache[18] || (_cache[18] = createBaseVNode("label", null, "Task Name", -1)),
+            createBaseVNode("div", _hoisted_14, [
+              createBaseVNode("div", _hoisted_15, [
+                _cache[20] || (_cache[20] = createBaseVNode("label", null, "Task Name", -1)),
                 withDirectives(createBaseVNode("input", {
-                  "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => editingTask.value.name = $event),
+                  "onUpdate:modelValue": _cache[4] || (_cache[4] = ($event) => editingTask.value.name = $event),
                   type: "text"
                 }, null, 512), [
                   [vModelText, editingTask.value.name]
                 ])
               ]),
-              createBaseVNode("div", _hoisted_15, [
-                createBaseVNode("div", _hoisted_16, [
-                  _cache[19] || (_cache[19] = createBaseVNode("label", null, "Start Date", -1)),
+              createBaseVNode("div", _hoisted_16, [
+                createBaseVNode("div", _hoisted_17, [
+                  _cache[21] || (_cache[21] = createBaseVNode("label", null, "Start Date", -1)),
                   withDirectives(createBaseVNode("input", {
-                    "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => editingTask.value.start = $event),
+                    "onUpdate:modelValue": _cache[5] || (_cache[5] = ($event) => editingTask.value.start = $event),
                     type: "datetime-local"
                   }, null, 512), [
                     [vModelText, editingTask.value.start]
                   ])
                 ]),
-                createBaseVNode("div", _hoisted_17, [
-                  _cache[20] || (_cache[20] = createBaseVNode("label", null, "End Date", -1)),
+                createBaseVNode("div", _hoisted_18, [
+                  _cache[22] || (_cache[22] = createBaseVNode("label", null, "End Date", -1)),
                   withDirectives(createBaseVNode("input", {
-                    "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => editingTask.value.end = $event),
+                    "onUpdate:modelValue": _cache[6] || (_cache[6] = ($event) => editingTask.value.end = $event),
                     type: "datetime-local"
                   }, null, 512), [
                     [vModelText, editingTask.value.end]
                   ])
                 ])
               ]),
-              createBaseVNode("div", _hoisted_18, [
-                createBaseVNode("div", _hoisted_19, [
-                  _cache[22] || (_cache[22] = createBaseVNode("label", null, "Status", -1)),
+              createBaseVNode("div", _hoisted_19, [
+                createBaseVNode("div", _hoisted_20, [
+                  _cache[24] || (_cache[24] = createBaseVNode("label", null, "Status", -1)),
                   withDirectives(createBaseVNode("select", {
-                    "onUpdate:modelValue": _cache[4] || (_cache[4] = ($event) => editingTask.value.status = $event)
-                  }, [..._cache[21] || (_cache[21] = [
+                    "onUpdate:modelValue": _cache[7] || (_cache[7] = ($event) => editingTask.value.status = $event)
+                  }, [..._cache[23] || (_cache[23] = [
                     createBaseVNode("option", { value: "To Do" }, "To Do", -1),
                     createBaseVNode("option", { value: "In Progress" }, "In Progress", -1),
                     createBaseVNode("option", { value: "Review" }, "Review", -1),
@@ -9075,10 +9137,10 @@ ${original}` : meta;
                     [vModelSelect, editingTask.value.status]
                   ])
                 ]),
-                createBaseVNode("div", _hoisted_20, [
-                  _cache[23] || (_cache[23] = createBaseVNode("label", null, "Progress (%)", -1)),
+                createBaseVNode("div", _hoisted_21, [
+                  _cache[25] || (_cache[25] = createBaseVNode("label", null, "Progress (%)", -1)),
                   withDirectives(createBaseVNode("input", {
-                    "onUpdate:modelValue": _cache[5] || (_cache[5] = ($event) => editingTask.value.progress = $event),
+                    "onUpdate:modelValue": _cache[8] || (_cache[8] = ($event) => editingTask.value.progress = $event),
                     type: "number",
                     min: "0",
                     max: "100"
@@ -9092,9 +9154,9 @@ ${original}` : meta;
                   ])
                 ])
               ]),
-              createBaseVNode("div", _hoisted_21, [
-                _cache[25] || (_cache[25] = createBaseVNode("label", null, "Predecessors (Dependencies)", -1)),
-                createBaseVNode("div", _hoisted_22, [
+              createBaseVNode("div", _hoisted_22, [
+                _cache[27] || (_cache[27] = createBaseVNode("label", null, "Predecessors (Dependencies)", -1)),
+                createBaseVNode("div", _hoisted_23, [
                   (openBlock(true), createElementBlock(Fragment, null, renderList(editingTask.value.dependencies, (depId) => {
                     return openBlock(), createElementBlock("div", {
                       key: depId,
@@ -9104,16 +9166,16 @@ ${original}` : meta;
                       createBaseVNode("span", {
                         class: "remove-dep",
                         onClick: ($event) => removeDependency(depId)
-                      }, "×", 8, _hoisted_23)
+                      }, "×", 8, _hoisted_24)
                     ]);
                   }), 128)),
-                  !editingTask.value.dependencies || editingTask.value.dependencies.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_24, " No dependencies ")) : createCommentVNode("", true)
+                  !editingTask.value.dependencies || editingTask.value.dependencies.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_25, " No dependencies ")) : createCommentVNode("", true)
                 ]),
-                createBaseVNode("div", _hoisted_25, [
+                createBaseVNode("div", _hoisted_26, [
                   withDirectives(createBaseVNode("select", {
-                    "onUpdate:modelValue": _cache[6] || (_cache[6] = ($event) => selectedDepToAdd.value = $event)
+                    "onUpdate:modelValue": _cache[9] || (_cache[9] = ($event) => selectedDepToAdd.value = $event)
                   }, [
-                    _cache[24] || (_cache[24] = createBaseVNode("option", {
+                    _cache[26] || (_cache[26] = createBaseVNode("option", {
                       value: "",
                       disabled: ""
                     }, "Select task...", -1)),
@@ -9121,7 +9183,7 @@ ${original}` : meta;
                       return openBlock(), createElementBlock("option", {
                         key: t.id,
                         value: t.id
-                      }, toDisplayString(t.name), 9, _hoisted_26);
+                      }, toDisplayString(t.name), 9, _hoisted_27);
                     }), 128))
                   ], 512), [
                     [vModelSelect, selectedDepToAdd.value]
@@ -9130,14 +9192,14 @@ ${original}` : meta;
                     class: "btn-add-dep",
                     disabled: !selectedDepToAdd.value,
                     onClick: addDependency
-                  }, "Add", 8, _hoisted_27)
+                  }, "Add", 8, _hoisted_28)
                 ])
               ])
             ]),
-            createBaseVNode("div", _hoisted_28, [
+            createBaseVNode("div", _hoisted_29, [
               createBaseVNode("button", {
                 class: "btn-cancel",
-                onClick: _cache[7] || (_cache[7] = ($event) => isModalOpen.value = false)
+                onClick: _cache[10] || (_cache[10] = ($event) => isModalOpen.value = false)
               }, "Cancel"),
               createBaseVNode("button", {
                 class: "btn-save",
@@ -9150,7 +9212,7 @@ ${original}` : meta;
     };
   }
 };
-const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-fad22b06"]]);
+const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-6f882c3d"]]);
 const mountApp = () => {
   const el = document.getElementById("nxc-gantt-root");
   if (el) {

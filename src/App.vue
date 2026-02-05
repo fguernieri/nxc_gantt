@@ -363,6 +363,14 @@ async function handleTaskDurationChanged(event) {
         console.error('Failed to update task duration:', err)
     }
 }
+const ganttChartRef = ref(null)
+const viewMode = ref('Day')
+
+const jumpToToday = () => {
+    if (ganttChartRef.value) {
+        ganttChartRef.value.centerOnDate(new Date())
+    }
+}
 </script>
 
 <template>
@@ -388,12 +396,12 @@ async function handleTaskDurationChanged(event) {
            
            <div class="view-controls">
              <div class="btn-group">
-               <button class="active">Day</button>
-               <button>Week</button>
-               <button>Month</button>
+               <button :class="{ active: viewMode === 'Day' }" @click="viewMode = 'Day'">Day</button>
+               <button :class="{ active: viewMode === 'Week' }" @click="viewMode = 'Week'">Week</button>
+               <button :class="{ active: viewMode === 'Month' }" @click="viewMode = 'Month'">Month</button>
              </div>
-             <button class="icon-only"><span class="circle-icon"></span></button>
-             <button class="icon-only active"><Calendar size="16"/></button>
+             <button class="icon-only" @click="jumpToToday" title="Jump to Today"><span class="circle-icon"></span></button>
+             <button class="icon-only active" title="Gantt View"><Calendar size="16"/></button>
            </div>
        <div class="header-right">
            <div id="contactsmenu" class="icon-contacts menutoggle" tabindex="0" role="button" aria-haspopup="true" aria-controls="contactsmenu-menu" aria-expanded="false">
@@ -406,7 +414,9 @@ async function handleTaskDurationChanged(event) {
       </div>
 
       <GanttChart 
+        ref="ganttChartRef"
         :tasks="tasks" 
+        :view-mode="viewMode"
         @task-clicked="openTaskModal"
         @task-dates-changed="handleTaskDatesChanged"
         @task-reordered="handleTaskReordered"
