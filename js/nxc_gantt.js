@@ -10310,8 +10310,8 @@ ${original}` : meta;
       return {
         id: card.id,
         name: card.title,
-        start: format(startDate, "yyyy-MM-dd"),
-        end: format(endDate, "yyyy-MM-dd"),
+        start: format(startDate, "yyyy-MM-dd'T'HH:mm"),
+        end: format(endDate, "yyyy-MM-dd'T'HH:mm"),
         color,
         progress,
         status,
@@ -10401,6 +10401,14 @@ ${original}` : meta;
     };
     const openTaskModal = (task) => {
       editingTask.value = { ...task };
+      const normalizeForInput = (val) => {
+        if (!val) return "";
+        if (/^\d{4}-\d{2}-\d{2}$/.test(val)) return val + "T00:00";
+        if (val.length > 16) return val.substring(0, 16);
+        return val;
+      };
+      editingTask.value.start = normalizeForInput(editingTask.value.start);
+      editingTask.value.end = normalizeForInput(editingTask.value.end);
       isModalOpen.value = true;
     };
     const saveTask = async () => {
@@ -10410,11 +10418,13 @@ ${original}` : meta;
         return;
       }
       try {
+        let apiDueDate = editingTask.value.end;
+        if (apiDueDate && apiDueDate.length === 16) apiDueDate += ":00";
         const updates = {
           title: editingTask.value.name,
           type: _deckMeta.type,
           owner: _deckMeta.owner,
-          duedate: editingTask.value.end,
+          duedate: apiDueDate,
           description: buildDescription(editingTask.value)
         };
         await updateCard(_deckMeta.boardId, _deckMeta.stackId, editingTask.value.id, updates);
@@ -10473,7 +10483,7 @@ ${original}` : meta;
     return (_ctx, _cache) => {
       return openBlock(), createElementBlock("div", _hoisted_1, [
         createBaseVNode("header", _hoisted_2, [
-          _cache[10] || (_cache[10] = createStaticVNode('<div class="logo-area" data-v-da05d051><div class="deck-icon" data-v-da05d051><svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" data-v-da05d051><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" data-v-da05d051></path><line x1="12" y1="4" x2="12" y2="20" data-v-da05d051></line></svg></div><span class="app-name" data-v-da05d051>Deck</span><span class="nav-item" data-v-da05d051>Projects <span class="chevron" data-v-da05d051>▼</span></span></div>', 1)),
+          _cache[10] || (_cache[10] = createStaticVNode('<div class="logo-area" data-v-58ce33c4><div class="deck-icon" data-v-58ce33c4><svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" data-v-58ce33c4><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" data-v-58ce33c4></path><line x1="12" y1="4" x2="12" y2="20" data-v-58ce33c4></line></svg></div><span class="app-name" data-v-58ce33c4>Deck</span><span class="nav-item" data-v-58ce33c4>Projects <span class="chevron" data-v-58ce33c4>▼</span></span></div>', 1)),
           createBaseVNode("div", _hoisted_3, [
             createBaseVNode("div", _hoisted_4, [
               createVNode(unref(Search), { size: "16" }),
@@ -10533,7 +10543,7 @@ ${original}` : meta;
             createVNode(unref(Settings), { size: "14" }),
             _cache[15] || (_cache[15] = createTextVNode(" Deck Settings", -1))
           ]),
-          _cache[16] || (_cache[16] = createStaticVNode('<div class="lists-legend" data-v-da05d051><span data-v-da05d051>Lists: </span><span class="legend-item" data-v-da05d051><span class="dot done" data-v-da05d051></span> Done</span><span class="legend-item" data-v-da05d051><span class="dot progress" data-v-da05d051></span> In Progress</span><span class="legend-item" data-v-da05d051><span class="dot review" data-v-da05d051></span> Review</span><span class="legend-item" data-v-da05d051><span class="dot todo" data-v-da05d051></span> To Do</span></div>', 1))
+          _cache[16] || (_cache[16] = createStaticVNode('<div class="lists-legend" data-v-58ce33c4><span data-v-58ce33c4>Lists: </span><span class="legend-item" data-v-58ce33c4><span class="dot done" data-v-58ce33c4></span> Done</span><span class="legend-item" data-v-58ce33c4><span class="dot progress" data-v-58ce33c4></span> In Progress</span><span class="legend-item" data-v-58ce33c4><span class="dot review" data-v-58ce33c4></span> Review</span><span class="legend-item" data-v-58ce33c4><span class="dot todo" data-v-58ce33c4></span> To Do</span></div>', 1))
         ]),
         isModalOpen.value ? (openBlock(), createElementBlock("div", {
           key: 0,
@@ -10565,7 +10575,7 @@ ${original}` : meta;
                   _cache[19] || (_cache[19] = createBaseVNode("label", null, "Start Date", -1)),
                   withDirectives(createBaseVNode("input", {
                     "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => editingTask.value.start = $event),
-                    type: "date"
+                    type: "datetime-local"
                   }, null, 512), [
                     [vModelText, editingTask.value.start]
                   ])
@@ -10574,7 +10584,7 @@ ${original}` : meta;
                   _cache[20] || (_cache[20] = createBaseVNode("label", null, "End Date", -1)),
                   withDirectives(createBaseVNode("input", {
                     "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => editingTask.value.end = $event),
-                    type: "date"
+                    type: "datetime-local"
                   }, null, 512), [
                     [vModelText, editingTask.value.end]
                   ])
@@ -10669,7 +10679,7 @@ ${original}` : meta;
     };
   }
 };
-const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-da05d051"]]);
+const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-58ce33c4"]]);
 const mountApp = () => {
   const el = document.getElementById("nxc-gantt-root");
   if (el) {

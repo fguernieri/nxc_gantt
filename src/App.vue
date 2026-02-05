@@ -109,8 +109,8 @@ function mapCardToTask(card, stackId) {
     return {
         id: card.id,
         name: card.title,
-        start: format(startDate, 'yyyy-MM-dd'),
-        end: format(endDate, 'yyyy-MM-dd'),
+        start: format(startDate, "yyyy-MM-dd'T'HH:mm"),
+        end: format(endDate, "yyyy-MM-dd'T'HH:mm"),
         color: color,
         progress: progress,
         status: status,
@@ -221,6 +221,20 @@ const handleSelectBoard = (id) => {
 const openTaskModal = (task) => {
     // Clone to avoid direct mutation during edit
     editingTask.value = { ...task }
+    
+    // Ensure format is correct for datetime-local input (needs YYYY-MM-DDThh:mm)
+    const normalizeForInput = (val) => {
+        if (!val) return ''
+        // If it's already YYYY-MM-DD, append time
+        if (/^\d{4}-\d{2}-\d{2}$/.test(val)) return val + 'T00:00'
+        // If it sends with seconds, strip them
+        if (val.length > 16) return val.substring(0, 16)
+        return val
+    }
+    
+    editingTask.value.start = normalizeForInput(editingTask.value.start)
+    editingTask.value.end = normalizeForInput(editingTask.value.end)
+    
     isModalOpen.value = true
 }
 
@@ -234,11 +248,17 @@ const saveTask = async () => {
     
     try {
         // Prepare API updates
+        // Ensure due date has seconds for API stability if needed, though most accept without
+        // But better to send full ISO if possible. 
+        // Input gives YYYY-MM-DDTHH:mm
+        let apiDueDate = editingTask.value.end
+        if (apiDueDate && apiDueDate.length === 16) apiDueDate += ':00'
+        
         const updates = {
             title: editingTask.value.name,
             type: _deckMeta.type,
             owner: _deckMeta.owner,
-            duedate: editingTask.value.end,
+            duedate: apiDueDate,
             description: buildDescription(editingTask.value)
         }
         
@@ -408,11 +428,11 @@ async function handleTaskDurationChanged(event) {
                 <div class="form-row">
                     <div class="form-group">
                         <label>Start Date</label>
-                        <input v-model="editingTask.start" type="date" />
+                        <input v-model="editingTask.start" type="datetime-local" />
                     </div>
                     <div class="form-group">
                         <label>End Date</label>
-                        <input v-model="editingTask.end" type="date" />
+                        <input v-model="editingTask.end" type="datetime-local" />
                     </div>
                 </div>
                  <div class="form-row">
