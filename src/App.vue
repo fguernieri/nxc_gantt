@@ -106,6 +106,7 @@ function mapCardToTask(card, stackId) {
         _deckMeta: {
             boardId: selectedBoardId.value,
             stackId: stackId,
+            type: card.type || 'plain',
             originalDescription: card.description || ''
         }
     }
@@ -222,6 +223,7 @@ const saveTask = async () => {
         // Prepare API updates
         const updates = {
             title: editingTask.value.name,
+            type: _deckMeta.type,
             duedate: editingTask.value.end,
             description: buildDescription(editingTask.value)
         }
