@@ -1,37 +1,138 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import Sidebar from './components/Sidebar.vue'
 import GanttChart from './components/GanttChart.vue'
 import { Search, Bell, Settings, Calendar, User, X } from 'lucide-vue-next'
+import { fetchBoards, fetchBoardStacks } from './services/deckApi.js'
+import { format, subDays, parse } from 'date-fns'
 
-const selectedBoardId = ref(1)
+const selectedBoardId = ref(null)
 const isModalOpen = ref(false)
 const editingTask = ref({})
 const selectedDepToAdd = ref("")
+const loading = ref(true)
+const error = ref(null)
 
-const boards = ref([
-  { id: 1, name: 'Website Relaunch', count: 12, color: '#0082c9', favorite: true },
-  { id: 2, name: 'Q1 Marketing', count: 5, color: '#46c45e', favorite: true },
-  { id: 3, name: 'HR Recruitment', count: 0, color: '#a054d6', favorite: false },
-  { id: 4, name: 'Office Events', count: 0, color: '#ff7e38', favorite: false }
-])
-
-const tasks = ref([
-  { id: 1, name: 'Kickoff Meeting', start: '2026-02-01', end: '2026-02-02', color: '#16a085', progress: 100, status: 'Done', dependencies: [] },
-  { id: 2, name: 'Wireframe Design', start: '2026-02-02', end: '2026-02-06', color: '#7e8ce0', progress: 80, status: 'In Progress', dependencies: [1] },
-  { id: 3, name: 'Database Schema', start: '2026-02-04', end: '2026-02-08', color: '#f1c40f', progress: 40, status: 'Review', dependencies: [1] },
-  { id: 4, name: 'Content Strategy', start: '2026-02-07', end: '2026-02-10', color: '#e67e22', progress: 0, status: 'To Do', dependencies: [2, 3] },
-  { id: 5, name: 'Frontend Dev', start: '2026-02-11', end: '2026-02-20', color: '#34495e', progress: 0, status: 'To Do', dependencies: [2] }
-])
+const boards = ref([])
+const tasks = ref([])
 
 // Computed for Modal
-import { computed } from 'vue'
 const availableDependencies = computed(() => {
     if (!editingTask.value.id) return []
     return tasks.value.filter(t => 
         t.id !== editingTask.value.id && // not self
         !editingTask.value.dependencies?.includes(t.id) // not already added
     )
+})
+
+// Get selected board name for breadcrumb
+const selectedBoardName = computed(() => {
+    const board = boards.value.find(b => b.id === selectedBoardId.value)
+    return board ? board.title : 'Select a Board'
+})
+
+// Map Deck card to Gantt task format
+function mapCardToTask(card) {
+    // Parse duedate or use defaults
+    let endDate = new Date()
+    let startDate = subDays(endDate, 7) // Default: 7 days before end
+    
+    if (card.duedate) {
+        try {
+            endDate = parse(card.duedate, "yyyy-MM-dd'T'HH:mm:ssXXX", new Date())
+            startDate = subDays(endDate, 7) // Start is 7 days before due
+        } catch (e) {
+            console.warn('Failed to parse duedate:', card.duedate, e)
+        }
+    }
+    
+    // Get color from first label or use default
+    const color = card.labels?.[0]?.color || '#4a90e2'
+    
+    // Map archived/done status
+    const status = card.archived ? 'Done' : (card.done ? 'Done' : 'To Do')
+    const progress = card.done || card.archived ? 100 : 0
+    
+    return {
+        id: card.id,
+        name: card.title,
+        start: format(startDate, 'yyyy-MM-dd'),
+        end: format(endDate, 'yyyy-MM-dd'),
+        color: color,
+        progress: progress,
+        status: status,
+        dependencies: [] // Will implement later
+    }
+}
+
+// Load boards from API
+async function loadBoards() {
+    try {
+        loading.value = true
+        error.value = null
+        const data = await fetchBoards()
+        
+        // Map boards to sidebar format
+        boards.value = data.map(board => ({
+            id: board.id,
+            name: board.title,
+            count: 0, // Not provided by API, could calculate later
+            color: board.color || '#0082c9',
+            favorite: false // Not provided by basic endpoint
+        }))
+        
+        // Auto-select first board
+        if (boards.value.length > 0 && !selectedBoardId.value) {
+            selectedBoardId.value = boards.value[0].id
+        }
+    } catch (err) {
+        error.value = 'Failed to load boards: ' + err.message
+        console.error(err)
+    } finally {
+        loading.value = false
+    }
+}
+
+// Load tasks (cards) for selected board
+async function loadTasks() {
+    if (!selectedBoardId.value) {
+        tasks.value = []
+        return
+    }
+    
+    try {
+        loading.value = true
+        error.value = null
+        const stacks = await fetchBoardStacks(selectedBoardId.value)
+        
+        // Flatten all cards from all stacks
+        const allCards = []
+        stacks.forEach(stack => {
+            if (stack.cards && Array.isArray(stack.cards)) {
+                allCards.push(...stack.cards)
+            }
+        })
+        
+        // Map to Gantt format
+        tasks.value = allCards.map(mapCardToTask)
+    } catch (err) {
+        error.value = 'Failed to load tasks: ' + err.message
+        console.error(err)
+    } finally {
+        loading.value = false
+    }
+}
+
+// Watch for board selection changes
+watch(selectedBoardId, (newId) => {
+    if (newId) {
+        loadTasks()
+    }
+})
+
+// Load on mount
+onMounted(() => {
+    loadBoards()
 })
 
 const getTaskName = (id) => {
@@ -101,8 +202,8 @@ const saveTask = () => {
       
       <main class="content-area">
         <div class="content-header">
-           <div class="breadcrumb">
-             <span class="board-title">Website Relaunch</span>
+         <div class="breadcrumb">
+             <span class="board-title">{{ selectedBoardName }}</span>
              <span class="sep">›</span>
              <span class="view-title">Gantt Timeline</span>
            </div>
