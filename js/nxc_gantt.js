@@ -9543,8 +9543,7 @@ ${original}` : meta;
         return;
       }
       try {
-        let apiDueDate = editingTask.value.end;
-        if (apiDueDate && apiDueDate.length === 16) apiDueDate += ":00";
+        const apiDueDate = parseFromZone(editingTask.value.end).toISOString();
         const updates = {
           title: editingTask.value.name,
           type: _deckMeta.type,
@@ -9610,7 +9609,7 @@ ${original}` : meta;
     return (_ctx, _cache) => {
       return openBlock(), createElementBlock("div", _hoisted_1, [
         createBaseVNode("header", _hoisted_2, [
-          _cache[10] || (_cache[10] = createStaticVNode('<div class="logo-area" data-v-4eba8ef9><div class="deck-icon" data-v-4eba8ef9><svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" data-v-4eba8ef9><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" data-v-4eba8ef9></path><line x1="12" y1="4" x2="12" y2="20" data-v-4eba8ef9></line></svg></div><span class="app-name" data-v-4eba8ef9>Deck</span><span class="nav-item" data-v-4eba8ef9>Projects <span class="chevron" data-v-4eba8ef9>▼</span></span></div>', 1)),
+          _cache[10] || (_cache[10] = createStaticVNode('<div class="logo-area" data-v-cd4e7245><div class="deck-icon" data-v-cd4e7245><svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" data-v-cd4e7245><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" data-v-cd4e7245></path><line x1="12" y1="4" x2="12" y2="20" data-v-cd4e7245></line></svg></div><span class="app-name" data-v-cd4e7245>Deck</span><span class="nav-item" data-v-cd4e7245>Projects <span class="chevron" data-v-cd4e7245>▼</span></span></div>', 1)),
           createBaseVNode("div", _hoisted_3, [
             createBaseVNode("div", _hoisted_4, [
               createVNode(unref(Search), { size: "16" }),
@@ -9670,7 +9669,7 @@ ${original}` : meta;
             createVNode(unref(Settings), { size: "14" }),
             _cache[15] || (_cache[15] = createTextVNode(" Deck Settings", -1))
           ]),
-          _cache[16] || (_cache[16] = createStaticVNode('<div class="lists-legend" data-v-4eba8ef9><span data-v-4eba8ef9>Lists: </span><span class="legend-item" data-v-4eba8ef9><span class="dot done" data-v-4eba8ef9></span> Done</span><span class="legend-item" data-v-4eba8ef9><span class="dot progress" data-v-4eba8ef9></span> In Progress</span><span class="legend-item" data-v-4eba8ef9><span class="dot review" data-v-4eba8ef9></span> Review</span><span class="legend-item" data-v-4eba8ef9><span class="dot todo" data-v-4eba8ef9></span> To Do</span></div>', 1))
+          _cache[16] || (_cache[16] = createStaticVNode('<div class="lists-legend" data-v-cd4e7245><span data-v-cd4e7245>Lists: </span><span class="legend-item" data-v-cd4e7245><span class="dot done" data-v-cd4e7245></span> Done</span><span class="legend-item" data-v-cd4e7245><span class="dot progress" data-v-cd4e7245></span> In Progress</span><span class="legend-item" data-v-cd4e7245><span class="dot review" data-v-cd4e7245></span> Review</span><span class="legend-item" data-v-cd4e7245><span class="dot todo" data-v-cd4e7245></span> To Do</span></div>', 1))
         ]),
         isModalOpen.value ? (openBlock(), createElementBlock("div", {
           key: 0,
@@ -9806,7 +9805,7 @@ ${original}` : meta;
     };
   }
 };
-const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-4eba8ef9"]]);
+const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-cd4e7245"]]);
 const mountApp = () => {
   const el = document.getElementById("nxc-gantt-root");
   if (el) {

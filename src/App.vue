@@ -266,11 +266,8 @@ const saveTask = async () => {
     
     try {
         // Prepare API updates
-        // Ensure due date has seconds for API stability if needed, though most accept without
-        // But better to send full ISO if possible. 
-        // Input gives YYYY-MM-DDTHH:mm
-        let apiDueDate = editingTask.value.end
-        if (apiDueDate && apiDueDate.length === 16) apiDueDate += ':00'
+        // Convert SP Time String from input -> UTC ISO for API
+        const apiDueDate = parseFromZone(editingTask.value.end).toISOString()
         
         const updates = {
             title: editingTask.value.name,
