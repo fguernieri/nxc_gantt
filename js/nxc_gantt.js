@@ -9840,6 +9840,15 @@ const _sfc_main$1 = {
   emits: ["task-updated"],
   setup(__props, { emit: __emit }) {
     const props = __props;
+    function darkenColor(hex, percent) {
+      const cleanHex = hex.replace("#", "");
+      const num = parseInt(cleanHex, 16);
+      const amt = Math.round(2.55 * percent);
+      const R = Math.max(0, (num >> 16) - amt);
+      const G = Math.max(0, (num >> 8 & 255) - amt);
+      const B = Math.max(0, (num & 255) - amt);
+      return "#" + (16777216 + R * 65536 + G * 256 + B).toString(16).slice(1);
+    }
     const hoveredTask = /* @__PURE__ */ ref(null);
     const startDate = computed(() => {
       if (!props.tasks.length) return /* @__PURE__ */ new Date();
@@ -10034,11 +10043,14 @@ const _sfc_main$1 = {
                   onMouseleave: _cache[0] || (_cache[0] = ($event) => hoveredTask.value = null),
                   onMousedown: ($event) => startDrag($event, task)
                 }, [
-                  createBaseVNode("span", _hoisted_10$1, toDisplayString(task.name), 1),
                   createBaseVNode("div", {
-                    class: "progress-bar",
-                    style: normalizeStyle({ width: `${task.progress}%` })
+                    class: "progress-fill",
+                    style: normalizeStyle({
+                      width: task.progress + "%",
+                      background: darkenColor(task.color, 25)
+                    })
                   }, null, 4),
+                  createBaseVNode("span", _hoisted_10$1, toDisplayString(task.name), 1),
                   hoveredTask.value && hoveredTask.value.id === task.id ? (openBlock(), createElementBlock("div", _hoisted_11$1, [
                     createBaseVNode("div", _hoisted_12$1, toDisplayString(task.name), 1),
                     createBaseVNode("div", _hoisted_13$1, toDisplayString(unref(format)(new Date(task.start), "yyyy-MM-dd")) + " - " + toDisplayString(unref(format)(new Date(task.end), "yyyy-MM-dd")), 1),
@@ -10056,7 +10068,7 @@ const _sfc_main$1 = {
     };
   }
 };
-const GanttChart = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-6d776b63"]]);
+const GanttChart = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-5a983b97"]]);
 const API_BASE = "/index.php/apps/deck/api/v1.0";
 const headers = {
   "OCS-APIRequest": "true",
@@ -10070,6 +10082,15 @@ async function fetchBoards() {
 async function fetchBoardStacks(boardId) {
   const response = await fetch(`${API_BASE}/boards/${boardId}/stacks`, { headers });
   if (!response.ok) throw new Error(`Failed to fetch stacks: ${response.statusText}`);
+  return await response.json();
+}
+async function updateCard(boardId, stackId, cardId, updates) {
+  const response = await fetch(`${API_BASE}/boards/${boardId}/stacks/${stackId}/cards/${cardId}`, {
+    method: "PUT",
+    headers,
+    body: JSON.stringify(updates)
+  });
+  if (!response.ok) throw new Error(`Failed to update card: ${response.statusText}`);
   return await response.json();
 }
 const _hoisted_1 = { class: "app-layout" };
@@ -10132,21 +10153,53 @@ const _sfc_main = {
       const board = boards.value.find((b) => b.id === selectedBoardId.value);
       return board ? board.title : "Select a Board";
     });
-    function mapCardToTask(card) {
+    function parseGanttMeta(description) {
+      if (!description) return {};
+      const match2 = description.match(/\[GANTT_META\]([\s\S]*?)\[\/GANTT_META\]/);
+      if (!match2) return {};
+      const meta = {};
+      match2[1].split("\n").forEach((line) => {
+        const trimmed = line.trim();
+        if (!trimmed) return;
+        const [key, ...valueParts] = trimmed.split(":");
+        if (key && valueParts.length > 0) {
+          meta[key.trim()] = valueParts.join(":").trim();
+        }
+      });
+      return meta;
+    }
+    function buildDescription(task) {
+      var _a;
+      const meta = `[GANTT_META]
+start: ${task.start}
+progress: ${task.progress}
+status: ${task.status}
+[/GANTT_META]`;
+      const original = (((_a = task._deckMeta) == null ? void 0 : _a.originalDescription) || "").replace(/\[GANTT_META\][\s\S]*?\[\/GANTT_META\]\n*/g, "").trim();
+      return original ? `${meta}
+
+${original}` : meta;
+    }
+    function mapCardToTask(card, stackId) {
       var _a, _b;
+      const meta = parseGanttMeta(card.description || "");
       let endDate = /* @__PURE__ */ new Date();
       let startDate = subDays(endDate);
       if (card.duedate) {
         try {
           endDate = parse(card.duedate, "yyyy-MM-dd'T'HH:mm:ssXXX", /* @__PURE__ */ new Date());
-          startDate = subDays(endDate, 7);
+          startDate = meta.start ? new Date(meta.start) : subDays(endDate, 7);
         } catch (e) {
           console.warn("Failed to parse duedate:", card.duedate, e);
         }
+      } else if (meta.start) {
+        startDate = new Date(meta.start);
+        endDate = new Date(startDate);
+        endDate.setDate(endDate.getDate() + 7);
       }
       const color = ((_b = (_a = card.labels) == null ? void 0 : _a[0]) == null ? void 0 : _b.color) || "#4a90e2";
-      const status = card.archived ? "Done" : card.done ? "Done" : "To Do";
-      const progress = card.done || card.archived ? 100 : 0;
+      const status = meta.status || (card.archived ? "Done" : card.done ? "Done" : "To Do");
+      const progress = meta.progress !== void 0 ? parseInt(meta.progress) : card.done || card.archived ? 100 : 0;
       return {
         id: card.id,
         name: card.title,
@@ -10155,8 +10208,13 @@ const _sfc_main = {
         color,
         progress,
         status,
-        dependencies: []
+        dependencies: [],
         // Will implement later
+        _deckMeta: {
+          boardId: selectedBoardId.value,
+          stackId,
+          originalDescription: card.description || ""
+        }
       };
     }
     async function loadBoards() {
@@ -10195,10 +10253,12 @@ const _sfc_main = {
         const allCards = [];
         stacks.forEach((stack2) => {
           if (stack2.cards && Array.isArray(stack2.cards)) {
-            allCards.push(...stack2.cards);
+            stack2.cards.forEach((card) => {
+              allCards.push(mapCardToTask(card, stack2.id));
+            });
           }
         });
-        tasks.value = allCards.map(mapCardToTask);
+        tasks.value = allCards;
       } catch (err) {
         error.value = "Failed to load tasks: " + err.message;
         console.error(err);
@@ -10235,17 +10295,33 @@ const _sfc_main = {
       editingTask.value = { ...task };
       isModalOpen.value = true;
     };
-    const saveTask = () => {
-      const index = tasks.value.findIndex((t) => t.id === editingTask.value.id);
-      if (index !== -1) {
-        tasks.value[index] = { ...editingTask.value };
+    const saveTask = async () => {
+      const { _deckMeta } = editingTask.value;
+      if (!_deckMeta) {
+        alert("Error: Missing deck metadata");
+        return;
       }
-      isModalOpen.value = false;
+      try {
+        const updates = {
+          title: editingTask.value.name,
+          duedate: editingTask.value.end,
+          description: buildDescription(editingTask.value)
+        };
+        await updateCard(_deckMeta.boardId, _deckMeta.stackId, editingTask.value.id, updates);
+        const index = tasks.value.findIndex((t) => t.id === editingTask.value.id);
+        if (index !== -1) {
+          tasks.value[index] = { ...editingTask.value };
+        }
+        isModalOpen.value = false;
+      } catch (err) {
+        console.error("Failed to save task:", err);
+        alert("Failed to save changes: " + err.message);
+      }
     };
     return (_ctx, _cache) => {
       return openBlock(), createElementBlock("div", _hoisted_1, [
         createBaseVNode("header", _hoisted_2, [
-          _cache[10] || (_cache[10] = createStaticVNode('<div class="logo-area" data-v-5bd8b00b><div class="deck-icon" data-v-5bd8b00b><svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" data-v-5bd8b00b><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" data-v-5bd8b00b></path><line x1="12" y1="4" x2="12" y2="20" data-v-5bd8b00b></line></svg></div><span class="app-name" data-v-5bd8b00b>Deck</span><span class="nav-item" data-v-5bd8b00b>Projects <span class="chevron" data-v-5bd8b00b>▼</span></span></div>', 1)),
+          _cache[10] || (_cache[10] = createStaticVNode('<div class="logo-area" data-v-a826b79b><div class="deck-icon" data-v-a826b79b><svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" data-v-a826b79b><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" data-v-a826b79b></path><line x1="12" y1="4" x2="12" y2="20" data-v-a826b79b></line></svg></div><span class="app-name" data-v-a826b79b>Deck</span><span class="nav-item" data-v-a826b79b>Projects <span class="chevron" data-v-a826b79b>▼</span></span></div>', 1)),
           createBaseVNode("div", _hoisted_3, [
             createBaseVNode("div", _hoisted_4, [
               createVNode(unref(Search), { size: "16" }),
@@ -10302,7 +10378,7 @@ const _sfc_main = {
             createVNode(unref(Settings), { size: "14" }),
             _cache[15] || (_cache[15] = createTextVNode(" Deck Settings", -1))
           ]),
-          _cache[16] || (_cache[16] = createStaticVNode('<div class="lists-legend" data-v-5bd8b00b><span data-v-5bd8b00b>Lists: </span><span class="legend-item" data-v-5bd8b00b><span class="dot done" data-v-5bd8b00b></span> Done</span><span class="legend-item" data-v-5bd8b00b><span class="dot progress" data-v-5bd8b00b></span> In Progress</span><span class="legend-item" data-v-5bd8b00b><span class="dot review" data-v-5bd8b00b></span> Review</span><span class="legend-item" data-v-5bd8b00b><span class="dot todo" data-v-5bd8b00b></span> To Do</span></div>', 1))
+          _cache[16] || (_cache[16] = createStaticVNode('<div class="lists-legend" data-v-a826b79b><span data-v-a826b79b>Lists: </span><span class="legend-item" data-v-a826b79b><span class="dot done" data-v-a826b79b></span> Done</span><span class="legend-item" data-v-a826b79b><span class="dot progress" data-v-a826b79b></span> In Progress</span><span class="legend-item" data-v-a826b79b><span class="dot review" data-v-a826b79b></span> Review</span><span class="legend-item" data-v-a826b79b><span class="dot todo" data-v-a826b79b></span> To Do</span></div>', 1))
         ]),
         isModalOpen.value ? (openBlock(), createElementBlock("div", {
           key: 0,
@@ -10438,7 +10514,7 @@ const _sfc_main = {
     };
   }
 };
-const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-5bd8b00b"]]);
+const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-a826b79b"]]);
 const mountApp = () => {
   const el = document.getElementById("nxc-gantt-root");
   if (el) {

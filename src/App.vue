@@ -3,7 +3,7 @@ import { ref, computed, onMounted, watch } from 'vue'
 import Sidebar from './components/Sidebar.vue'
 import GanttChart from './components/GanttChart.vue'
 import { Search, Bell, Settings, Calendar, User, X } from 'lucide-vue-next'
-import { fetchBoards, fetchBoardStacks } from './services/deckApi.js'
+import { fetchBoards, fetchBoardStacks, updateCard } from './services/deckApi.js'
 import { format, subDays, parse } from 'date-fns'
 
 const selectedBoardId = ref(null)
@@ -31,8 +31,44 @@ const selectedBoardName = computed(() => {
     return board ? board.title : 'Select a Board'
 })
 
+// Parse GANTT_META block from card description
+function parseGanttMeta(description) {
+    if (!description) return {}
+    
+    const match = description.match(/\[GANTT_META\]([\s\S]*?)\[\/GANTT_META\]/)
+    if (!match) return {}
+    
+    const meta = {}
+    match[1].split('\n').forEach(line => {
+        const trimmed = line.trim()
+        if (!trimmed) return
+        const [key, ...valueParts] = trimmed.split(':')
+        if (key && valueParts.length > 0) {
+            meta[key.trim()] = valueParts.join(':').trim()
+        }
+    })
+    return meta
+}
+
+// Build description with GANTT_META block
+function buildDescription(task) {
+    const meta = `[GANTT_META]
+start: ${task.start}
+progress: ${task.progress}
+status: ${task.status}
+[/GANTT_META]`
+    
+    // Extract original content (remove old meta block if exists)
+    const original = (task._deckMeta?.originalDescription || '').replace(/\[GANTT_META\][\s\S]*?\[\/GANTT_META\]\n*/g, '').trim()
+    
+    return original ? `${meta}\n\n${original}` : meta
+}
+
 // Map Deck card to Gantt task format
-function mapCardToTask(card) {
+function mapCardToTask(card, stackId) {
+    // Parse metadata from description
+    const meta = parseGanttMeta(card.description || '')
+    
     // Parse duedate or use defaults
     let endDate = new Date()
     let startDate = subDays(endDate, 7) // Default: 7 days before end
@@ -40,18 +76,23 @@ function mapCardToTask(card) {
     if (card.duedate) {
         try {
             endDate = parse(card.duedate, "yyyy-MM-dd'T'HH:mm:ssXXX", new Date())
-            startDate = subDays(endDate, 7) // Start is 7 days before due
+            startDate = meta.start ? new Date(meta.start) : subDays(endDate, 7)
         } catch (e) {
             console.warn('Failed to parse duedate:', card.duedate, e)
         }
+    } else if (meta.start) {
+        // If no duedate but has start in meta, calculate end
+        startDate = new Date(meta.start)
+        endDate = new Date(startDate)
+        endDate.setDate(endDate.getDate() + 7) // Default 7-day duration
     }
     
     // Get color from first label or use default
     const color = card.labels?.[0]?.color || '#4a90e2'
     
-    // Map archived/done status
-    const status = card.archived ? 'Done' : (card.done ? 'Done' : 'To Do')
-    const progress = card.done || card.archived ? 100 : 0
+    // Use metadata if available, otherwise fallback to card properties
+    const status = meta.status || (card.archived ? 'Done' : (card.done ? 'Done' : 'To Do'))
+    const progress = meta.progress !== undefined ? parseInt(meta.progress) : (card.done || card.archived ? 100 : 0)
     
     return {
         id: card.id,
@@ -61,7 +102,12 @@ function mapCardToTask(card) {
         color: color,
         progress: progress,
         status: status,
-        dependencies: [] // Will implement later
+        dependencies: [], // Will implement later
+        _deckMeta: {
+            boardId: selectedBoardId.value,
+            stackId: stackId,
+            originalDescription: card.description || ''
+        }
     }
 }
 
@@ -109,12 +155,13 @@ async function loadTasks() {
         const allCards = []
         stacks.forEach(stack => {
             if (stack.cards && Array.isArray(stack.cards)) {
-                allCards.push(...stack.cards)
+                stack.cards.forEach(card => {
+                    allCards.push(mapCardToTask(card, stack.id))
+                })
             }
         })
         
-        // Map to Gantt format
-        tasks.value = allCards.map(mapCardToTask)
+        tasks.value = allCards
     } catch (err) {
         error.value = 'Failed to load tasks: ' + err.message
         console.error(err)
@@ -163,12 +210,37 @@ const openTaskModal = (task) => {
     isModalOpen.value = true
 }
 
-const saveTask = () => {
-    const index = tasks.value.findIndex(t => t.id === editingTask.value.id)
-    if (index !== -1) {
-        tasks.value[index] = { ...editingTask.value }
+const saveTask = async () => {
+    const { _deckMeta } = editingTask.value
+    
+    if (!_deckMeta) {
+        alert('Error: Missing deck metadata')
+        return
     }
-    isModalOpen.value = false
+    
+    try {
+        // Prepare API updates
+        const updates = {
+            title: editingTask.value.name,
+            duedate: editingTask.value.end,
+            description: buildDescription(editingTask.value)
+        }
+        
+        // Call Deck API
+        await updateCard(_deckMeta.boardId, _deckMeta.stackId, editingTask.value.id, updates)
+        
+        // Update local state only after API success
+        const index = tasks.value.findIndex(t => t.id === editingTask.value.id)
+        if (index !== -1) {
+            tasks.value[index] = { ...editingTask.value }
+        }
+        
+        isModalOpen.value = false
+    } catch (err) {
+        console.error('Failed to save task:', err)
+        alert('Failed to save changes: ' + err.message)
+        // Keep modal open on error
+    }
 }
 </script>
 

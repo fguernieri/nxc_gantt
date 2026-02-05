@@ -13,6 +13,22 @@ const CELL_WIDTH = 50
 const ROW_HEIGHT = 50
 const HEADER_HEIGHT = 60
 
+// Helper to darken a hex color
+function darkenColor(hex, percent) {
+  // Remove # if present
+  const cleanHex = hex.replace('#', '')
+  
+  // Parse RGB
+  const num = parseInt(cleanHex, 16)
+  const amt = Math.round(2.55 * percent)
+  
+  const R = Math.max(0, (num >> 16) - amt)
+  const G = Math.max(0, ((num >> 8) & 0x00FF) - amt)
+  const B = Math.max(0, (num & 0x0000FF) - amt)
+  
+  return '#' + (0x1000000 + R * 0x10000 + G * 0x100 + B).toString(16).slice(1)
+}
+
 // Interactive state
 const hoveredTask = ref(null)
 
@@ -230,8 +246,11 @@ const stopDrag = () => {
             @mouseleave="hoveredTask = null"
             @mousedown="startDrag($event, task)"
           >
+            <div class="progress-fill" :style="{ 
+              width: task.progress + '%',
+              background: darkenColor(task.color, 25)
+            }"></div>
             <span class="task-label">{{ task.name }}</span>
-            <div class="progress-bar" :style="{ width: `${task.progress}%` }"></div>
             
             <!-- Tooltip -->
              <div v-if="hoveredTask && hoveredTask.id === task.id" class="tooltip">
@@ -360,13 +379,14 @@ const stopDrag = () => {
   text-overflow: ellipsis;
 }
 
-.progress-bar {
+.progress-fill {
   position: absolute;
   left: 0;
   top: 0;
   height: 100%;
-  background-color: rgba(255,255,255,0.2);
+  opacity: 0.8;
   border-radius: 6px 0 0 6px;
+  z-index: 1;
 }
 
 .tooltip {
