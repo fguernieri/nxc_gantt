@@ -8372,6 +8372,10 @@ const _sfc_main$1 = {
       const e = parseDateLocal(end);
       return (differenceInDays(e, s) + 1) * CELL_WIDTH.value;
     };
+    const getRowY = (taskId) => {
+      const index = props.tasks.findIndex((t) => t.id === taskId);
+      return index * ROW_HEIGHT;
+    };
     const connections = computed(() => {
       const lines = [];
       props.tasks.forEach((task) => {
@@ -8670,7 +8674,7 @@ const _sfc_main$1 = {
     };
   }
 };
-const GanttChart = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-e80aad37"]]);
+const GanttChart = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-ed5202e4"]]);
 const API_BASE = "/index.php/apps/deck/api/v1.0";
 const headers = {
   "OCS-APIRequest": "true",

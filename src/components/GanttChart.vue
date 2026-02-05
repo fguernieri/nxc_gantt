@@ -94,6 +94,11 @@ const getWidth = (start, end) => {
 }
 
 // ... (connections logic) ...
+const getRowY = (taskId) => {
+    const index = props.tasks.findIndex(t => t.id === taskId)
+    return index * ROW_HEIGHT
+}
+
 const connections = computed(() => {
   const lines = []
   props.tasks.forEach(task => {
