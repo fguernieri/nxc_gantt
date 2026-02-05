@@ -207,8 +207,9 @@ const onDrag = (event) => {
       
       emit('task-dates-changed', {
         taskId: task.id,
-        start: format(newStart, 'yyyy-MM-dd'),
-        end: format(newEnd, 'yyyy-MM-dd')
+        // Preserve time by using full format
+        start: format(newStart, "yyyy-MM-dd'T'HH:mm"),
+        end: format(newEnd, "yyyy-MM-dd'T'HH:mm")
       })
     }
     
@@ -233,7 +234,7 @@ const onDrag = (event) => {
       if (newStart < dragState.value.initialEnd) {
         emit('task-duration-changed', {
           taskId: task.id,
-          start: format(newStart, 'yyyy-MM-dd'),
+          start: format(newStart, "yyyy-MM-dd'T'HH:mm"),
           end: task.end
         })
       }
@@ -244,7 +245,7 @@ const onDrag = (event) => {
         emit('task-duration-changed', {
           taskId: task.id,
           start: task.start,
-          end: format(newEnd, 'yyyy-MM-dd')
+          end: format(newEnd, "yyyy-MM-dd'T'HH:mm")
         })
       }
     }

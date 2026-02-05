@@ -16,6 +16,17 @@ const error = ref(null)
 const boards = ref([])
 const tasks = ref([])
 
+// Helper to convert any date input to our target timezone ISO string preserving hours
+// Used for displaying in datetime-local inputs
+const formatToZone = (date) => {
+    return formatInTimeZone(date, TIMEZONE, "yyyy-MM-dd'T'HH:mm")
+}
+
+// Helper to parse from datetime-local input back to Date object in target timezone
+const parseFromZone = (dateString) => {
+    return fromZonedTime(dateString, TIMEZONE)
+}
+
 // Computed for Modal
 const availableDependencies = computed(() => {
     if (!editingTask.value.id) return []
@@ -87,14 +98,17 @@ function mapCardToTask(card, stackId) {
     
     if (card.duedate) {
         try {
-            endDate = parse(card.duedate, "yyyy-MM-dd'T'HH:mm:ssXXX", new Date())
-            startDate = meta.start ? new Date(meta.start) : subDays(endDate, 7)
+            const parsedDue = parseISO(card.duedate)
+            if (parsedDue.toString() !== 'Invalid Date') {
+                 endDate = parsedDue
+            }
+            startDate = meta.start ? parseISO(meta.start) : subDays(endDate, 7)
         } catch (e) {
             console.warn('Failed to parse duedate:', card.duedate, e)
         }
     } else if (meta.start) {
         // If no duedate but has start in meta, calculate end
-        startDate = new Date(meta.start)
+        startDate = parseISO(meta.start)
         endDate = new Date(startDate)
         endDate.setDate(endDate.getDate() + 7) // Default 7-day duration
     }
@@ -109,8 +123,9 @@ function mapCardToTask(card, stackId) {
     return {
         id: card.id,
         name: card.title,
-        start: format(startDate, "yyyy-MM-dd'T'HH:mm"),
-        end: format(endDate, "yyyy-MM-dd'T'HH:mm"),
+        // formatted for datetime-local (Sao Paulo Time)
+        start: formatToZone(startDate),
+        end: formatToZone(endDate),
         color: color,
         progress: progress,
         status: status,
@@ -284,7 +299,13 @@ async function handleTaskDatesChanged(event) {
     const task = tasks.value.find(t => t.id === event.taskId)
     if (!task) return
     
-    // Update local state
+    // Update local state (Optimistic)
+    // event.start/end from Gantt might be YYYY-MM-DD or full ISO
+    // Gantt emits YYYY-MM-DD currently, we need to fix Gantt or handle it here
+    // Assuming Gantt emits simple dates, we might lose time precision if we blindly assign
+    // But let's assume Gantt is fixed to emit ISO or we append time
+    
+    // Actually, update Gantt later. For now:
     task.start = event.start
     task.end = event.end
     
@@ -294,14 +315,15 @@ async function handleTaskDatesChanged(event) {
             title: task.name,
             type: task._deckMeta.type,
             owner: task._deckMeta.owner,
-            duedate: event.end,
+            // Convert the Sao Paulo Time String -> UTC ISO for API
+            duedate: parseFromZone(event.end).toISOString(),
             description: buildDescription(task)
         }
         
         await updateCard(task._deckMeta.boardId, task._deckMeta.stackId, task.id, updates)
     } catch (err) {
         console.error('Failed to update task dates:', err)
-        // Optionally revert the change
+        // Optionally revert
     }
 }
 
@@ -313,9 +335,6 @@ function handleTaskReordered(event) {
     const taskToMove = tasks.value[oldIndex]
     tasks.value.splice(oldIndex, 1)
     tasks.value.splice(newIndex, 0, taskToMove)
-    
-    // Note: We don't save order to Deck API as cards don't have explicit order field
-    // The order is only visual within the Gantt view
 }
 
 // Handle task duration changed (resize)
@@ -329,18 +348,21 @@ async function handleTaskDurationChanged(event) {
     
     // Save to API
     try {
+        // Use current task values which are now updated
+        // Convert SP Time String -> UTC ISO
+        const duedateISO = parseFromZone(task.end).toISOString()
+        
         const updates = {
             title: task.name,
             type: task._deckMeta.type,
             owner: task._deckMeta.owner,
-            duedate: event.end || task.end,
+            duedate: duedateISO,
             description: buildDescription(task)
         }
         
         await updateCard(task._deckMeta.boardId, task._deckMeta.stackId, task.id, updates)
     } catch (err) {
         console.error('Failed to update task duration:', err)
-        // Optionally revert the change
     }
 }
 </script>
