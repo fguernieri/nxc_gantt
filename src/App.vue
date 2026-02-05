@@ -1,8 +1,8 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
-import Sidebar from './components/Sidebar.vue'
+import { NcContent, NcAppNavigation, NcAppNavigationItem, NcAppNavigationCaption, NcAppContent } from '@nextcloud/vue'
 import GanttChart from './components/GanttChart.vue'
-import { Settings, Calendar, X } from 'lucide-vue-next'
+import { Settings, Calendar, X, Folder } from 'lucide-vue-next'
 import { fetchBoards, fetchBoardStacks, updateCard } from './services/deckApi.js'
 import { format, subDays, parse, parseISO } from 'date-fns'
 
@@ -15,6 +15,10 @@ const error = ref(null)
 
 const boards = ref([])
 const tasks = ref([])
+
+// Sidebar Logic (moved from Sidebar.vue)
+const favorites = computed(() => boards.value.filter(b => b.favorite))
+const others = computed(() => boards.value.filter(b => !b.favorite))
 
 // Helper to convert any date input to ISO string "YYYY-MM-DDTHH:mm" for datetime-local input
 // Uses Browser Local Time
@@ -298,12 +302,6 @@ async function handleTaskDatesChanged(event) {
     if (!task) return
     
     // Update local state (Optimistic)
-    // event.start/end from Gantt might be YYYY-MM-DD or full ISO
-    // Gantt emits YYYY-MM-DD currently, we need to fix Gantt or handle it here
-    // Assuming Gantt emits simple dates, we might lose time precision if we blindly assign
-    // But let's assume Gantt is fixed to emit ISO or we append time
-    
-    // Actually, update Gantt later. For now:
     task.start = event.start
     task.end = event.end
     
@@ -374,182 +372,188 @@ const jumpToToday = () => {
 </script>
 
 <template>
-  <div id="content" class="app-nxc_gantt">
-    <div id="app-navigation">
-      <div class="app-navigation-caption">
-         <div class="app-navigation-caption__title">NXC Gantt</div>
-      </div>
-      <Sidebar 
-        :boards="boards" 
-        :selectedId="selectedBoardId" 
-        @select="handleSelectBoard"
-      />
-    </div>
+  <NcContent app-name="nxc_gantt">
     
-    <div id="app-content">
-      <div class="content-header">
-         <div class="breadcrumb">
-             <span class="board-title">{{ selectedBoardName }}</span>
-             <span class="sep">›</span>
-             <span class="view-title">Gantt Timeline</span>
-           </div>
-           
-           <div class="view-controls">
-             <div class="btn-group">
-               <button :class="{ active: viewMode === 'Day' }" @click="viewMode = 'Day'">Day</button>
-               <button :class="{ active: viewMode === 'Week' }" @click="viewMode = 'Week'">Week</button>
-               <button :class="{ active: viewMode === 'Month' }" @click="viewMode = 'Month'">Month</button>
-             </div>
-             <button class="icon-only" @click="jumpToToday" title="Jump to Today"><span class="circle-icon"></span></button>
-             <button class="icon-only active" title="Gantt View"><Calendar size="16"/></button>
-           </div>
-       <div class="header-right">
-           <div id="gantt-contacts" class="icon-contacts menutoggle" tabindex="0" role="button" aria-haspopup="true" aria-controls="contactsmenu-menu" aria-expanded="false">
-                <span class="hidden-visually">Contacts</span>
+    <NcAppNavigation>
+       <NcAppNavigationCaption name="FAVORITES" />
+       <!-- Favorites -->
+       <NcAppNavigationItem 
+            v-for="board in favorites" 
+            :key="board.id"
+            :name="board.name"
+            :active="selectedBoardId === board.id"
+            @click="handleSelectBoard(board.id)"
+        >
+            <template #icon>
+                <span class="app-navigation-entry-icon" :style="{ backgroundColor: board.color }"></span>
+            </template>
+            <template #utils v-if="board.count">
+                 <span class="app-navigation-entry-utils-counter">{{ board.count }}</span>
+            </template>
+       </NcAppNavigationItem>
+
+       <NcAppNavigationCaption name="ALL BOARDS" />
+       <!-- All Boards -->
+       <NcAppNavigationItem 
+            v-for="board in others" 
+            :key="board.id"
+            :name="board.name"
+            :active="selectedBoardId === board.id"
+            @click="handleSelectBoard(board.id)"
+        >
+            <template #icon>
+                <span class="app-navigation-entry-icon" :style="{ backgroundColor: board.color }"></span>
+            </template>
+       </NcAppNavigationItem>
+
+        <!-- Archived -->
+        <NcAppNavigationItem name="Archived">
+             <template #icon>
+                 <Folder size="20" class="app-navigation-entry-icon-svg"/>
+             </template>
+        </NcAppNavigationItem>
+        
+        <template #footer>
+            <div id="app-settings">
+                 <div class="app-navigation-entry-utils">
+                     <span class="icon-settings-dark"></span>
+                 </div>
             </div>
-            <div id="gantt-settings" class="icon-settings menutoggle" tabindex="0" role="button" aria-haspopup="true" aria-controls="settings-menu" aria-expanded="false">
-                <span class="hidden-visually">Settings</span>
-            </div>
-       </div>
-      </div>
+        </template>
+    </NcAppNavigation>
 
-      <GanttChart 
-        ref="ganttChartRef"
-        :tasks="tasks" 
-        :view-mode="viewMode"
-        @task-clicked="openTaskModal"
-        @task-dates-changed="handleTaskDatesChanged"
-        @task-reordered="handleTaskReordered"
-        @task-duration-changed="handleTaskDurationChanged"
-      />
-
-
-       <div class="footer-bar">
-          <div class="deck-settings"><Settings size="14"/> Deck Settings</div>
-          <div class="lists-legend">
-            <span>Lists: </span>
-            <span class="legend-item"><span class="dot done"></span> Done</span>
-            <span class="legend-item"><span class="dot progress"></span> In Progress</span>
-            <span class="legend-item"><span class="dot review"></span> Review</span>
-            <span class="legend-item"><span class="dot todo"></span> To Do</span>
+    <NcAppContent>
+       <div class="content-wrapper">
+          <div class="content-header">
+             <div class="breadcrumb">
+                 <span class="board-title">{{ selectedBoardName }}</span>
+                 <span class="sep">›</span>
+                 <span class="view-title">Gantt Timeline</span>
+               </div>
+               
+               <div class="view-controls">
+                 <div class="btn-group">
+                   <button :class="{ active: viewMode === 'Day' }" @click="viewMode = 'Day'">Day</button>
+                   <button :class="{ active: viewMode === 'Week' }" @click="viewMode = 'Week'">Week</button>
+                   <button :class="{ active: viewMode === 'Month' }" @click="viewMode = 'Month'">Month</button>
+                 </div>
+                 <button class="icon-only" @click="jumpToToday" title="Jump to Today"><span class="circle-icon"></span></button>
+                 <button class="icon-only active" title="Gantt View"><Calendar size="16"/></button>
+               </div>
+           <div class="header-right">
+               <div id="gantt-contacts" class="icon-contacts menutoggle" tabindex="0" role="button" aria-haspopup="true" aria-controls="contactsmenu-menu" aria-expanded="false">
+                    <span class="hidden-visually">Contacts</span>
+                </div>
+                <div id="gantt-settings" class="icon-settings menutoggle" tabindex="0" role="button" aria-haspopup="true" aria-controls="settings-menu" aria-expanded="false">
+                    <span class="hidden-visually">Settings</span>
+                </div>
+           </div>
           </div>
-       </div>
-    </div>
-    
-    <!-- Edit Modal -->
-    <div v-if="isModalOpen" class="modal-overlay" @click.self="isModalOpen = false">
-        <div class="modal">
-            <div class="modal-header">
-                <h3>Edit Task</h3>
-                <button class="close-btn" @click="isModalOpen = false"><X size="20"/></button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label>Task Name</label>
-                    <input v-model="editingTask.name" type="text" />
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Start Date</label>
-                        <input v-model="editingTask.start" type="datetime-local" />
-                    </div>
-                    <div class="form-group">
-                         <label>End Date</label>
-                         <input v-model="editingTask.end" type="datetime-local" />
-                    </div>
-                </div>
-                 <div class="form-row">
-                    <div class="form-group">
-                        <label>Status</label>
-                        <select v-model="editingTask.status">
-                            <option value="To Do">To Do</option>
-                            <option value="In Progress">In Progress</option>
-                            <option value="Review">Review</option>
-                            <option value="Done">Done</option>
-                        </select>
-                    </div>
-                     <div class="form-group">
-                        <label>Progress (%)</label>
-                        <input v-model.number="editingTask.progress" type="number" min="0" max="100" />
-                    </div>
-                </div>
 
-                <div class="form-group">
-                  <label>Predecessors (Dependencies)</label>
-                  <div class="deps-list">
-                    <div v-for="depId in editingTask.dependencies" :key="depId" class="dep-chip">
-                      {{ getTaskName(depId) }}
-                      <span class="remove-dep" @click="removeDependency(depId)">×</span>
-                    </div>
-                    <div v-if="!editingTask.dependencies || editingTask.dependencies.length === 0" class="no-deps">
-                      No dependencies
-                    </div>
+          <GanttChart 
+            ref="ganttChartRef"
+            :tasks="tasks" 
+            :view-mode="viewMode"
+            @task-clicked="openTaskModal"
+            @task-dates-changed="handleTaskDatesChanged"
+            @task-reordered="handleTaskReordered"
+            @task-duration-changed="handleTaskDurationChanged"
+          />
+
+           <div class="footer-bar">
+              <div class="deck-settings"><Settings size="14"/> Deck Settings</div>
+              <div class="lists-legend">
+                <span>Lists: </span>
+                <span class="legend-item"><span class="dot done"></span> Done</span>
+                <span class="legend-item"><span class="dot progress"></span> In Progress</span>
+                <span class="legend-item"><span class="dot review"></span> Review</span>
+                <span class="legend-item"><span class="dot todo"></span> To Do</span>
+              </div>
+           </div>
+       </div>
+    </NcAppContent>
+  </NcContent>
+    
+  <!-- Edit Modal -->
+  <div v-if="isModalOpen" class="modal-overlay" @click.self="isModalOpen = false">
+      <div class="modal">
+          <div class="modal-header">
+              <h3>Edit Task</h3>
+              <button class="close-btn" @click="isModalOpen = false"><X size="20"/></button>
+          </div>
+          <div class="modal-body">
+              <div class="form-group">
+                  <label>Task Name</label>
+                  <input v-model="editingTask.name" type="text" />
+              </div>
+              <div class="form-row">
+                  <div class="form-group">
+                      <label>Start Date</label>
+                      <input v-model="editingTask.start" type="datetime-local" />
                   </div>
-                  
-                  <div class="add-dep-row">
-                    <select v-model="selectedDepToAdd">
-                      <option value="" disabled>Select task...</option>
-                      <option 
-                        v-for="t in availableDependencies" 
-                        :key="t.id" 
-                        :value="t.id"
-                      >
-                        {{ t.name }}
-                      </option>
-                    </select>
-                    <button class="btn-add-dep" :disabled="!selectedDepToAdd" @click="addDependency">Add</button>
+                  <div class="form-group">
+                       <label>End Date</label>
+                       <input v-model="editingTask.end" type="datetime-local" />
+                  </div>
+              </div>
+               <div class="form-row">
+                  <div class="form-group">
+                      <label>Status</label>
+                      <select v-model="editingTask.status">
+                          <option value="To Do">To Do</option>
+                          <option value="In Progress">In Progress</option>
+                          <option value="Review">Review</option>
+                          <option value="Done">Done</option>
+                      </select>
+                  </div>
+                   <div class="form-group">
+                      <label>Progress (%)</label>
+                      <input v-model.number="editingTask.progress" type="number" min="0" max="100" />
+                  </div>
+              </div>
+
+              <div class="form-group">
+                <label>Predecessors (Dependencies)</label>
+                <div class="deps-list">
+                  <div v-for="depId in editingTask.dependencies" :key="depId" class="dep-chip">
+                    {{ getTaskName(depId) }}
+                    <span class="remove-dep" @click="removeDependency(depId)">×</span>
+                  </div>
+                  <div v-if="!editingTask.dependencies || editingTask.dependencies.length === 0" class="no-deps">
+                    No dependencies
                   </div>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-cancel" @click="isModalOpen = false">Cancel</button>
-                <button class="btn-save" @click="saveTask">Save Changes</button>
-            </div>
-        </div>
-    </div>
+                
+                <div class="add-dep-row">
+                  <select v-model="selectedDepToAdd">
+                    <option value="" disabled>Select task...</option>
+                    <option 
+                      v-for="t in availableDependencies" 
+                      :key="t.id" 
+                      :value="t.id"
+                    >
+                      {{ t.name }}
+                    </option>
+                  </select>
+                  <button class="btn-add-dep" :disabled="!selectedDepToAdd" @click="addDependency">Add</button>
+                </div>
+              </div>
+          </div>
+          <div class="modal-footer">
+              <button class="btn-cancel" @click="isModalOpen = false">Cancel</button>
+              <button class="btn-save" @click="saveTask">Save Changes</button>
+          </div>
+      </div>
   </div>
 </template>
 
 <style scoped>
-/* Standard Nextcloud Content Layout */
-#content {
-    height: 100vh;
-    display: flex;
-    background-color: var(--color-main-background, #fff);
-    overflow: hidden;
-}
-
-#app-navigation {
-    width: 300px;
-    height: 100%;
-    overflow-y: auto;
-    background-color: #eff6fc; /* Light Blue Sidebar */
-    border-right: 1px solid var(--color-border, #eee);
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
-}
-
-.app-navigation-caption {
-    background-color: var(--color-primary, #0082c9);
-    color: var(--color-primary-text, #fff);
-    font-weight: bold;
-    padding: 12px 16px;
-    font-size: 1.1rem;
-    display: flex;
-    align-items: center;
-    min-height: 50px;
-    flex-shrink: 0;
-}
-
-#app-content {
+/* Scoped styles for internal layout components */
+.content-wrapper {
     display: flex;
     flex-direction: column;
     height: 100%;
-    flex: 1;
-    min-width: 0; 
-    overflow: hidden;
-    background-color: var(--color-main-background, #fff);
+    /* NcAppContent provides the scrollable area, so this should fill it */
 }
 
 /* Original styles adapted */
@@ -802,76 +806,32 @@ const jumpToToday = () => {
     align-items: center;
 }
 
-.modal-header h3 {
-    margin: 0;
-    font-size: 1.1rem;
+/* Sidebar Specific Styles for overrides or icons */
+.app-navigation-entry-icon {
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+    display: inline-block;
 }
 
-.close-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: var(--color-text-maxcontrast, #555);
+.app-navigation-entry-icon-svg {
+    opacity: .7;
 }
 
-.modal-body {
-    padding: 16px;
+.app-navigation-entry-utils-counter {
+    background-color: var(--color-background-dark);
+    border-radius: 10px;
+    padding: 2px 8px;
+    font-size: 11px;
+    color: var(--color-text-light);
 }
 
-.form-group {
-    margin-bottom: 16px;
-}
-
-.form-group label {
-    display: block;
-    font-size: 0.85rem;
-    color: var(--color-text-maxcontrast, #555);
-    margin-bottom: 6px;
-}
-
-.form-group input, .form-group select {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid var(--color-border, #ddd);
-    border-radius: var(--border-radius, 4px);
-    font-size: 0.9rem;
-    background-color: var(--color-main-background, #fff);
-    color: var(--color-main-text, #000);
-}
-
-.form-row {
-    display: flex;
-    gap: 16px;
-}
-
-.form-row .form-group {
-    flex: 1;
-}
-
-.modal-footer {
-    padding: 16px;
-    background: var(--color-background-dark, #f9f9f9);
-    display: flex;
-    justify-content: flex-end;
-    gap: 8px;
-    border-top: 1px solid var(--color-border, #eee);
-}
-
-.btn-cancel {
-    padding: 8px 16px;
-    border: 1px solid var(--color-border, #ddd);
-    background: var(--color-main-background, #fff);
-    border-radius: var(--border-radius, 4px);
-    cursor: pointer;
-    color: var(--color-main-text, #000);
-}
-
-.btn-save {
-    padding: 8px 16px;
-    border: none;
-    background: var(--color-primary, #0082c9);
-    color: white;
-    border-radius: var(--border-radius, 4px);
-    cursor: pointer;
+.hidden-visually {
+  position: absolute;
+  left: -10000px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
 }
 </style>
