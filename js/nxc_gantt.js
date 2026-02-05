@@ -10085,12 +10085,23 @@ async function fetchBoardStacks(boardId) {
   return await response.json();
 }
 async function updateCard(boardId, stackId, cardId, updates) {
-  const response = await fetch(`${API_BASE}/boards/${boardId}/stacks/${stackId}/cards/${cardId}`, {
+  const url = `${API_BASE}/boards/${boardId}/stacks/${stackId}/cards/${cardId}`;
+  console.log("Updating card:", { url, boardId, stackId, cardId, updates });
+  const response = await fetch(url, {
     method: "PUT",
     headers,
     body: JSON.stringify(updates)
   });
-  if (!response.ok) throw new Error(`Failed to update card: ${response.statusText}`);
+  if (!response.ok) {
+    const errorBody = await response.text();
+    console.error("Update card failed:", {
+      status: response.status,
+      statusText: response.statusText,
+      body: errorBody
+    });
+    throw new Error(`Failed to update card: ${response.status} ${response.statusText}
+${errorBody}`);
+  }
   return await response.json();
 }
 const _hoisted_1 = { class: "app-layout" };
