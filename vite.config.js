@@ -11,6 +11,8 @@ export default defineConfig({
     rollupOptions: {
       input: resolve(__dirname, 'src/main.js'),
       output: {
+        format: 'iife',
+        name: 'NXCGantt',
         entryFileNames: 'js/nxc_gantt.js',
         assetFileNames: (assetInfo) => {
           if (assetInfo.name === 'style.css') return 'css/main.css';
