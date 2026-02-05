@@ -10252,7 +10252,7 @@ a[data-v-a47e4ba7]:not(.rich-text--component) {
 }\r
 \r
 /* Scoped styles for internal layout components */
-.content-wrapper[data-v-b21bc7e7] {\r
+.content-wrapper[data-v-a3263af6] {\r
     display: flex;\r
     flex-direction: column;\r
     height: 100%;\r
@@ -10260,7 +10260,7 @@ a[data-v-a47e4ba7]:not(.rich-text--component) {
 }\r
 \r
 /* Original styles adapted */
-.content-header[data-v-b21bc7e7] {\r
+.content-header[data-v-a3263af6] {\r
   height: 50px;\r
   border-bottom: 1px solid var(--color-border, #eee);\r
   display: flex;\r
@@ -10272,30 +10272,30 @@ a[data-v-a47e4ba7]:not(.rich-text--component) {
   top: 0;\r
   z-index: 50;
 }
-.board-title[data-v-b21bc7e7] {\r
+.board-title[data-v-a3263af6] {\r
   font-weight: bold;\r
   font-size: 1.1rem;\r
   color: var(--color-main-text, #222);
 }
-.sep[data-v-b21bc7e7] {\r
+.sep[data-v-a3263af6] {\r
   margin: 0 8px;\r
   color: var(--color-text-maxcontrast, #555);
 }
-.view-title[data-v-b21bc7e7] {\r
+.view-title[data-v-a3263af6] {\r
   color: var(--color-text-light, #888);
 }
-.view-controls[data-v-b21bc7e7] {\r
+.view-controls[data-v-a3263af6] {\r
   display: flex;\r
   gap: 12px;\r
   align-items: center;
 }
-.btn-group[data-v-b21bc7e7] {\r
+.btn-group[data-v-a3263af6] {\r
   display: flex;\r
   background: var(--color-background-dark, #eee);\r
   border-radius: var(--border-radius, 4px);\r
   padding: 2px;
 }
-.btn-group button[data-v-b21bc7e7] {\r
+.btn-group button[data-v-a3263af6] {\r
   border: none;\r
   background: none;\r
   padding: 4px 12px;\r
@@ -10304,12 +10304,12 @@ a[data-v-a47e4ba7]:not(.rich-text--component) {
   cursor: pointer;\r
   color: var(--color-text-light, #888);
 }
-.btn-group button.active[data-v-b21bc7e7] {\r
+.btn-group button.active[data-v-a3263af6] {\r
   background: var(--color-main-background, #fff);\r
   box-shadow: 0 1px 2px rgba(0,0,0,0.1);\r
   color: var(--color-main-text, #222);
 }
-.icon-only[data-v-b21bc7e7] {\r
+.icon-only[data-v-a3263af6] {\r
   width: 32px;\r
   height: 32px;\r
   display: flex;\r
@@ -10321,20 +10321,20 @@ a[data-v-a47e4ba7]:not(.rich-text--component) {
   cursor: pointer;\r
   color: var(--color-text-maxcontrast, #444);
 }
-.icon-only.active[data-v-b21bc7e7] {\r
+.icon-only.active[data-v-a3263af6] {\r
   background: var(--color-primary, #0082c9);\r
   border-color: var(--color-primary, #0082c9);\r
   color: var(--color-primary-text, #fff);
 }
-.icon-only[data-v-b21bc7e7]:hover:not(.active) {\r
+.icon-only[data-v-a3263af6]:hover:not(.active) {\r
     background-color: var(--color-background-hover, #efefef);
 }
-.header-right[data-v-b21bc7e7] {\r
+.header-right[data-v-a3263af6] {\r
     display: flex;\r
     align-items: center;\r
     gap: 12px;
 }
-.menutoggle[data-v-b21bc7e7] {\r
+.menutoggle[data-v-a3263af6] {\r
     width: 44px;\r
     height: 44px;\r
     display: flex;\r
@@ -10343,19 +10343,19 @@ a[data-v-a47e4ba7]:not(.rich-text--component) {
     cursor: pointer;\r
     opacity: .7;
 }
-.menutoggle[data-v-b21bc7e7]:hover {\r
+.menutoggle[data-v-a3263af6]:hover {\r
     opacity: 1;\r
     background-color: var(--color-background-hover);\r
     border-radius: 50%;
 }\r
 \r
 /* Ensure nextcloud icons have size if using bg image class */
-.icon-contacts[data-v-b21bc7e7], .icon-settings[data-v-b21bc7e7] {\r
+.icon-contacts[data-v-a3263af6], .icon-settings[data-v-a3263af6] {\r
     background-position: center;\r
     background-repeat: no-repeat;\r
     background-size: 24px;
 }
-.footer-bar[data-v-b21bc7e7] {\r
+.footer-bar[data-v-a3263af6] {\r
   height: 40px;\r
   border-top: 1px solid var(--color-border, #eee);\r
   display: flex;\r
@@ -10366,38 +10366,38 @@ a[data-v-a47e4ba7]:not(.rich-text--component) {
   background: var(--color-main-background, #fff);\r
   color: var(--color-text-light, #888);
 }
-.deck-settings[data-v-b21bc7e7] {\r
+.deck-settings[data-v-a3263af6] {\r
   display: flex;\r
   align-items: center;\r
   gap: 6px;\r
   cursor: pointer;
 }
-.lists-legend[data-v-b21bc7e7] {\r
+.lists-legend[data-v-a3263af6] {\r
   display: flex;\r
   gap: 16px;\r
   align-items: center;
 }
-.legend-item[data-v-b21bc7e7] {\r
+.legend-item[data-v-a3263af6] {\r
   display: flex;\r
   align-items: center;\r
   gap: 6px;
 }
-.dot[data-v-b21bc7e7] {\r
+.dot[data-v-a3263af6] {\r
   width: 10px;\r
   height: 10px;\r
   border-radius: 2px;
 }
-.dot.done[data-v-b21bc7e7] { background: var(--color-success, #16a085);
+.dot.done[data-v-a3263af6] { background: var(--color-success, #16a085);
 }
-.dot.progress[data-v-b21bc7e7] { background: var(--color-primary, #0082c9);
+.dot.progress[data-v-a3263af6] { background: var(--color-primary, #0082c9);
 }
-.dot.review[data-v-b21bc7e7] { background: var(--color-warning, #f1c40f);
+.dot.review[data-v-a3263af6] { background: var(--color-warning, #f1c40f);
 }
-.dot.todo[data-v-b21bc7e7] { background: var(--color-text-maxcontrast, #555);
+.dot.todo[data-v-a3263af6] { background: var(--color-text-maxcontrast, #555);
 }\r
 \r
 /* Modal and Dep Styles remain */
-.deps-list[data-v-b21bc7e7] {\r
+.deps-list[data-v-a3263af6] {\r
   display: flex;\r
   flex-wrap: wrap;\r
   gap: 8px;\r
@@ -10407,7 +10407,7 @@ a[data-v-a47e4ba7]:not(.rich-text--component) {
   border-radius: var(--border-radius, 4px);\r
   min-height: 40px;
 }
-.dep-chip[data-v-b21bc7e7] {\r
+.dep-chip[data-v-a3263af6] {\r
   background: var(--color-background-dark, #eee);\r
   padding: 4px 8px;\r
   border-radius: 12px;\r
@@ -10416,35 +10416,35 @@ a[data-v-a47e4ba7]:not(.rich-text--component) {
   align-items: center;\r
   gap: 6px;
 }
-.remove-dep[data-v-b21bc7e7] {\r
+.remove-dep[data-v-a3263af6] {\r
   cursor: pointer;\r
   color: var(--color-text-maxcontrast, #555);\r
   font-weight: bold;
 }
-.remove-dep[data-v-b21bc7e7]:hover {\r
+.remove-dep[data-v-a3263af6]:hover {\r
   color: var(--color-error, #d00);
 }
-.no-deps[data-v-b21bc7e7] {\r
+.no-deps[data-v-a3263af6] {\r
   color: var(--color-text-light, #888);\r
   font-style: italic;\r
   font-size: 0.8rem;
 }
-.add-dep-row[data-v-b21bc7e7] {\r
+.add-dep-row[data-v-a3263af6] {\r
   display: flex;\r
   gap: 8px;
 }
-.btn-add-dep[data-v-b21bc7e7] {\r
+.btn-add-dep[data-v-a3263af6] {\r
   background: var(--color-background-dark, #eee);\r
   border: none;\r
   padding: 0 12px;\r
   border-radius: 4px;\r
   cursor: pointer;
 }
-.btn-add-dep[data-v-b21bc7e7]:disabled {\r
+.btn-add-dep[data-v-a3263af6]:disabled {\r
   opacity: 0.5;\r
   cursor: not-allowed;
 }
-.modal-overlay[data-v-b21bc7e7] {\r
+.modal-overlay[data-v-a3263af6] {\r
     position: fixed;\r
     top: 0;\r
     left: 0;\r
@@ -10456,7 +10456,7 @@ a[data-v-a47e4ba7]:not(.rich-text--component) {
     justify-content: center;\r
     z-index: 1000;
 }
-.modal[data-v-b21bc7e7] {\r
+.modal[data-v-a3263af6] {\r
     background: var(--color-main-background, #fff);\r
     border-radius: var(--border-radius-large, 8px);\r
     width: 400px;\r
@@ -10464,7 +10464,7 @@ a[data-v-a47e4ba7]:not(.rich-text--component) {
     overflow: hidden;\r
     color: var(--color-main-text, #000);
 }
-.modal-header[data-v-b21bc7e7] {\r
+.modal-header[data-v-a3263af6] {\r
     padding: 16px;\r
     border-bottom: 1px solid var(--color-border, #eee);\r
     display: flex;\r
@@ -10473,23 +10473,23 @@ a[data-v-a47e4ba7]:not(.rich-text--component) {
 }\r
 \r
 /* Sidebar Specific Styles for overrides or icons */
-.app-navigation-entry-icon[data-v-b21bc7e7] {\r
+.app-navigation-entry-icon[data-v-a3263af6] {\r
     width: 14px;\r
     height: 14px;\r
     border-radius: 4px;\r
     display: inline-block;
 }
-.app-navigation-entry-icon-svg[data-v-b21bc7e7] {\r
+.app-navigation-entry-icon-svg[data-v-a3263af6] {\r
     opacity: .7;
 }
-.app-navigation-entry-utils-counter[data-v-b21bc7e7] {\r
+.app-navigation-entry-utils-counter[data-v-a3263af6] {\r
     background-color: var(--color-background-dark);\r
     border-radius: 10px;\r
     padding: 2px 8px;\r
     font-size: 11px;\r
     color: var(--color-text-light);
 }
-.hidden-visually[data-v-b21bc7e7] {\r
+.hidden-visually[data-v-a3263af6] {\r
   position: absolute;\r
   left: -10000px;\r
   top: auto;\r
@@ -48400,49 +48400,6 @@ https://vue-select.org/api/props.html#getoptionkey`, e, t52);
    * This source code is licensed under the ISC license.
    * See the LICENSE file in the root directory of this source tree.
    */
-  const Calendar = createLucideIcon("CalendarIcon", [
-    ["rect", { width: "18", height: "18", x: "3", y: "4", rx: "2", ry: "2", key: "eu3xkr" }],
-    ["line", { x1: "16", x2: "16", y1: "2", y2: "6", key: "m3sa8f" }],
-    ["line", { x1: "8", x2: "8", y1: "2", y2: "6", key: "18kwsl" }],
-    ["line", { x1: "3", x2: "21", y1: "10", y2: "10", key: "xt86sb" }]
-  ]);
-  /**
-   * @license lucide-vue-next v0.300.0 - ISC
-   *
-   * This source code is licensed under the ISC license.
-   * See the LICENSE file in the root directory of this source tree.
-   */
-  const Folder = createLucideIcon("FolderIcon", [
-    [
-      "path",
-      {
-        d: "M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z",
-        key: "1kt360"
-      }
-    ]
-  ]);
-  /**
-   * @license lucide-vue-next v0.300.0 - ISC
-   *
-   * This source code is licensed under the ISC license.
-   * See the LICENSE file in the root directory of this source tree.
-   */
-  const Settings = createLucideIcon("SettingsIcon", [
-    [
-      "path",
-      {
-        d: "M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z",
-        key: "1qme2f"
-      }
-    ],
-    ["circle", { cx: "12", cy: "12", r: "3", key: "1v7zrd" }]
-  ]);
-  /**
-   * @license lucide-vue-next v0.300.0 - ISC
-   *
-   * This source code is licensed under the ISC license.
-   * See the LICENSE file in the root directory of this source tree.
-   */
   const X = createLucideIcon("XIcon", [
     ["path", { d: "M18 6 6 18", key: "1bl5f8" }],
     ["path", { d: "m6 6 12 12", key: "d8bk6v" }]
@@ -48489,33 +48446,27 @@ ${errorBody}`);
   const _hoisted_5 = { class: "board-title" };
   const _hoisted_6 = { class: "view-controls" };
   const _hoisted_7 = { class: "btn-group" };
-  const _hoisted_8 = {
-    class: "icon-only active",
-    title: "Gantt View"
-  };
-  const _hoisted_9 = { class: "footer-bar" };
-  const _hoisted_10 = { class: "deck-settings" };
-  const _hoisted_11 = { class: "modal" };
-  const _hoisted_12 = { class: "modal-header" };
-  const _hoisted_13 = { class: "modal-body" };
+  const _hoisted_8 = { class: "modal" };
+  const _hoisted_9 = { class: "modal-header" };
+  const _hoisted_10 = { class: "modal-body" };
+  const _hoisted_11 = { class: "form-group" };
+  const _hoisted_12 = { class: "form-row" };
+  const _hoisted_13 = { class: "form-group" };
   const _hoisted_14 = { class: "form-group" };
   const _hoisted_15 = { class: "form-row" };
   const _hoisted_16 = { class: "form-group" };
   const _hoisted_17 = { class: "form-group" };
-  const _hoisted_18 = { class: "form-row" };
-  const _hoisted_19 = { class: "form-group" };
-  const _hoisted_20 = { class: "form-group" };
-  const _hoisted_21 = { class: "form-group" };
-  const _hoisted_22 = { class: "deps-list" };
-  const _hoisted_23 = ["onClick"];
-  const _hoisted_24 = {
+  const _hoisted_18 = { class: "form-group" };
+  const _hoisted_19 = { class: "deps-list" };
+  const _hoisted_20 = ["onClick"];
+  const _hoisted_21 = {
     key: 0,
     class: "no-deps"
   };
-  const _hoisted_25 = { class: "add-dep-row" };
-  const _hoisted_26 = ["value"];
-  const _hoisted_27 = ["disabled"];
-  const _hoisted_28 = { class: "modal-footer" };
+  const _hoisted_22 = { class: "add-dep-row" };
+  const _hoisted_23 = ["value"];
+  const _hoisted_24 = ["disabled"];
+  const _hoisted_25 = { class: "modal-footer" };
   const _sfc_main = {
     __name: "App",
     setup(__props) {
@@ -48845,16 +48796,7 @@ ${original}` : meta;
                       ]),
                       _: 2
                     }, 1032, ["name", "active", "onClick"]);
-                  }), 128)),
-                  createVNode(unref(NcAppNavigationItem), { name: "Archived" }, {
-                    icon: withCtx(() => [
-                      createVNode(unref(Folder), {
-                        size: "20",
-                        class: "app-navigation-entry-icon-svg"
-                      })
-                    ]),
-                    _: 1
-                  })
+                  }), 128))
                 ]),
                 _: 1
               }),
@@ -48888,10 +48830,7 @@ ${original}` : meta;
                           title: "Jump to Today"
                         }, [..._cache[15] || (_cache[15] = [
                           createBaseVNode("span", { class: "circle-icon" }, null, -1)
-                        ])]),
-                        createBaseVNode("button", _hoisted_8, [
-                          createVNode(unref(Calendar), { size: "16" })
-                        ])
+                        ])])
                       ]),
                       _cache[16] || (_cache[16] = createBaseVNode("div", { class: "header-right" }, [
                         createBaseVNode("div", {
@@ -48904,17 +48843,6 @@ ${original}` : meta;
                           "aria-expanded": "false"
                         }, [
                           createBaseVNode("span", { class: "hidden-visually" }, "Contacts")
-                        ]),
-                        createBaseVNode("div", {
-                          id: "gantt-settings",
-                          class: "icon-settings menutoggle",
-                          tabindex: "0",
-                          role: "button",
-                          "aria-haspopup": "true",
-                          "aria-controls": "settings-menu",
-                          "aria-expanded": "false"
-                        }, [
-                          createBaseVNode("span", { class: "hidden-visually" }, "Settings")
                         ])
                       ], -1))
                     ]),
@@ -48928,12 +48856,8 @@ ${original}` : meta;
                       onTaskReordered: handleTaskReordered,
                       onTaskDurationChanged: handleTaskDurationChanged
                     }, null, 8, ["tasks", "view-mode"]),
-                    createBaseVNode("div", _hoisted_9, [
-                      createBaseVNode("div", _hoisted_10, [
-                        createVNode(unref(Settings), { size: "14" }),
-                        _cache[17] || (_cache[17] = createTextVNode(" Deck Settings", -1))
-                      ]),
-                      _cache[18] || (_cache[18] = createBaseVNode("div", { class: "lists-legend" }, [
+                    _cache[17] || (_cache[17] = createBaseVNode("div", { class: "footer-bar" }, [
+                      createBaseVNode("div", { class: "lists-legend" }, [
                         createBaseVNode("span", null, "Lists: "),
                         createBaseVNode("span", { class: "legend-item" }, [
                           createBaseVNode("span", { class: "dot done" }),
@@ -48951,8 +48875,8 @@ ${original}` : meta;
                           createBaseVNode("span", { class: "dot todo" }),
                           createTextVNode(" To Do")
                         ])
-                      ], -1))
-                    ])
+                      ])
+                    ], -1))
                   ])
                 ]),
                 _: 1
@@ -48965,9 +48889,9 @@ ${original}` : meta;
             class: "modal-overlay",
             onClick: _cache[11] || (_cache[11] = withModifiers(($event) => isModalOpen.value = false, ["self"]))
           }, [
-            createBaseVNode("div", _hoisted_11, [
-              createBaseVNode("div", _hoisted_12, [
-                _cache[19] || (_cache[19] = createBaseVNode("h3", null, "Edit Task", -1)),
+            createBaseVNode("div", _hoisted_8, [
+              createBaseVNode("div", _hoisted_9, [
+                _cache[18] || (_cache[18] = createBaseVNode("h3", null, "Edit Task", -1)),
                 createBaseVNode("button", {
                   class: "close-btn",
                   onClick: _cache[3] || (_cache[3] = ($event) => isModalOpen.value = false)
@@ -48975,9 +48899,9 @@ ${original}` : meta;
                   createVNode(unref(X), { size: "20" })
                 ])
               ]),
-              createBaseVNode("div", _hoisted_13, [
-                createBaseVNode("div", _hoisted_14, [
-                  _cache[20] || (_cache[20] = createBaseVNode("label", null, "Task Name", -1)),
+              createBaseVNode("div", _hoisted_10, [
+                createBaseVNode("div", _hoisted_11, [
+                  _cache[19] || (_cache[19] = createBaseVNode("label", null, "Task Name", -1)),
                   withDirectives(createBaseVNode("input", {
                     "onUpdate:modelValue": _cache[4] || (_cache[4] = ($event) => editingTask.value.name = $event),
                     type: "text"
@@ -48985,9 +48909,9 @@ ${original}` : meta;
                     [vModelText, editingTask.value.name]
                   ])
                 ]),
-                createBaseVNode("div", _hoisted_15, [
-                  createBaseVNode("div", _hoisted_16, [
-                    _cache[21] || (_cache[21] = createBaseVNode("label", null, "Start Date", -1)),
+                createBaseVNode("div", _hoisted_12, [
+                  createBaseVNode("div", _hoisted_13, [
+                    _cache[20] || (_cache[20] = createBaseVNode("label", null, "Start Date", -1)),
                     withDirectives(createBaseVNode("input", {
                       "onUpdate:modelValue": _cache[5] || (_cache[5] = ($event) => editingTask.value.start = $event),
                       type: "datetime-local"
@@ -48995,8 +48919,8 @@ ${original}` : meta;
                       [vModelText, editingTask.value.start]
                     ])
                   ]),
-                  createBaseVNode("div", _hoisted_17, [
-                    _cache[22] || (_cache[22] = createBaseVNode("label", null, "End Date", -1)),
+                  createBaseVNode("div", _hoisted_14, [
+                    _cache[21] || (_cache[21] = createBaseVNode("label", null, "End Date", -1)),
                     withDirectives(createBaseVNode("input", {
                       "onUpdate:modelValue": _cache[6] || (_cache[6] = ($event) => editingTask.value.end = $event),
                       type: "datetime-local"
@@ -49005,12 +48929,12 @@ ${original}` : meta;
                     ])
                   ])
                 ]),
-                createBaseVNode("div", _hoisted_18, [
-                  createBaseVNode("div", _hoisted_19, [
-                    _cache[24] || (_cache[24] = createBaseVNode("label", null, "Status", -1)),
+                createBaseVNode("div", _hoisted_15, [
+                  createBaseVNode("div", _hoisted_16, [
+                    _cache[23] || (_cache[23] = createBaseVNode("label", null, "Status", -1)),
                     withDirectives(createBaseVNode("select", {
                       "onUpdate:modelValue": _cache[7] || (_cache[7] = ($event) => editingTask.value.status = $event)
-                    }, [..._cache[23] || (_cache[23] = [
+                    }, [..._cache[22] || (_cache[22] = [
                       createBaseVNode("option", { value: "To Do" }, "To Do", -1),
                       createBaseVNode("option", { value: "In Progress" }, "In Progress", -1),
                       createBaseVNode("option", { value: "Review" }, "Review", -1),
@@ -49019,8 +48943,8 @@ ${original}` : meta;
                       [vModelSelect, editingTask.value.status]
                     ])
                   ]),
-                  createBaseVNode("div", _hoisted_20, [
-                    _cache[25] || (_cache[25] = createBaseVNode("label", null, "Progress (%)", -1)),
+                  createBaseVNode("div", _hoisted_17, [
+                    _cache[24] || (_cache[24] = createBaseVNode("label", null, "Progress (%)", -1)),
                     withDirectives(createBaseVNode("input", {
                       "onUpdate:modelValue": _cache[8] || (_cache[8] = ($event) => editingTask.value.progress = $event),
                       type: "number",
@@ -49036,9 +48960,9 @@ ${original}` : meta;
                     ])
                   ])
                 ]),
-                createBaseVNode("div", _hoisted_21, [
-                  _cache[27] || (_cache[27] = createBaseVNode("label", null, "Predecessors (Dependencies)", -1)),
-                  createBaseVNode("div", _hoisted_22, [
+                createBaseVNode("div", _hoisted_18, [
+                  _cache[26] || (_cache[26] = createBaseVNode("label", null, "Predecessors (Dependencies)", -1)),
+                  createBaseVNode("div", _hoisted_19, [
                     (openBlock(true), createElementBlock(Fragment, null, renderList(editingTask.value.dependencies, (depId) => {
                       return openBlock(), createElementBlock("div", {
                         key: depId,
@@ -49048,16 +48972,16 @@ ${original}` : meta;
                         createBaseVNode("span", {
                           class: "remove-dep",
                           onClick: ($event) => removeDependency(depId)
-                        }, "×", 8, _hoisted_23)
+                        }, "×", 8, _hoisted_20)
                       ]);
                     }), 128)),
-                    !editingTask.value.dependencies || editingTask.value.dependencies.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_24, " No dependencies ")) : createCommentVNode("", true)
+                    !editingTask.value.dependencies || editingTask.value.dependencies.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_21, " No dependencies ")) : createCommentVNode("", true)
                   ]),
-                  createBaseVNode("div", _hoisted_25, [
+                  createBaseVNode("div", _hoisted_22, [
                     withDirectives(createBaseVNode("select", {
                       "onUpdate:modelValue": _cache[9] || (_cache[9] = ($event) => selectedDepToAdd.value = $event)
                     }, [
-                      _cache[26] || (_cache[26] = createBaseVNode("option", {
+                      _cache[25] || (_cache[25] = createBaseVNode("option", {
                         value: "",
                         disabled: ""
                       }, "Select task...", -1)),
@@ -49065,7 +48989,7 @@ ${original}` : meta;
                         return openBlock(), createElementBlock("option", {
                           key: t52.id,
                           value: t52.id
-                        }, toDisplayString(t52.name), 9, _hoisted_26);
+                        }, toDisplayString(t52.name), 9, _hoisted_23);
                       }), 128))
                     ], 512), [
                       [vModelSelect, selectedDepToAdd.value]
@@ -49074,11 +48998,11 @@ ${original}` : meta;
                       class: "btn-add-dep",
                       disabled: !selectedDepToAdd.value,
                       onClick: addDependency
-                    }, "Add", 8, _hoisted_27)
+                    }, "Add", 8, _hoisted_24)
                   ])
                 ])
               ]),
-              createBaseVNode("div", _hoisted_28, [
+              createBaseVNode("div", _hoisted_25, [
                 createBaseVNode("button", {
                   class: "btn-cancel",
                   onClick: _cache[10] || (_cache[10] = ($event) => isModalOpen.value = false)
@@ -49094,7 +49018,7 @@ ${original}` : meta;
       };
     }
   };
-  const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-b21bc7e7"]]);
+  const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-a3263af6"]]);
   const mountApp = () => {
     const el = document.getElementById("nxc-gantt-root");
     if (el) {
