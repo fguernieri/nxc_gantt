@@ -47,6 +47,17 @@ function parseGanttMeta(description) {
             meta[key.trim()] = valueParts.join(':').trim()
         }
     })
+    
+    // Parse dependencies JSON array
+    if (meta.dependencies) {
+        try {
+            meta.dependencies = JSON.parse(meta.dependencies)
+        } catch (e) {
+            console.warn('Failed to parse dependencies:', e)
+            meta.dependencies = []
+        }
+    }
+    
     return meta
 }
 
@@ -56,6 +67,7 @@ function buildDescription(task) {
 start: ${task.start}
 progress: ${task.progress}
 status: ${task.status}
+dependencies: ${JSON.stringify(task.dependencies || [])}
 [/GANTT_META]`
     
     // Extract original content (remove old meta block if exists)
@@ -102,7 +114,7 @@ function mapCardToTask(card, stackId) {
         color: color,
         progress: progress,
         status: status,
-        dependencies: [], // Will implement later
+        dependencies: meta.dependencies || [],
         _deckMeta: {
             boardId: selectedBoardId.value,
             stackId: stackId,
@@ -385,12 +397,28 @@ const saveTask = async () => {
 </template>
 
 <style scoped>
-/* Previous Styles */
+/* Responsive Layout */
 .app-layout {
   display: flex;
   flex-direction: column;
+  width: 100%;
   height: 100vh;
-  background-color: #fff;
+  background-color: var(--color-main-background, #fff);
+  overflow: hidden;
+}
+
+.main-body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.content-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 /* ... keep existing styles but appending modal styles ... */
 
