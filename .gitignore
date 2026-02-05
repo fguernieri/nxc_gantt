@@ -1,0 +1,11 @@
+node_modules/
+.idea/
+.vscode/
+*.log
+.DS_Store
+dist_app/
+src/
+vite.config.js
+index.html
+package.json
+package-lock.json

@@ -1,108 +1,89 @@
-# Guia de Deploy - Deck Gantt (Docker)
+# Guia de Deploy - Deck Gantt (Nextcloud AIO)
 
-Este guia explica como instalar o aplicativo "Deck Gantt" em uma instância Nextcloud rodando em **Docker**.
+Este roteiro é específico para sua infraestrutura utilizando o **Nextcloud All-in-One (AIO)**.
+Todos os comandos devem ser executados no terminal do host (servidor onde o Docker roda).
 
-## 1. Gerar o Build de Produção
+## 1. Identificar o Container
 
-Primeiro, na sua máquina de desenvolvimento (onde está este código), gere os arquivos estáticos otimizados:
+No Nextcloud AIO, o container que roda o servidor web e PHP se chama **`nextcloud-aio-nextcloud`**.
+
+*(Nota: Embora seu compose mostre `nextcloud-aio-mastercontainer`, ele é o orquestrador que cria os outros. O container real da aplicação é o `nextcloud-aio-nextcloud`).*
+
+Você pode verificar se ele está rodando com:
+```bash
+docker ps --filter "name=nextcloud-aio-nextcloud"
+```
+
+## 2. Instalação via Git (Direto no Host)
+
+Vamos clonar o repositório diretamente para dentro do container usando comandos executados do host.
+
+### Passo 2.1: Entrar na pasta de Apps
+Vamos usar `docker exec` para rodar o git dentro do container.
+
+Primeiro, clone/baixe o app:
+```bash
+docker exec -it --user root nextcloud-aio-nextcloud git clone https://github.com/fguernieri/nxc_gantt.git /var/www/html/custom_apps/nxc_gantt
+```
+
+### Passo 2.2: Ajustar Permissões
+Garanta que o usuário `www-data` é dono dos arquivos para que o Nextcloud possa ler e executar.
 
 ```bash
-npm install
-npm run build
+docker exec -t --user root nextcloud-aio-nextcloud chown -R www-data:www-data /var/www/html/custom_apps/nxc_gantt
 ```
 
-## 2. Preparar os Arquivos
+## 3. Permitir App Não Assinado
 
-Crie uma estrutura limpa contendo apenas os arquivos necessários para o Nextcloud. Você pode fazer isso criando uma pasta temporária `dist_app`:
+O Nextcloud bloqueia apps manuais. Use este comando para liberar o `nxc_gantt`.
 
 ```bash
-# Criar pasta temporária
-mkdir dist_app
-
-# Copiar pastas essenciais
-cp -r appinfo css img js lib templates dist_app/
+docker exec --user www-data nextcloud-aio-nextcloud php occ config:system:set app_install_overwrite 0 --value="nxc_gantt"
 ```
 
-## 3. Instalação no Container Docker
+*Se você já tiver liberado outros apps antes, esse comando pode sobrescrever a lista. Se for o caso, me avise para te passar o comando de append.*
 
-Existem duas formas principais de instalar, dependendo de como você gerencia seu Docker.
+## 4. Ativar o App
 
-### Método A: Copiar arquivos para container rodando (Mais rápido para teste)
-
-Se seu container se chama `nextcloud-app`:
-
-1.  Copie a pasta para dentro do diretório de apps do container:
-    ```bash
-    docker cp dist_app/. nextcloud-app:/var/www/html/custom_apps/nxc_gantt
-    ```
-    *(Nota: Se você usa o caminho padrão `/var/www/html/apps` e não `custom_apps`, ajuste o comando. Verifique onde seus apps estão instalados).*
-
-2.  Ajuste as permissões dentro do container:
-    ```bash
-    docker exec -it nextcloud-app chown -R www-data:www-data /var/www/html/custom_apps/nxc_gantt
-    ```
-
-### Método B: Usando Volumes (Persistente / Recomendado)
-
-Se você mapeia a pasta de apps no seu `docker-compose.yml`, por exemplo:
-
-```yaml
-services:
-  app:
-    image: nextcloud
-    volumes:
-      - ./nextcloud-data/apps:/var/www/html/custom_apps
-```
-
-Basta copiar a pasta `dist_app` (renomeada para `nxc_gantt`) para dentro da sua pasta local `./nextcloud-data/apps/`.
-
-## 4. Configuração de Permissão (App não assinado)
-
-Como o app não é assinado digitalmente, o Nextcloud bloqueará a ativação por padrão. Em Docker, a maneira mais fácil de resolver isso é via variável de ambiente ou comando `occ`.
-
-### Opção 1: Variável de Ambiente (Docker Compose)
-
-Adicione ao seu `docker-compose.yml` na seção `environment`:
-
-```yaml
-environment:
-  - NEXTCLOUD_ADDITIONAL_APPRES=nxc_gantt
-```
-*(Nota: verifique se sua imagem Docker suporta essa variável específica, imagens oficiais ou da Linuxserver podem variar).*
-
-### Opção 2: Comando OCC (Universal para Docker)
-
-Rode o comando diretamente no container para autorizar o app:
+Agora o app já deve aparecer na lista. Você pode ativar via linha de comando para ser mais rápido:
 
 ```bash
-docker exec -u www-data nextcloud-app php occ config:system:set app_install_overwrite 0 --value="nxc_gantt"
+docker exec --user www-data nextcloud-aio-nextcloud php occ app:enable nxc_gantt
 ```
 
-*Se já houver outros apps, use índices diferentes (1, 2...) ou adicione manualmente ao config.php.*
+Se tudo der certo, ele responderá algo como: `nxc_gantt enabled`.
 
-## 5. Ativação Final
+---
 
-1.  Acesse seu Nextcloud no navegador.
-2.  Vá em **Apps** (clique no ícone do perfil > Aplicativos).
-3.  Vá em **Seus aplicativos** (Your apps).
-4.  Encontre **Deck Gantt** e clique em **Ativar** (Enable).
+## 5. Roteiro de Atualização (Deploy Contínuo)
 
-## Resumo de Comandos Rápidos
+Quando você fizer alterações e enviar para o GitHub, rode estes 3 comandos no servidor para atualizar:
 
-```powershell
-# 1. Build
-npm run build
+```bash
+# 1. Puxar alterações (Git Pull)
+docker exec --user root nextcloud-aio-nextcloud git -C /var/www/html/custom_apps/nxc_gantt pull
 
-# 2. Copiar para container (Exemplo Windows PowerShell)
-# Certifique-se de estar na raiz do projeto
-docker cp appinfo nextcloud_server:/var/www/html/custom_apps/nxc_gantt/
-docker cp css nextcloud_server:/var/www/html/custom_apps/nxc_gantt/
-docker cp img nextcloud_server:/var/www/html/custom_apps/nxc_gantt/
-docker cp js nextcloud_server:/var/www/html/custom_apps/nxc_gantt/
-docker cp lib nextcloud_server:/var/www/html/custom_apps/nxc_gantt/
-docker cp templates nextcloud_server:/var/www/html/custom_apps/nxc_gantt/
+# 2. Garantir permissões (por segurança)
+docker exec --user root nextcloud-aio-nextcloud chown -R www-data:www-data /var/www/html/custom_apps/nxc_gantt
 
-# 3. Permissões e Config
-docker exec -u www-data nextcloud_server php occ config:system:set app_install_overwrite 0 --value="nxc_gantt"
-docker exec nextcloud_server chown -R www-data:www-data /var/www/html/custom_apps/nxc_gantt
+# 3. Limpar cache de JS/CSS (opcional, se notar que não atualizou no browser)
+# docker exec --user www-data nextcloud-aio-nextcloud php occ maintenance:repair
+```
+
+## Resumão (Copie e Cole)
+
+Roteiro completo de instalação do zero:
+
+```bash
+# 1. Clone
+docker exec --user root nextcloud-aio-nextcloud git clone https://github.com/fguernieri/nxc_gantt.git /var/www/html/custom_apps/nxc_gantt
+
+# 2. Permissões
+docker exec --user root nextcloud-aio-nextcloud chown -R www-data:www-data /var/www/html/custom_apps/nxc_gantt
+
+# 3. Config (Unsigned)
+docker exec --user www-data nextcloud-aio-nextcloud php occ config:system:set app_install_overwrite 0 --value="nxc_gantt"
+
+# 4. Enable
+docker exec --user www-data nextcloud-aio-nextcloud php occ app:enable nxc_gantt
 ```
