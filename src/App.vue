@@ -2,7 +2,7 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { NcContent, NcAppNavigation, NcAppNavigationItem, NcAppNavigationCaption, NcAppContent } from '@nextcloud/vue'
 import GanttChart from './components/GanttChart.vue'
-import { Settings, Calendar, X, Folder } from 'lucide-vue-next'
+import { X } from 'lucide-vue-next'
 import { fetchBoards, fetchBoardStacks, updateCard } from './services/deckApi.js'
 import { format, subDays, parse, parseISO } from 'date-fns'
 
@@ -405,13 +405,6 @@ const jumpToToday = () => {
                 <span class="app-navigation-entry-icon" :style="{ backgroundColor: board.color }"></span>
             </template>
        </NcAppNavigationItem>
-
-        <!-- Archived -->
-        <NcAppNavigationItem name="Archived">
-             <template #icon>
-                 <Folder size="20" class="app-navigation-entry-icon-svg"/>
-             </template>
-        </NcAppNavigationItem>
         
         <template #footer>
             <div id="app-settings">
@@ -438,14 +431,10 @@ const jumpToToday = () => {
                    <button :class="{ active: viewMode === 'Month' }" @click="viewMode = 'Month'">Month</button>
                  </div>
                  <button class="icon-only" @click="jumpToToday" title="Jump to Today"><span class="circle-icon"></span></button>
-                 <button class="icon-only active" title="Gantt View"><Calendar size="16"/></button>
                </div>
            <div class="header-right">
                <div id="gantt-contacts" class="icon-contacts menutoggle" tabindex="0" role="button" aria-haspopup="true" aria-controls="contactsmenu-menu" aria-expanded="false">
                     <span class="hidden-visually">Contacts</span>
-                </div>
-                <div id="gantt-settings" class="icon-settings menutoggle" tabindex="0" role="button" aria-haspopup="true" aria-controls="settings-menu" aria-expanded="false">
-                    <span class="hidden-visually">Settings</span>
                 </div>
            </div>
           </div>
@@ -461,7 +450,6 @@ const jumpToToday = () => {
           />
 
            <div class="footer-bar">
-              <div class="deck-settings"><Settings size="14"/> Deck Settings</div>
               <div class="lists-legend">
                 <span>Lists: </span>
                 <span class="legend-item"><span class="dot done"></span> Done</span>
