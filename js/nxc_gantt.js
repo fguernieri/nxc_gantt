@@ -6521,16 +6521,18 @@ const _export_sfc = (sfc, props) => {
   }
   return target;
 };
-const _hoisted_1$2 = { class: "sidebar" };
+const _hoisted_1$2 = { id: "app-navigation-list" };
 const _hoisted_2$2 = ["onClick"];
-const _hoisted_3$2 = { class: "board-name" };
+const _hoisted_3$2 = { class: "app-navigation-entry-title" };
 const _hoisted_4$2 = {
   key: 0,
-  class: "badge"
+  class: "app-navigation-entry-utils"
 };
-const _hoisted_5$2 = ["onClick"];
-const _hoisted_6$2 = { class: "board-name" };
-const _hoisted_7$2 = { class: "menu-item" };
+const _hoisted_5$2 = { class: "app-navigation-entry-utils-counter" };
+const _hoisted_6$2 = ["onClick"];
+const _hoisted_7$2 = { class: "app-navigation-entry-title" };
+const _hoisted_8$2 = { class: "app-navigation-entry" };
+const _hoisted_9$2 = { href: "#" };
 const _sfc_main$2 = {
   __name: "Sidebar",
   props: {
@@ -6544,52 +6546,64 @@ const _sfc_main$2 = {
     const favorites = computed(() => props.boards.filter((b) => b.favorite));
     const others = computed(() => props.boards.filter((b) => !b.favorite));
     return (_ctx, _cache) => {
-      return openBlock(), createElementBlock("aside", _hoisted_1$2, [
-        _cache[1] || (_cache[1] = createBaseVNode("div", { class: "sidebar-header" }, [
-          createBaseVNode("button", { class: "add-board-btn" }, "+ Add Board")
+      return openBlock(), createElementBlock("ul", _hoisted_1$2, [
+        _cache[1] || (_cache[1] = createBaseVNode("li", { class: "app-navigation-entry-header" }, [
+          createBaseVNode("div", { class: "app-navigation-entry-header-title" }, "FAVORITES")
         ], -1)),
-        _cache[2] || (_cache[2] = createBaseVNode("div", { class: "section-title" }, "FAVORITES", -1)),
-        createBaseVNode("ul", null, [
-          (openBlock(true), createElementBlock(Fragment, null, renderList(favorites.value, (board) => {
-            return openBlock(), createElementBlock("li", {
-              key: board.id,
-              class: normalizeClass({ active: board.id === __props.selectedId }),
-              onClick: ($event) => emit2("select", board.id)
+        (openBlock(true), createElementBlock(Fragment, null, renderList(favorites.value, (board) => {
+          return openBlock(), createElementBlock("li", {
+            key: board.id,
+            class: normalizeClass(["app-navigation-entry", { active: board.id === __props.selectedId }])
+          }, [
+            createBaseVNode("a", {
+              href: "#",
+              onClick: withModifiers(($event) => emit2("select", board.id), ["prevent"])
             }, [
               createBaseVNode("span", {
-                class: "color-dot",
+                class: "app-navigation-entry-icon",
                 style: normalizeStyle({ backgroundColor: board.color })
               }, null, 4),
               createBaseVNode("span", _hoisted_3$2, toDisplayString(board.name), 1),
-              board.count ? (openBlock(), createElementBlock("span", _hoisted_4$2, toDisplayString(board.count), 1)) : createCommentVNode("", true)
-            ], 10, _hoisted_2$2);
-          }), 128))
-        ]),
-        _cache[3] || (_cache[3] = createBaseVNode("div", { class: "section-title" }, "ALL BOARDS", -1)),
-        createBaseVNode("ul", null, [
-          (openBlock(true), createElementBlock(Fragment, null, renderList(others.value, (board) => {
-            return openBlock(), createElementBlock("li", {
-              key: board.id,
-              class: normalizeClass({ active: board.id === __props.selectedId }),
-              onClick: ($event) => emit2("select", board.id)
+              board.count ? (openBlock(), createElementBlock("div", _hoisted_4$2, [
+                createBaseVNode("span", _hoisted_5$2, toDisplayString(board.count), 1)
+              ])) : createCommentVNode("", true)
+            ], 8, _hoisted_2$2)
+          ], 2);
+        }), 128)),
+        _cache[2] || (_cache[2] = createBaseVNode("li", { class: "app-navigation-entry-header" }, [
+          createBaseVNode("div", { class: "app-navigation-entry-header-title" }, "ALL BOARDS")
+        ], -1)),
+        (openBlock(true), createElementBlock(Fragment, null, renderList(others.value, (board) => {
+          return openBlock(), createElementBlock("li", {
+            key: board.id,
+            class: normalizeClass(["app-navigation-entry", { active: board.id === __props.selectedId }])
+          }, [
+            createBaseVNode("a", {
+              href: "#",
+              onClick: withModifiers(($event) => emit2("select", board.id), ["prevent"])
             }, [
               createBaseVNode("span", {
-                class: "color-dot",
+                class: "app-navigation-entry-icon",
                 style: normalizeStyle({ backgroundColor: board.color })
               }, null, 4),
-              createBaseVNode("span", _hoisted_6$2, toDisplayString(board.name), 1)
-            ], 10, _hoisted_5$2);
-          }), 128))
-        ]),
-        createBaseVNode("div", _hoisted_7$2, [
-          createVNode(unref(Folder), { size: "16" }),
-          _cache[0] || (_cache[0] = createTextVNode(" Archived", -1))
+              createBaseVNode("span", _hoisted_7$2, toDisplayString(board.name), 1)
+            ], 8, _hoisted_6$2)
+          ], 2);
+        }), 128)),
+        createBaseVNode("li", _hoisted_8$2, [
+          createBaseVNode("a", _hoisted_9$2, [
+            createVNode(unref(Folder), {
+              size: "20",
+              class: "app-navigation-entry-icon-svg"
+            }),
+            _cache[0] || (_cache[0] = createBaseVNode("span", { class: "app-navigation-entry-title" }, "Archived", -1))
+          ])
         ])
       ]);
     };
   }
 };
-const Sidebar = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-dddbfd75"]]);
+const Sidebar = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-cced9772"]]);
 function toDate(argument) {
   const argStr = Object.prototype.toString.call(argument);
   if (argument instanceof Date || typeof argument === "object" && argStr === "[object Date]") {
@@ -8630,9 +8644,12 @@ ${errorBody}`);
   }
   return await response.json();
 }
-const _hoisted_1 = { class: "app-layout" };
-const _hoisted_2 = { class: "main-body" };
-const _hoisted_3 = { class: "content-area" };
+const _hoisted_1 = {
+  id: "content",
+  class: "app-nxc_gantt"
+};
+const _hoisted_2 = { id: "app-navigation" };
+const _hoisted_3 = { id: "app-content" };
 const _hoisted_4 = { class: "content-header" };
 const _hoisted_5 = { class: "breadcrumb" };
 const _hoisted_6 = { class: "board-title" };
@@ -8934,43 +8951,43 @@ ${original}` : meta;
             boards: boards.value,
             selectedId: selectedBoardId.value,
             onSelect: handleSelectBoard
-          }, null, 8, ["boards", "selectedId"]),
-          createBaseVNode("main", _hoisted_3, [
-            createBaseVNode("div", _hoisted_4, [
-              createBaseVNode("div", _hoisted_5, [
-                createBaseVNode("span", _hoisted_6, toDisplayString(selectedBoardName.value), 1),
-                _cache[9] || (_cache[9] = createBaseVNode("span", { class: "sep" }, "›", -1)),
-                _cache[10] || (_cache[10] = createBaseVNode("span", { class: "view-title" }, "Gantt Timeline", -1))
-              ]),
-              createBaseVNode("div", _hoisted_7, [
-                _cache[11] || (_cache[11] = createBaseVNode("div", { class: "btn-group" }, [
-                  createBaseVNode("button", { class: "active" }, "Day"),
-                  createBaseVNode("button", null, "Week"),
-                  createBaseVNode("button", null, "Month")
-                ], -1)),
-                _cache[12] || (_cache[12] = createBaseVNode("button", { class: "icon-only" }, [
-                  createBaseVNode("span", { class: "circle-icon" })
-                ], -1)),
-                createBaseVNode("button", _hoisted_8, [
-                  createVNode(unref(Calendar), { size: "16" })
-                ])
-              ])
-            ]),
-            createVNode(GanttChart, {
-              tasks: tasks.value,
-              onTaskClicked: openTaskModal,
-              onTaskDatesChanged: handleTaskDatesChanged,
-              onTaskReordered: handleTaskReordered,
-              onTaskDurationChanged: handleTaskDurationChanged
-            }, null, 8, ["tasks"])
-          ])
+          }, null, 8, ["boards", "selectedId"])
         ]),
-        createBaseVNode("div", _hoisted_9, [
-          createBaseVNode("div", _hoisted_10, [
-            createVNode(unref(Settings), { size: "14" }),
-            _cache[13] || (_cache[13] = createTextVNode(" Deck Settings", -1))
+        createBaseVNode("div", _hoisted_3, [
+          createBaseVNode("div", _hoisted_4, [
+            createBaseVNode("div", _hoisted_5, [
+              createBaseVNode("span", _hoisted_6, toDisplayString(selectedBoardName.value), 1),
+              _cache[9] || (_cache[9] = createBaseVNode("span", { class: "sep" }, "›", -1)),
+              _cache[10] || (_cache[10] = createBaseVNode("span", { class: "view-title" }, "Gantt Timeline", -1))
+            ]),
+            createBaseVNode("div", _hoisted_7, [
+              _cache[11] || (_cache[11] = createBaseVNode("div", { class: "btn-group" }, [
+                createBaseVNode("button", { class: "active" }, "Day"),
+                createBaseVNode("button", null, "Week"),
+                createBaseVNode("button", null, "Month")
+              ], -1)),
+              _cache[12] || (_cache[12] = createBaseVNode("button", { class: "icon-only" }, [
+                createBaseVNode("span", { class: "circle-icon" })
+              ], -1)),
+              createBaseVNode("button", _hoisted_8, [
+                createVNode(unref(Calendar), { size: "16" })
+              ])
+            ])
           ]),
-          _cache[14] || (_cache[14] = createStaticVNode('<div class="lists-legend" data-v-4be328be><span data-v-4be328be>Lists: </span><span class="legend-item" data-v-4be328be><span class="dot done" data-v-4be328be></span> Done</span><span class="legend-item" data-v-4be328be><span class="dot progress" data-v-4be328be></span> In Progress</span><span class="legend-item" data-v-4be328be><span class="dot review" data-v-4be328be></span> Review</span><span class="legend-item" data-v-4be328be><span class="dot todo" data-v-4be328be></span> To Do</span></div>', 1))
+          createVNode(GanttChart, {
+            tasks: tasks.value,
+            onTaskClicked: openTaskModal,
+            onTaskDatesChanged: handleTaskDatesChanged,
+            onTaskReordered: handleTaskReordered,
+            onTaskDurationChanged: handleTaskDurationChanged
+          }, null, 8, ["tasks"]),
+          createBaseVNode("div", _hoisted_9, [
+            createBaseVNode("div", _hoisted_10, [
+              createVNode(unref(Settings), { size: "14" }),
+              _cache[13] || (_cache[13] = createTextVNode(" Deck Settings", -1))
+            ]),
+            _cache[14] || (_cache[14] = createStaticVNode('<div class="lists-legend" data-v-e1c71146><span data-v-e1c71146>Lists: </span><span class="legend-item" data-v-e1c71146><span class="dot done" data-v-e1c71146></span> Done</span><span class="legend-item" data-v-e1c71146><span class="dot progress" data-v-e1c71146></span> In Progress</span><span class="legend-item" data-v-e1c71146><span class="dot review" data-v-e1c71146></span> Review</span><span class="legend-item" data-v-e1c71146><span class="dot todo" data-v-e1c71146></span> To Do</span></div>', 1))
+          ])
         ]),
         isModalOpen.value ? (openBlock(), createElementBlock("div", {
           key: 0,
@@ -9106,7 +9123,7 @@ ${original}` : meta;
     };
   }
 };
-const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-4be328be"]]);
+const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-e1c71146"]]);
 const mountApp = () => {
   const el = document.getElementById("nxc-gantt-root");
   if (el) {

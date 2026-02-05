@@ -366,19 +366,17 @@ async function handleTaskDurationChanged(event) {
 </script>
 
 <template>
-  <div class="app-layout">
-    <!-- Top Bar Mock -->
-    <!-- Top Bar Removed -->
-
-    <div class="main-body">
+  <div id="content" class="app-nxc_gantt">
+    <div id="app-navigation">
       <Sidebar 
         :boards="boards" 
         :selectedId="selectedBoardId" 
         @select="handleSelectBoard"
       />
-      
-      <main class="content-area">
-        <div class="content-header">
+    </div>
+    
+    <div id="app-content">
+      <div class="content-header">
          <div class="breadcrumb">
              <span class="board-title">{{ selectedBoardName }}</span>
              <span class="sep">›</span>
@@ -394,29 +392,28 @@ async function handleTaskDurationChanged(event) {
              <button class="icon-only"><span class="circle-icon"></span></button>
              <button class="icon-only active"><Calendar size="16"/></button>
            </div>
-        </div>
+      </div>
 
-        <GanttChart 
-          :tasks="tasks" 
-          @task-clicked="openTaskModal"
-          @task-dates-changed="handleTaskDatesChanged"
-          @task-reordered="handleTaskReordered"
-          @task-duration-changed="handleTaskDurationChanged"
-        />
-      </main>
-    </div>
-    
-    <div class="footer-bar">
-       <div class="deck-settings"><Settings size="14"/> Deck Settings</div>
-       <div class="lists-legend">
-         <span>Lists: </span>
-         <span class="legend-item"><span class="dot done"></span> Done</span>
-         <span class="legend-item"><span class="dot progress"></span> In Progress</span>
-         <span class="legend-item"><span class="dot review"></span> Review</span>
-         <span class="legend-item"><span class="dot todo"></span> To Do</span>
+      <GanttChart 
+        :tasks="tasks" 
+        @task-clicked="openTaskModal"
+        @task-dates-changed="handleTaskDatesChanged"
+        @task-reordered="handleTaskReordered"
+        @task-duration-changed="handleTaskDurationChanged"
+      />
+
+       <div class="footer-bar">
+          <div class="deck-settings"><Settings size="14"/> Deck Settings</div>
+          <div class="lists-legend">
+            <span>Lists: </span>
+            <span class="legend-item"><span class="dot done"></span> Done</span>
+            <span class="legend-item"><span class="dot progress"></span> In Progress</span>
+            <span class="legend-item"><span class="dot review"></span> Review</span>
+            <span class="legend-item"><span class="dot todo"></span> To Do</span>
+          </div>
        </div>
     </div>
-
+    
     <!-- Edit Modal -->
     <div v-if="isModalOpen" class="modal-overlay" @click.self="isModalOpen = false">
         <div class="modal">
@@ -435,8 +432,8 @@ async function handleTaskDurationChanged(event) {
                         <input v-model="editingTask.start" type="datetime-local" />
                     </div>
                     <div class="form-group">
-                        <label>End Date</label>
-                        <input v-model="editingTask.end" type="datetime-local" />
+                         <label>End Date</label>
+                         <input v-model="editingTask.end" type="datetime-local" />
                     </div>
                 </div>
                  <div class="form-row">
@@ -492,44 +489,178 @@ async function handleTaskDurationChanged(event) {
 </template>
 
 <style scoped>
-/* Responsive Layout */
-.app-layout {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 100vh;
-  background-color: var(--color-main-background, #fff);
-  overflow: hidden;
+/* Standard Nextcloud Content Layout */
+#content {
+    /* Nextcloud handles the main container */
+    height: 100vh;
+    display: flex;
+    background-color: var(--color-main-background, #fff);
+    overflow: hidden;
 }
 
-.main-body {
-  display: flex;
-  flex: 1;
-  min-height: 0;
-  overflow: hidden;
+#app-navigation {
+    width: 300px; /* Standard Width */
+    height: 100%;
+    overflow-y: auto;
+    background-color: var(--color-main-background, #fff);
+    border-right: 1px solid var(--color-border, #eee);
+    flex-shrink: 0;
 }
 
-.content-area {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
+#app-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    flex: 1;
+    min-width: 0; 
+    overflow: hidden;
+    background-color: var(--color-main-background, #fff);
 }
-/* ... keep existing styles but appending modal styles ... */
 
+/* Original styles adapted */
+
+.content-header {
+  height: 50px;
+  border-bottom: 1px solid var(--color-border, #eee);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1rem;
+  background: var(--color-main-background, #fff);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+
+.board-title {
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: var(--color-main-text, #222);
+}
+
+
+.sep {
+  margin: 0 8px;
+  color: var(--color-text-maxcontrast, #555);
+}
+
+
+.view-title {
+  color: var(--color-text-light, #888);
+}
+
+
+.view-controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+
+.btn-group {
+  display: flex;
+  background: var(--color-background-dark, #eee);
+  border-radius: var(--border-radius, 4px);
+  padding: 2px;
+}
+
+
+.btn-group button {
+  border: none;
+  background: none;
+  padding: 4px 12px;
+  border-radius: var(--border-radius, 4px);
+  font-size: 13px;
+  cursor: pointer;
+  color: var(--color-text-light, #888);
+}
+
+
+.btn-group button.active {
+  background: var(--color-main-background, #fff);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  color: var(--color-main-text, #222);
+}
+
+
+.icon-only {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-border, #eee);
+  background: var(--color-main-background, #fff);
+  border-radius: var(--border-radius, 4px);
+  cursor: pointer;
+  color: var(--color-text-light, #888);
+}
+
+
+.icon-only.active {
+  background: var(--color-primary-light, #e6f2ff);
+  border-color: var(--color-primary, #0082c9);
+  color: var(--color-primary, #0082c9);
+}
+
+
+.footer-bar {
+  height: 40px;
+  border-top: 1px solid var(--color-border, #eee);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1rem;
+  font-size: 0.85rem;
+  background: var(--color-main-background, #fff);
+  color: var(--color-text-light, #888);
+}
+
+.deck-settings {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.lists-legend {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+}
+
+.dot.done { background: var(--color-success, #16a085); }
+.dot.progress { background: var(--color-primary, #0082c9); }
+.dot.review { background: var(--color-warning, #f1c40f); }
+.dot.todo { background: var(--color-text-maxcontrast, #555); }
+
+/* Modal and Dep Styles remain */
 .deps-list {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
   margin-bottom: 8px;
   padding: 8px;
-  border: 1px solid #eee;
-  border-radius: 4px;
+  border: 1px solid var(--color-border, #eee);
+  border-radius: var(--border-radius, 4px);
   min-height: 40px;
 }
 
 .dep-chip {
-  background: #eef2f5;
+  background: var(--color-background-dark, #eee);
   padding: 4px 8px;
   border-radius: 12px;
   font-size: 0.8rem;
@@ -540,16 +671,16 @@ async function handleTaskDurationChanged(event) {
 
 .remove-dep {
   cursor: pointer;
-  color: #999;
+  color: var(--color-text-maxcontrast, #555);
   font-weight: bold;
 }
 
 .remove-dep:hover {
-  color: #d00;
+  color: var(--color-error, #d00);
 }
 
 .no-deps {
-  color: #ccc;
+  color: var(--color-text-light, #888);
   font-style: italic;
   font-size: 0.8rem;
 }
@@ -560,11 +691,11 @@ async function handleTaskDurationChanged(event) {
 }
 
 .btn-add-dep {
-    background: #eee;
-    border: none;
-    padding: 0 12px;
-    border-radius: 4px;
-    cursor: pointer;
+  background: var(--color-background-dark, #eee);
+  border: none;
+  padding: 0 12px;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
 .btn-add-dep:disabled {
@@ -586,16 +717,17 @@ async function handleTaskDurationChanged(event) {
 }
 
 .modal {
-    background: white;
-    border-radius: 8px;
+    background: var(--color-main-background, #fff);
+    border-radius: var(--border-radius-large, 8px);
     width: 400px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.2);
     overflow: hidden;
+    color: var(--color-main-text, #000);
 }
 
 .modal-header {
     padding: 16px;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--color-border, #eee);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -610,7 +742,7 @@ async function handleTaskDurationChanged(event) {
     background: none;
     border: none;
     cursor: pointer;
-    color: #666;
+    color: var(--color-text-maxcontrast, #555);
 }
 
 .modal-body {
@@ -624,16 +756,18 @@ async function handleTaskDurationChanged(event) {
 .form-group label {
     display: block;
     font-size: 0.85rem;
-    color: #555;
+    color: var(--color-text-maxcontrast, #555);
     margin-bottom: 6px;
 }
 
 .form-group input, .form-group select {
     width: 100%;
     padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    border: 1px solid var(--color-border, #ddd);
+    border-radius: var(--border-radius, 4px);
     font-size: 0.9rem;
+    background-color: var(--color-main-background, #fff);
+    color: var(--color-main-text, #000);
 }
 
 .form-row {
@@ -647,158 +781,28 @@ async function handleTaskDurationChanged(event) {
 
 .modal-footer {
     padding: 16px;
-    background: #f9f9f9;
+    background: var(--color-background-dark, #f9f9f9);
     display: flex;
     justify-content: flex-end;
     gap: 8px;
-    border-top: 1px solid #eee;
+    border-top: 1px solid var(--color-border, #eee);
 }
 
 .btn-cancel {
     padding: 8px 16px;
-    border: 1px solid #ddd;
-    background: white;
-    border-radius: 4px;
+    border: 1px solid var(--color-border, #ddd);
+    background: var(--color-main-background, #fff);
+    border-radius: var(--border-radius, 4px);
     cursor: pointer;
+    color: var(--color-main-text, #000);
 }
 
 .btn-save {
     padding: 8px 16px;
     border: none;
-    background: var(--color-primary);
+    background: var(--color-primary, #0082c9);
     color: white;
-    border-radius: 4px;
+    border-radius: var(--border-radius, 4px);
     cursor: pointer;
 }
-
-/* Original styles below */
-
-
-
-.main-body {
-  display: flex;
-  flex: 1;
-  overflow: hidden;
-}
-
-.content-area {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  background-color: #fcfcfc;
-}
-
-.content-header {
-  height: 60px;
-  border-bottom: 1px solid #eee;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 1.5rem;
-  background: white;
-}
-
-.board-title {
-  font-weight: bold;
-  font-size: 1.1rem;
-}
-
-.sep {
-  margin: 0 8px;
-  color: #999;
-}
-
-.view-title {
-  color: #666;
-}
-
-.view-controls {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
-
-.btn-group {
-  display: flex;
-  background: #eee;
-  border-radius: 6px;
-  padding: 2px;
-}
-
-.btn-group button {
-  border: none;
-  background: none;
-  padding: 4px 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.85rem;
-  color: #555;
-}
-
-.btn-group button.active {
-  background: white;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-  color: var(--color-primary);
-  font-weight: 500;
-}
-
-.icon-only {
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid #ddd;
-  background: white;
-  border-radius: 8px;
-  cursor: pointer;
-  color: #666;
-}
-
-.icon-only.active {
-  background: #e6f2ff;
-  border-color: var(--color-primary);
-  color: var(--color-primary);
-}
-
-.footer-bar {
-  height: 40px;
-  border-top: 1px solid #ddd;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 1rem;
-  font-size: 0.8rem;
-  color: #666;
-}
-
-.deck-settings {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  cursor: pointer;
-}
-
-.lists-legend {
-  display: flex;
-  gap: 16px;
-}
-
-.legend-item {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 2px;
-}
-
-.dot.done { background: #16a085; }
-.dot.progress { background: #f1c40f; } /* Swapped in mock */
-.dot.review { background: #0082c9; }
-.dot.todo { background: #c0392b; }
-
 </style>

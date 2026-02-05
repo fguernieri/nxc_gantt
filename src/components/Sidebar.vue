@@ -15,123 +15,131 @@ const others = computed(() => props.boards.filter(b => !b.favorite))
 </script>
 
 <template>
-  <aside class="sidebar">
-    <div class="sidebar-header">
-      <button class="add-board-btn">+ Add Board</button>
-    </div>
-
-    <div class="section-title">FAVORITES</div>
-    <ul>
-      <li 
-        v-for="board in favorites" 
-        :key="board.id"
-        :class="{ active: board.id === selectedId }"
-        @click="emit('select', board.id)"
-      >
-        <span class="color-dot" :style="{ backgroundColor: board.color }"></span>
-        <span class="board-name">{{ board.name }}</span>
-        <span class="badge" v-if="board.count">{{ board.count }}</span>
-      </li>
-    </ul>
-
-    <div class="section-title">ALL BOARDS</div>
-    <ul>
-      <li 
-        v-for="board in others" 
-        :key="board.id"
-        :class="{ active: board.id === selectedId }"
-        @click="emit('select', board.id)"
-      >
-        <span class="color-dot" :style="{ backgroundColor: board.color }"></span>
-        <span class="board-name">{{ board.name }}</span>
-      </li>
-    </ul>
+  <!-- Standard Nextcloud Navigation Structure -->
+  <ul id="app-navigation-list">
+    <li class="app-navigation-entry-header">
+       <div class="app-navigation-entry-header-title">FAVORITES</div>
+    </li>
     
-    <div class="menu-item"><Folder size="16"/> Archived</div>
+    <li 
+      v-for="board in favorites" 
+      :key="board.id"
+      class="app-navigation-entry"
+      :class="{ active: board.id === selectedId }"
+    >
+      <a href="#" @click.prevent="emit('select', board.id)">
+        <span class="app-navigation-entry-icon" :style="{ backgroundColor: board.color }"></span>
+        <span class="app-navigation-entry-title">{{ board.name }}</span>
+        <div class="app-navigation-entry-utils" v-if="board.count">
+            <span class="app-navigation-entry-utils-counter">{{ board.count }}</span>
+        </div>
+      </a>
+    </li>
+
+    <li class="app-navigation-entry-header">
+       <div class="app-navigation-entry-header-title">ALL BOARDS</div>
+    </li>
     
-  </aside>
+    <li 
+      v-for="board in others" 
+      :key="board.id"
+      class="app-navigation-entry"
+      :class="{ active: board.id === selectedId }"
+    >
+      <a href="#" @click.prevent="emit('select', board.id)">
+        <span class="app-navigation-entry-icon" :style="{ backgroundColor: board.color }"></span>
+        <span class="app-navigation-entry-title">{{ board.name }}</span>
+      </a>
+    </li>
+    
+    <li class="app-navigation-entry">
+        <a href="#">
+             <Folder size="20" class="app-navigation-entry-icon-svg"/>
+             <span class="app-navigation-entry-title">Archived</span>
+        </a>
+    </li>
+    
+    <!-- Settings usually go at bottom or separate list, sticking to simple list for now -->
+  </ul>
 </template>
 
 <style scoped>
-.sidebar {
-  width: 250px;
-  background-color: #fff;
-  border-right: 1px solid var(--color-border);
-  display: flex;
-  flex-direction: column;
-  padding: 1rem;
+/* 
+   We try to mimic Nextcloud's native classes locally 
+   so it looks right even if strictly isolated style.
+   In a real NC app, global styles might apply, but scoped ensures we control it.
+*/
+
+#app-navigation-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
 }
 
-.add-board-btn {
-  width: 100%;
-  background-color: var(--color-primary);
-  color: white;
-  border: none;
-  padding: 0.5rem;
-  border-radius: var(--border-radius-large);
-  cursor: pointer;
-  font-weight: bold;
-  margin-bottom: 1rem;
+.app-navigation-entry-header {
+    padding: 20px 12px 10px;
+    font-size: 12px;
+    font-weight: bold;
+    color: var(--color-text-maxcontrast);
+    text-transform: uppercase;
+    opacity: .7;
 }
 
-.section-title {
-  font-size: 0.75rem;
-  color: #888;
-  font-weight: bold;
-  margin-top: 1rem;
-  margin-bottom: 0.5rem;
-  text-transform: uppercase;
+.app-navigation-entry a {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 10px 12px;
+    box-sizing: border-box;
+    color: var(--color-main-text);
+    text-decoration: none;
+    border-radius: var(--border-radius);
+    transition: background-color .1s;
 }
 
-ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+.app-navigation-entry a:hover,
+.app-navigation-entry.active a {
+    background-color: var(--color-background-hover);
 }
 
-li {
-  display: flex;
-  align-items: center;
-  padding: 0.5rem;
-  cursor: pointer;
-  border-radius: 8px;
-  margin-bottom: 2px;
+.app-navigation-entry.active a {
+    font-weight: bold;
 }
 
-li:hover {
-  background-color: var(--color-background-hover);
+.app-navigation-entry-icon {
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+    margin-right: 12px;
+    display: inline-block;
+    flex-shrink: 0;
 }
 
-li.active {
-  background-color: #e6f2ff; /* Light blue tint */
+.app-navigation-entry-icon-svg {
+    margin-right: 12px;
+    opacity: .7;
+    flex-shrink: 0;
 }
 
-.color-dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 4px;
-  margin-right: 8px;
+.app-navigation-entry-title {
+    flex: 1 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.board-name {
-  flex: 1;
-  font-size: 0.9rem;
+.app-navigation-entry-utils {
+    display: flex;
+    align-items: center;
 }
 
-.badge {
-  background-color: #dddddd;
-  border-radius: 10px;
-  padding: 2px 6px;
-  font-size: 0.7rem;
-  color: #555;
-}
-
-.menu-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 0.5rem;
-  color: #888;
-  cursor: pointer;
+.app-navigation-entry-utils-counter {
+    background-color: var(--color-background-dark);
+    border-radius: 10px;
+    padding: 2px 8px;
+    font-size: 11px;
+    color: var(--color-text-light);
 }
 </style>
