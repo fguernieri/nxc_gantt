@@ -4,7 +4,7 @@
 	<name>Deck Gantt</name>
 	<summary>Gantt chart visualization for Nextcloud Deck</summary>
 	<description>Adds a Gantt chart view to Nextcloud Deck boards, supporting predecessors and dependencies.</description>
-	<version>0.1.0</version>
+	<version>0.1.1</version>
 	<licence>agpl</licence>
 	<author>Antigravity</author>
 	<namespace>NxcGantt</namespace>
