@@ -625,18 +625,22 @@ const jumpToToday = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid var(--color-border, #eee);
-  background: var(--color-main-background, #fff);
+  border: 1px solid var(--color-border-dark, #dbdbdb);
+  background: var(--color-background-dark, #f5f5f5);
   border-radius: var(--border-radius, 4px);
   cursor: pointer;
-  color: var(--color-text-light, #888);
+  color: var(--color-text-maxcontrast, #444);
 }
 
 
 .icon-only.active {
-  background: var(--color-primary-light, #e6f2ff);
+  background: var(--color-primary, #0082c9);
   border-color: var(--color-primary, #0082c9);
-  color: var(--color-primary, #0082c9);
+  color: var(--color-primary-text, #fff);
+}
+
+.icon-only:hover:not(.active) {
+    background-color: var(--color-background-hover, #efefef);
 }
 
 

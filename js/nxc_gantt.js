@@ -255,13 +255,13 @@
 }\r
 \r
 /* Standard Nextcloud Content Layout */
-#content[data-v-f6ef8f98] {\r
+#content[data-v-392f462d] {\r
     height: 100vh;\r
     display: flex;\r
     background-color: var(--color-main-background, #fff);\r
     overflow: hidden;
 }
-#app-navigation[data-v-f6ef8f98] {\r
+#app-navigation[data-v-392f462d] {\r
     width: 300px;\r
     height: 100%;\r
     overflow-y: auto;\r
@@ -271,7 +271,7 @@
     display: flex;\r
     flex-direction: column;
 }
-.app-navigation-caption[data-v-f6ef8f98] {\r
+.app-navigation-caption[data-v-392f462d] {\r
     background-color: var(--color-primary, #0082c9);\r
     color: var(--color-primary-text, #fff);\r
     font-weight: bold;\r
@@ -282,7 +282,7 @@
     min-height: 50px;\r
     flex-shrink: 0;
 }
-#app-content[data-v-f6ef8f98] {\r
+#app-content[data-v-392f462d] {\r
     display: flex;\r
     flex-direction: column;\r
     height: 100%;\r
@@ -293,7 +293,7 @@
 }\r
 \r
 /* Original styles adapted */
-.content-header[data-v-f6ef8f98] {\r
+.content-header[data-v-392f462d] {\r
   height: 50px;\r
   border-bottom: 1px solid var(--color-border, #eee);\r
   display: flex;\r
@@ -305,30 +305,30 @@
   top: 0;\r
   z-index: 50;
 }
-.board-title[data-v-f6ef8f98] {\r
+.board-title[data-v-392f462d] {\r
   font-weight: bold;\r
   font-size: 1.1rem;\r
   color: var(--color-main-text, #222);
 }
-.sep[data-v-f6ef8f98] {\r
+.sep[data-v-392f462d] {\r
   margin: 0 8px;\r
   color: var(--color-text-maxcontrast, #555);
 }
-.view-title[data-v-f6ef8f98] {\r
+.view-title[data-v-392f462d] {\r
   color: var(--color-text-light, #888);
 }
-.view-controls[data-v-f6ef8f98] {\r
+.view-controls[data-v-392f462d] {\r
   display: flex;\r
   gap: 12px;\r
   align-items: center;
 }
-.btn-group[data-v-f6ef8f98] {\r
+.btn-group[data-v-392f462d] {\r
   display: flex;\r
   background: var(--color-background-dark, #eee);\r
   border-radius: var(--border-radius, 4px);\r
   padding: 2px;
 }
-.btn-group button[data-v-f6ef8f98] {\r
+.btn-group button[data-v-392f462d] {\r
   border: none;\r
   background: none;\r
   padding: 4px 12px;\r
@@ -337,34 +337,37 @@
   cursor: pointer;\r
   color: var(--color-text-light, #888);
 }
-.btn-group button.active[data-v-f6ef8f98] {\r
+.btn-group button.active[data-v-392f462d] {\r
   background: var(--color-main-background, #fff);\r
   box-shadow: 0 1px 2px rgba(0,0,0,0.1);\r
   color: var(--color-main-text, #222);
 }
-.icon-only[data-v-f6ef8f98] {\r
+.icon-only[data-v-392f462d] {\r
   width: 32px;\r
   height: 32px;\r
   display: flex;\r
   align-items: center;\r
   justify-content: center;\r
-  border: 1px solid var(--color-border, #eee);\r
-  background: var(--color-main-background, #fff);\r
+  border: 1px solid var(--color-border-dark, #dbdbdb);\r
+  background: var(--color-background-dark, #f5f5f5);\r
   border-radius: var(--border-radius, 4px);\r
   cursor: pointer;\r
-  color: var(--color-text-light, #888);
+  color: var(--color-text-maxcontrast, #444);
 }
-.icon-only.active[data-v-f6ef8f98] {\r
-  background: var(--color-primary-light, #e6f2ff);\r
+.icon-only.active[data-v-392f462d] {\r
+  background: var(--color-primary, #0082c9);\r
   border-color: var(--color-primary, #0082c9);\r
-  color: var(--color-primary, #0082c9);
+  color: var(--color-primary-text, #fff);
 }
-.header-right[data-v-f6ef8f98] {\r
+.icon-only[data-v-392f462d]:hover:not(.active) {\r
+    background-color: var(--color-background-hover, #efefef);
+}
+.header-right[data-v-392f462d] {\r
     display: flex;\r
     align-items: center;\r
     gap: 12px;
 }
-.menutoggle[data-v-f6ef8f98] {\r
+.menutoggle[data-v-392f462d] {\r
     width: 44px;\r
     height: 44px;\r
     display: flex;\r
@@ -373,19 +376,19 @@
     cursor: pointer;\r
     opacity: .7;
 }
-.menutoggle[data-v-f6ef8f98]:hover {\r
+.menutoggle[data-v-392f462d]:hover {\r
     opacity: 1;\r
     background-color: var(--color-background-hover);\r
     border-radius: 50%;
 }\r
 \r
 /* Ensure nextcloud icons have size if using bg image class */
-.icon-contacts[data-v-f6ef8f98], .icon-settings[data-v-f6ef8f98] {\r
+.icon-contacts[data-v-392f462d], .icon-settings[data-v-392f462d] {\r
     background-position: center;\r
     background-repeat: no-repeat;\r
     background-size: 24px;
 }
-.footer-bar[data-v-f6ef8f98] {\r
+.footer-bar[data-v-392f462d] {\r
   height: 40px;\r
   border-top: 1px solid var(--color-border, #eee);\r
   display: flex;\r
@@ -396,38 +399,38 @@
   background: var(--color-main-background, #fff);\r
   color: var(--color-text-light, #888);
 }
-.deck-settings[data-v-f6ef8f98] {\r
+.deck-settings[data-v-392f462d] {\r
   display: flex;\r
   align-items: center;\r
   gap: 6px;\r
   cursor: pointer;
 }
-.lists-legend[data-v-f6ef8f98] {\r
+.lists-legend[data-v-392f462d] {\r
   display: flex;\r
   gap: 16px;\r
   align-items: center;
 }
-.legend-item[data-v-f6ef8f98] {\r
+.legend-item[data-v-392f462d] {\r
   display: flex;\r
   align-items: center;\r
   gap: 6px;
 }
-.dot[data-v-f6ef8f98] {\r
+.dot[data-v-392f462d] {\r
   width: 10px;\r
   height: 10px;\r
   border-radius: 2px;
 }
-.dot.done[data-v-f6ef8f98] { background: var(--color-success, #16a085);
+.dot.done[data-v-392f462d] { background: var(--color-success, #16a085);
 }
-.dot.progress[data-v-f6ef8f98] { background: var(--color-primary, #0082c9);
+.dot.progress[data-v-392f462d] { background: var(--color-primary, #0082c9);
 }
-.dot.review[data-v-f6ef8f98] { background: var(--color-warning, #f1c40f);
+.dot.review[data-v-392f462d] { background: var(--color-warning, #f1c40f);
 }
-.dot.todo[data-v-f6ef8f98] { background: var(--color-text-maxcontrast, #555);
+.dot.todo[data-v-392f462d] { background: var(--color-text-maxcontrast, #555);
 }\r
 \r
 /* Modal and Dep Styles remain */
-.deps-list[data-v-f6ef8f98] {\r
+.deps-list[data-v-392f462d] {\r
   display: flex;\r
   flex-wrap: wrap;\r
   gap: 8px;\r
@@ -437,7 +440,7 @@
   border-radius: var(--border-radius, 4px);\r
   min-height: 40px;
 }
-.dep-chip[data-v-f6ef8f98] {\r
+.dep-chip[data-v-392f462d] {\r
   background: var(--color-background-dark, #eee);\r
   padding: 4px 8px;\r
   border-radius: 12px;\r
@@ -446,35 +449,35 @@
   align-items: center;\r
   gap: 6px;
 }
-.remove-dep[data-v-f6ef8f98] {\r
+.remove-dep[data-v-392f462d] {\r
   cursor: pointer;\r
   color: var(--color-text-maxcontrast, #555);\r
   font-weight: bold;
 }
-.remove-dep[data-v-f6ef8f98]:hover {\r
+.remove-dep[data-v-392f462d]:hover {\r
   color: var(--color-error, #d00);
 }
-.no-deps[data-v-f6ef8f98] {\r
+.no-deps[data-v-392f462d] {\r
   color: var(--color-text-light, #888);\r
   font-style: italic;\r
   font-size: 0.8rem;
 }
-.add-dep-row[data-v-f6ef8f98] {\r
+.add-dep-row[data-v-392f462d] {\r
   display: flex;\r
   gap: 8px;
 }
-.btn-add-dep[data-v-f6ef8f98] {\r
+.btn-add-dep[data-v-392f462d] {\r
   background: var(--color-background-dark, #eee);\r
   border: none;\r
   padding: 0 12px;\r
   border-radius: 4px;\r
   cursor: pointer;
 }
-.btn-add-dep[data-v-f6ef8f98]:disabled {\r
+.btn-add-dep[data-v-392f462d]:disabled {\r
   opacity: 0.5;\r
   cursor: not-allowed;
 }
-.modal-overlay[data-v-f6ef8f98] {\r
+.modal-overlay[data-v-392f462d] {\r
     position: fixed;\r
     top: 0;\r
     left: 0;\r
@@ -486,7 +489,7 @@
     justify-content: center;\r
     z-index: 1000;
 }
-.modal[data-v-f6ef8f98] {\r
+.modal[data-v-392f462d] {\r
     background: var(--color-main-background, #fff);\r
     border-radius: var(--border-radius-large, 8px);\r
     width: 400px;\r
@@ -494,36 +497,36 @@
     overflow: hidden;\r
     color: var(--color-main-text, #000);
 }
-.modal-header[data-v-f6ef8f98] {\r
+.modal-header[data-v-392f462d] {\r
     padding: 16px;\r
     border-bottom: 1px solid var(--color-border, #eee);\r
     display: flex;\r
     justify-content: space-between;\r
     align-items: center;
 }
-.modal-header h3[data-v-f6ef8f98] {\r
+.modal-header h3[data-v-392f462d] {\r
     margin: 0;\r
     font-size: 1.1rem;
 }
-.close-btn[data-v-f6ef8f98] {\r
+.close-btn[data-v-392f462d] {\r
     background: none;\r
     border: none;\r
     cursor: pointer;\r
     color: var(--color-text-maxcontrast, #555);
 }
-.modal-body[data-v-f6ef8f98] {\r
+.modal-body[data-v-392f462d] {\r
     padding: 16px;
 }
-.form-group[data-v-f6ef8f98] {\r
+.form-group[data-v-392f462d] {\r
     margin-bottom: 16px;
 }
-.form-group label[data-v-f6ef8f98] {\r
+.form-group label[data-v-392f462d] {\r
     display: block;\r
     font-size: 0.85rem;\r
     color: var(--color-text-maxcontrast, #555);\r
     margin-bottom: 6px;
 }
-.form-group input[data-v-f6ef8f98], .form-group select[data-v-f6ef8f98] {\r
+.form-group input[data-v-392f462d], .form-group select[data-v-392f462d] {\r
     width: 100%;\r
     padding: 8px;\r
     border: 1px solid var(--color-border, #ddd);\r
@@ -532,14 +535,14 @@
     background-color: var(--color-main-background, #fff);\r
     color: var(--color-main-text, #000);
 }
-.form-row[data-v-f6ef8f98] {\r
+.form-row[data-v-392f462d] {\r
     display: flex;\r
     gap: 16px;
 }
-.form-row .form-group[data-v-f6ef8f98] {\r
+.form-row .form-group[data-v-392f462d] {\r
     flex: 1;
 }
-.modal-footer[data-v-f6ef8f98] {\r
+.modal-footer[data-v-392f462d] {\r
     padding: 16px;\r
     background: var(--color-background-dark, #f9f9f9);\r
     display: flex;\r
@@ -547,7 +550,7 @@
     gap: 8px;\r
     border-top: 1px solid var(--color-border, #eee);
 }
-.btn-cancel[data-v-f6ef8f98] {\r
+.btn-cancel[data-v-392f462d] {\r
     padding: 8px 16px;\r
     border: 1px solid var(--color-border, #ddd);\r
     background: var(--color-main-background, #fff);\r
@@ -555,7 +558,7 @@
     cursor: pointer;\r
     color: var(--color-main-text, #000);
 }
-.btn-save[data-v-f6ef8f98] {\r
+.btn-save[data-v-392f462d] {\r
     padding: 8px 16px;\r
     border: none;\r
     background: var(--color-primary, #0082c9);\r
@@ -9713,7 +9716,7 @@ ${original}` : meta;
                 createVNode(unref(Settings), { size: "14" }),
                 _cache[17] || (_cache[17] = createTextVNode(" Deck Settings", -1))
               ]),
-              _cache[18] || (_cache[18] = createStaticVNode('<div class="lists-legend" data-v-f6ef8f98><span data-v-f6ef8f98>Lists: </span><span class="legend-item" data-v-f6ef8f98><span class="dot done" data-v-f6ef8f98></span> Done</span><span class="legend-item" data-v-f6ef8f98><span class="dot progress" data-v-f6ef8f98></span> In Progress</span><span class="legend-item" data-v-f6ef8f98><span class="dot review" data-v-f6ef8f98></span> Review</span><span class="legend-item" data-v-f6ef8f98><span class="dot todo" data-v-f6ef8f98></span> To Do</span></div>', 1))
+              _cache[18] || (_cache[18] = createStaticVNode('<div class="lists-legend" data-v-392f462d><span data-v-392f462d>Lists: </span><span class="legend-item" data-v-392f462d><span class="dot done" data-v-392f462d></span> Done</span><span class="legend-item" data-v-392f462d><span class="dot progress" data-v-392f462d></span> In Progress</span><span class="legend-item" data-v-392f462d><span class="dot review" data-v-392f462d></span> Review</span><span class="legend-item" data-v-392f462d><span class="dot todo" data-v-392f462d></span> To Do</span></div>', 1))
             ])
           ]),
           isModalOpen.value ? (openBlock(), createElementBlock("div", {
@@ -9850,7 +9853,7 @@ ${original}` : meta;
       };
     }
   };
-  const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-f6ef8f98"]]);
+  const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-392f462d"]]);
   const mountApp = () => {
     const el = document.getElementById("nxc-gantt-root");
     if (el) {
