@@ -446,11 +446,34 @@ defineExpose({
 
 .gantt-header {
   height: 60px;
+  display: flex;
+  flex-direction: column;
+}
+
+.month-row {
+    height: 30px;
+    display: flex;
+    border-bottom: 1px solid #eee;
+    background: #fcfcfc;
+}
+
+.month-cell {
+    display: flex;
+    align-items: center;
+    padding-left: 8px;
+    font-weight: bold;
+    color: #555;
+    font-size: 0.9rem;
+    border-right: 1px solid #eee;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    box-sizing: border-box;
 }
 
 .days-row {
   display: flex;
-  height: 100%;
+  height: 30px;
 }
 
 .day-cell {

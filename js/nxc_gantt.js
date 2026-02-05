@@ -8674,7 +8674,7 @@ const _sfc_main$1 = {
     };
   }
 };
-const GanttChart = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-ed5202e4"]]);
+const GanttChart = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-24267bd1"]]);
 const API_BASE = "/index.php/apps/deck/api/v1.0";
 const headers = {
   "OCS-APIRequest": "true",

@@ -68,26 +68,47 @@
     color: var(--color-text-light);
 }
 
-.gantt-container[data-v-ed5202e4] {
+.gantt-container[data-v-24267bd1] {
   display: flex;
   flex-direction: column;
   flex: 1;
   overflow: hidden;
   background-color: #f9f9f9;
 }
-.gantt-header-wrapper[data-v-ed5202e4] {
+.gantt-header-wrapper[data-v-24267bd1] {
   overflow: hidden; /* Sync with body scroll in real app */
   border-bottom: 1px solid #ddd;
   background: white;
 }
-.gantt-header[data-v-ed5202e4] {
+.gantt-header[data-v-24267bd1] {
   height: 60px;
-}
-.days-row[data-v-ed5202e4] {
   display: flex;
-  height: 100%;
+  flex-direction: column;
 }
-.day-cell[data-v-ed5202e4] {
+.month-row[data-v-24267bd1] {
+    height: 30px;
+    display: flex;
+    border-bottom: 1px solid #eee;
+    background: #fcfcfc;
+}
+.month-cell[data-v-24267bd1] {
+    display: flex;
+    align-items: center;
+    padding-left: 8px;
+    font-weight: bold;
+    color: #555;
+    font-size: 0.9rem;
+    border-right: 1px solid #eee;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    box-sizing: border-box;
+}
+.days-row[data-v-24267bd1] {
+  display: flex;
+  height: 30px;
+}
+.day-cell[data-v-24267bd1] {
   border-right: 1px solid #f0f0f0;
   display: flex;
   flex-direction: column;
@@ -96,21 +117,21 @@
   font-size: 0.8rem;
   color: #666;
 }
-.day-num[data-v-ed5202e4] {
+.day-num[data-v-24267bd1] {
   font-weight: bold;
   color: #333;
 }
-.gantt-body-scroll[data-v-ed5202e4] {
+.gantt-body-scroll[data-v-24267bd1] {
   flex: 1;
   overflow: auto;
   position: relative;
 }
-.gantt-body[data-v-ed5202e4] {
+.gantt-body[data-v-24267bd1] {
   position: relative;
   background-image: linear-gradient(to right, transparent 49px, #f0f0f0 50px);
   background-size: 50px 100%; /* Matches CELL_WIDTH */
 }
-.connections-layer[data-v-ed5202e4] {
+.connections-layer[data-v-24267bd1] {
   position: absolute;
   top: 0;
   left: 0;
@@ -119,13 +140,13 @@
   pointer-events: none;
   z-index: 10;
 }
-.task-row[data-v-ed5202e4] {
+.task-row[data-v-24267bd1] {
   position: absolute;
   left: 0;
   width: 100%;
   height: 50px; /* ROW_HEIGHT */
 }
-.task-bar[data-v-ed5202e4] {
+.task-bar[data-v-24267bd1] {
   position: absolute;
   height: 36px;
   top: 7px; /* (ROW_HEIGHT - 36) / 2 */
@@ -142,15 +163,15 @@
   z-index: 20;
   transition: transform 0.1s, box-shadow 0.1s;
 }
-.task-bar[data-v-ed5202e4]:active {
+.task-bar[data-v-24267bd1]:active {
   cursor: grabbing;
 }
-.task-bar[data-v-ed5202e4]:hover {
+.task-bar[data-v-24267bd1]:hover {
   transform: scaleY(1.05);
   box-shadow: 0 4px 8px rgba(0,0,0,0.15);
   z-index: 30;
 }
-.task-bar.is-dragging[data-v-ed5202e4] {
+.task-bar.is-dragging[data-v-24267bd1] {
   cursor: grabbing;
   z-index: 50;
   box-shadow: 0 8px 16px rgba(0,0,0,0.2);
@@ -158,7 +179,7 @@
 }
 
 /* Resize Handles */
-.resize-handle[data-v-ed5202e4] {
+.resize-handle[data-v-24267bd1] {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -168,24 +189,24 @@
   opacity: 0;
   transition: opacity 0.2s;
 }
-.resize-left[data-v-ed5202e4] {
+.resize-left[data-v-24267bd1] {
   left: 0;
   border-left: 3px solid rgba(255, 255, 255, 0.8);
 }
-.resize-right[data-v-ed5202e4] {
+.resize-right[data-v-24267bd1] {
   right: 0;
   border-right: 3px solid rgba(255, 255, 255, 0.8);
 }
-.task-bar:hover .resize-handle[data-v-ed5202e4] {
+.task-bar:hover .resize-handle[data-v-24267bd1] {
   opacity: 1;
 }
-.task-label[data-v-ed5202e4] {
+.task-label[data-v-24267bd1] {
   z-index: 2;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.progress-fill[data-v-ed5202e4] {
+.progress-fill[data-v-24267bd1] {
   position: absolute;
   left: 0;
   top: 0;
@@ -194,7 +215,7 @@
   border-radius: 6px 0 0 6px;
   z-index: 1;
 }
-.tooltip[data-v-ed5202e4] {
+.tooltip[data-v-24267bd1] {
   position: absolute;
   top: 100%; /* Below */
   left: 50%;
@@ -209,21 +230,21 @@
   margin-top: 8px;
   text-align: left;
 }
-.tooltip-header[data-v-ed5202e4] {
+.tooltip-header[data-v-24267bd1] {
   font-weight: bold;
   margin-bottom: 4px;
 }
-.tooltip-dates[data-v-ed5202e4] {
+.tooltip-dates[data-v-24267bd1] {
   font-size: 0.8rem;
   color: #666;
   margin-bottom: 8px;
 }
-.tooltip-status[data-v-ed5202e4] {
+.tooltip-status[data-v-24267bd1] {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
-.status-badge[data-v-ed5202e4] {
+.status-badge[data-v-24267bd1] {
   background: #eee;
   padding: 2px 8px;
   border-radius: 10px;
