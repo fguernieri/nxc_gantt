@@ -372,7 +372,7 @@ const jumpToToday = () => {
 </script>
 
 <template>
-  <NcContent app-name="nxc_gantt">
+  <NcContent app-name="nxc_gantt" app-version="0.1.0">
     
     <NcAppNavigation>
        <NcAppNavigationCaption name="FAVORITES" />
