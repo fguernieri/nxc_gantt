@@ -368,6 +368,9 @@ async function handleTaskDurationChanged(event) {
 <template>
   <div id="content" class="app-nxc_gantt">
     <div id="app-navigation">
+      <div class="app-navigation-caption">
+         <div class="app-navigation-caption__title">NXC Gantt</div>
+      </div>
       <Sidebar 
         :boards="boards" 
         :selectedId="selectedBoardId" 
@@ -392,6 +395,14 @@ async function handleTaskDurationChanged(event) {
              <button class="icon-only"><span class="circle-icon"></span></button>
              <button class="icon-only active"><Calendar size="16"/></button>
            </div>
+       <div class="header-right">
+           <div id="contactsmenu" class="icon-contacts menutoggle" tabindex="0" role="button" aria-haspopup="true" aria-controls="contactsmenu-menu" aria-expanded="false">
+                <span class="hidden-visually">Contacts</span>
+            </div>
+            <div id="settings" class="icon-settings menutoggle" tabindex="0" role="button" aria-haspopup="true" aria-controls="settings-menu" aria-expanded="false">
+                <span class="hidden-visually">Settings</span>
+            </div>
+       </div>
       </div>
 
       <GanttChart 
@@ -401,6 +412,7 @@ async function handleTaskDurationChanged(event) {
         @task-reordered="handleTaskReordered"
         @task-duration-changed="handleTaskDurationChanged"
       />
+
 
        <div class="footer-bar">
           <div class="deck-settings"><Settings size="14"/> Deck Settings</div>
@@ -491,7 +503,6 @@ async function handleTaskDurationChanged(event) {
 <style scoped>
 /* Standard Nextcloud Content Layout */
 #content {
-    /* Nextcloud handles the main container */
     height: 100vh;
     display: flex;
     background-color: var(--color-main-background, #fff);
@@ -499,11 +510,25 @@ async function handleTaskDurationChanged(event) {
 }
 
 #app-navigation {
-    width: 300px; /* Standard Width */
+    width: 300px;
     height: 100%;
     overflow-y: auto;
-    background-color: var(--color-main-background, #fff);
+    background-color: #eff6fc; /* Light Blue Sidebar */
     border-right: 1px solid var(--color-border, #eee);
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.app-navigation-caption {
+    background-color: var(--color-primary, #0082c9);
+    color: var(--color-primary-text, #fff);
+    font-weight: bold;
+    padding: 12px 16px;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    min-height: 50px;
     flex-shrink: 0;
 }
 
@@ -602,6 +627,36 @@ async function handleTaskDurationChanged(event) {
   background: var(--color-primary-light, #e6f2ff);
   border-color: var(--color-primary, #0082c9);
   color: var(--color-primary, #0082c9);
+}
+
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.menutoggle {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: .7;
+}
+
+.menutoggle:hover {
+    opacity: 1;
+    background-color: var(--color-background-hover);
+    border-radius: 50%;
+}
+
+/* Ensure nextcloud icons have size if using bg image class */
+.icon-contacts, .icon-settings {
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 24px;
 }
 
 

@@ -8947,6 +8947,9 @@ ${original}` : meta;
     return (_ctx, _cache) => {
       return openBlock(), createElementBlock("div", _hoisted_1, [
         createBaseVNode("div", _hoisted_2, [
+          _cache[9] || (_cache[9] = createBaseVNode("div", { class: "app-navigation-caption" }, [
+            createBaseVNode("div", { class: "app-navigation-caption__title" }, "NXC Gantt")
+          ], -1)),
           createVNode(Sidebar, {
             boards: boards.value,
             selectedId: selectedBoardId.value,
@@ -8957,22 +8960,46 @@ ${original}` : meta;
           createBaseVNode("div", _hoisted_4, [
             createBaseVNode("div", _hoisted_5, [
               createBaseVNode("span", _hoisted_6, toDisplayString(selectedBoardName.value), 1),
-              _cache[9] || (_cache[9] = createBaseVNode("span", { class: "sep" }, "›", -1)),
-              _cache[10] || (_cache[10] = createBaseVNode("span", { class: "view-title" }, "Gantt Timeline", -1))
+              _cache[10] || (_cache[10] = createBaseVNode("span", { class: "sep" }, "›", -1)),
+              _cache[11] || (_cache[11] = createBaseVNode("span", { class: "view-title" }, "Gantt Timeline", -1))
             ]),
             createBaseVNode("div", _hoisted_7, [
-              _cache[11] || (_cache[11] = createBaseVNode("div", { class: "btn-group" }, [
+              _cache[12] || (_cache[12] = createBaseVNode("div", { class: "btn-group" }, [
                 createBaseVNode("button", { class: "active" }, "Day"),
                 createBaseVNode("button", null, "Week"),
                 createBaseVNode("button", null, "Month")
               ], -1)),
-              _cache[12] || (_cache[12] = createBaseVNode("button", { class: "icon-only" }, [
+              _cache[13] || (_cache[13] = createBaseVNode("button", { class: "icon-only" }, [
                 createBaseVNode("span", { class: "circle-icon" })
               ], -1)),
               createBaseVNode("button", _hoisted_8, [
                 createVNode(unref(Calendar), { size: "16" })
               ])
-            ])
+            ]),
+            _cache[14] || (_cache[14] = createBaseVNode("div", { class: "header-right" }, [
+              createBaseVNode("div", {
+                id: "contactsmenu",
+                class: "icon-contacts menutoggle",
+                tabindex: "0",
+                role: "button",
+                "aria-haspopup": "true",
+                "aria-controls": "contactsmenu-menu",
+                "aria-expanded": "false"
+              }, [
+                createBaseVNode("span", { class: "hidden-visually" }, "Contacts")
+              ]),
+              createBaseVNode("div", {
+                id: "settings",
+                class: "icon-settings menutoggle",
+                tabindex: "0",
+                role: "button",
+                "aria-haspopup": "true",
+                "aria-controls": "settings-menu",
+                "aria-expanded": "false"
+              }, [
+                createBaseVNode("span", { class: "hidden-visually" }, "Settings")
+              ])
+            ], -1))
           ]),
           createVNode(GanttChart, {
             tasks: tasks.value,
@@ -8984,9 +9011,9 @@ ${original}` : meta;
           createBaseVNode("div", _hoisted_9, [
             createBaseVNode("div", _hoisted_10, [
               createVNode(unref(Settings), { size: "14" }),
-              _cache[13] || (_cache[13] = createTextVNode(" Deck Settings", -1))
+              _cache[15] || (_cache[15] = createTextVNode(" Deck Settings", -1))
             ]),
-            _cache[14] || (_cache[14] = createStaticVNode('<div class="lists-legend" data-v-e1c71146><span data-v-e1c71146>Lists: </span><span class="legend-item" data-v-e1c71146><span class="dot done" data-v-e1c71146></span> Done</span><span class="legend-item" data-v-e1c71146><span class="dot progress" data-v-e1c71146></span> In Progress</span><span class="legend-item" data-v-e1c71146><span class="dot review" data-v-e1c71146></span> Review</span><span class="legend-item" data-v-e1c71146><span class="dot todo" data-v-e1c71146></span> To Do</span></div>', 1))
+            _cache[16] || (_cache[16] = createStaticVNode('<div class="lists-legend" data-v-fad22b06><span data-v-fad22b06>Lists: </span><span class="legend-item" data-v-fad22b06><span class="dot done" data-v-fad22b06></span> Done</span><span class="legend-item" data-v-fad22b06><span class="dot progress" data-v-fad22b06></span> In Progress</span><span class="legend-item" data-v-fad22b06><span class="dot review" data-v-fad22b06></span> Review</span><span class="legend-item" data-v-fad22b06><span class="dot todo" data-v-fad22b06></span> To Do</span></div>', 1))
           ])
         ]),
         isModalOpen.value ? (openBlock(), createElementBlock("div", {
@@ -8996,7 +9023,7 @@ ${original}` : meta;
         }, [
           createBaseVNode("div", _hoisted_11, [
             createBaseVNode("div", _hoisted_12, [
-              _cache[15] || (_cache[15] = createBaseVNode("h3", null, "Edit Task", -1)),
+              _cache[17] || (_cache[17] = createBaseVNode("h3", null, "Edit Task", -1)),
               createBaseVNode("button", {
                 class: "close-btn",
                 onClick: _cache[0] || (_cache[0] = ($event) => isModalOpen.value = false)
@@ -9006,7 +9033,7 @@ ${original}` : meta;
             ]),
             createBaseVNode("div", _hoisted_13, [
               createBaseVNode("div", _hoisted_14, [
-                _cache[16] || (_cache[16] = createBaseVNode("label", null, "Task Name", -1)),
+                _cache[18] || (_cache[18] = createBaseVNode("label", null, "Task Name", -1)),
                 withDirectives(createBaseVNode("input", {
                   "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => editingTask.value.name = $event),
                   type: "text"
@@ -9016,7 +9043,7 @@ ${original}` : meta;
               ]),
               createBaseVNode("div", _hoisted_15, [
                 createBaseVNode("div", _hoisted_16, [
-                  _cache[17] || (_cache[17] = createBaseVNode("label", null, "Start Date", -1)),
+                  _cache[19] || (_cache[19] = createBaseVNode("label", null, "Start Date", -1)),
                   withDirectives(createBaseVNode("input", {
                     "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => editingTask.value.start = $event),
                     type: "datetime-local"
@@ -9025,7 +9052,7 @@ ${original}` : meta;
                   ])
                 ]),
                 createBaseVNode("div", _hoisted_17, [
-                  _cache[18] || (_cache[18] = createBaseVNode("label", null, "End Date", -1)),
+                  _cache[20] || (_cache[20] = createBaseVNode("label", null, "End Date", -1)),
                   withDirectives(createBaseVNode("input", {
                     "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => editingTask.value.end = $event),
                     type: "datetime-local"
@@ -9036,10 +9063,10 @@ ${original}` : meta;
               ]),
               createBaseVNode("div", _hoisted_18, [
                 createBaseVNode("div", _hoisted_19, [
-                  _cache[20] || (_cache[20] = createBaseVNode("label", null, "Status", -1)),
+                  _cache[22] || (_cache[22] = createBaseVNode("label", null, "Status", -1)),
                   withDirectives(createBaseVNode("select", {
                     "onUpdate:modelValue": _cache[4] || (_cache[4] = ($event) => editingTask.value.status = $event)
-                  }, [..._cache[19] || (_cache[19] = [
+                  }, [..._cache[21] || (_cache[21] = [
                     createBaseVNode("option", { value: "To Do" }, "To Do", -1),
                     createBaseVNode("option", { value: "In Progress" }, "In Progress", -1),
                     createBaseVNode("option", { value: "Review" }, "Review", -1),
@@ -9049,7 +9076,7 @@ ${original}` : meta;
                   ])
                 ]),
                 createBaseVNode("div", _hoisted_20, [
-                  _cache[21] || (_cache[21] = createBaseVNode("label", null, "Progress (%)", -1)),
+                  _cache[23] || (_cache[23] = createBaseVNode("label", null, "Progress (%)", -1)),
                   withDirectives(createBaseVNode("input", {
                     "onUpdate:modelValue": _cache[5] || (_cache[5] = ($event) => editingTask.value.progress = $event),
                     type: "number",
@@ -9066,7 +9093,7 @@ ${original}` : meta;
                 ])
               ]),
               createBaseVNode("div", _hoisted_21, [
-                _cache[23] || (_cache[23] = createBaseVNode("label", null, "Predecessors (Dependencies)", -1)),
+                _cache[25] || (_cache[25] = createBaseVNode("label", null, "Predecessors (Dependencies)", -1)),
                 createBaseVNode("div", _hoisted_22, [
                   (openBlock(true), createElementBlock(Fragment, null, renderList(editingTask.value.dependencies, (depId) => {
                     return openBlock(), createElementBlock("div", {
@@ -9086,7 +9113,7 @@ ${original}` : meta;
                   withDirectives(createBaseVNode("select", {
                     "onUpdate:modelValue": _cache[6] || (_cache[6] = ($event) => selectedDepToAdd.value = $event)
                   }, [
-                    _cache[22] || (_cache[22] = createBaseVNode("option", {
+                    _cache[24] || (_cache[24] = createBaseVNode("option", {
                       value: "",
                       disabled: ""
                     }, "Select task...", -1)),
@@ -9123,7 +9150,7 @@ ${original}` : meta;
     };
   }
 };
-const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-e1c71146"]]);
+const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-fad22b06"]]);
 const mountApp = () => {
   const el = document.getElementById("nxc-gantt-root");
   if (el) {
