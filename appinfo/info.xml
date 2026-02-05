@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<info>
+	<id>nxc_gantt</id>
+	<name>Deck Gantt</name>
+	<summary>Gantt chart visualization for Nextcloud Deck</summary>
+	<description>Adds a Gantt chart view to Nextcloud Deck boards, supporting predecessors and dependencies.</description>
+	<version>0.1.0</version>
+	<licence>agpl</licence>
+	<author>Antigravity</author>
+	<namespace>NxcGantt</namespace>
+	<category>organization</category>
+	<bugs>https://github.com/example/nxc_gantt/issues</bugs>
+	<dependencies>
+		<nextcloud min-version="27" max-version="30"/>
+		<owncloud min-version="10" max-version="10"/>
+	</dependencies>
+    <navigation>
+        <name>Deck Gantt</name>
+        <route>nxc_gantt.page.index</route>
+        <icon>icon-gandtt</icon>
+    </navigation>
+</info>
