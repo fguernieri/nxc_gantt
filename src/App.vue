@@ -258,6 +258,71 @@ const saveTask = async () => {
         // Keep modal open on error
     }
 }
+
+// Handle task dates changed (horizontal drag)
+async function handleTaskDatesChanged(event) {
+    const task = tasks.value.find(t => t.id === event.taskId)
+    if (!task) return
+    
+    // Update local state
+    task.start = event.start
+    task.end = event.end
+    
+    // Save to API
+    try {
+        const updates = {
+            title: task.name,
+            type: task._deckMeta.type,
+            owner: task._deckMeta.owner,
+            duedate: event.end,
+            description: buildDescription(task)
+        }
+        
+        await updateCard(task._deckMeta.boardId, task._deckMeta.stackId, task.id, updates)
+    } catch (err) {
+        console.error('Failed to update task dates:', err)
+        // Optionally revert the change
+    }
+}
+
+// Handle task reordered (vertical drag)
+function handleTaskReordered(event) {
+    const { taskId, oldIndex, newIndex } = event
+    
+    // Reorder tasks array
+    const taskToMove = tasks.value[oldIndex]
+    tasks.value.splice(oldIndex, 1)
+    tasks.value.splice(newIndex, 0, taskToMove)
+    
+    // Note: We don't save order to Deck API as cards don't have explicit order field
+    // The order is only visual within the Gantt view
+}
+
+// Handle task duration changed (resize)
+async function handleTaskDurationChanged(event) {
+    const task = tasks.value.find(t => t.id === event.taskId)
+    if (!task) return
+    
+    // Update local state
+    if (event.start) task.start = event.start
+    if (event.end) task.end = event.end
+    
+    // Save to API
+    try {
+        const updates = {
+            title: task.name,
+            type: task._deckMeta.type,
+            owner: task._deckMeta.owner,
+            duedate: event.end || task.end,
+            description: buildDescription(task)
+        }
+        
+        await updateCard(task._deckMeta.boardId, task._deckMeta.stackId, task.id, updates)
+    } catch (err) {
+        console.error('Failed to update task duration:', err)
+        // Optionally revert the change
+    }
+}
 </script>
 
 <template>
@@ -307,7 +372,13 @@ const saveTask = async () => {
            </div>
         </div>
 
-        <GanttChart :tasks="tasks" @task-clicked="openTaskModal" />
+        <GanttChart 
+          :tasks="tasks" 
+          @task-clicked="openTaskModal"
+          @task-dates-changed="handleTaskDatesChanged"
+          @task-reordered="handleTaskReordered"
+          @task-duration-changed="handleTaskDurationChanged"
+        />
       </main>
     </div>
     

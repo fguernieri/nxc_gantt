@@ -9818,15 +9818,17 @@ const _hoisted_7$1 = { class: "connections-layer" };
 const _hoisted_8$1 = ["d"];
 const _hoisted_9$1 = ["onMouseenter", "onMousedown"];
 const _hoisted_10$1 = { class: "task-label" };
-const _hoisted_11$1 = {
+const _hoisted_11$1 = ["onMousedown"];
+const _hoisted_12$1 = ["onMousedown"];
+const _hoisted_13$1 = {
   key: 0,
   class: "tooltip"
 };
-const _hoisted_12$1 = { class: "tooltip-header" };
-const _hoisted_13$1 = { class: "tooltip-dates" };
-const _hoisted_14$1 = { class: "tooltip-status" };
-const _hoisted_15$1 = { class: "status-badge" };
-const _hoisted_16$1 = { class: "progress-text" };
+const _hoisted_14$1 = { class: "tooltip-header" };
+const _hoisted_15$1 = { class: "tooltip-dates" };
+const _hoisted_16$1 = { class: "tooltip-status" };
+const _hoisted_17$1 = { class: "status-badge" };
+const _hoisted_18$1 = { class: "progress-text" };
 const CELL_WIDTH = 50;
 const ROW_HEIGHT = 50;
 const _sfc_main$1 = {
@@ -9837,7 +9839,7 @@ const _sfc_main$1 = {
       default: () => []
     }
   },
-  emits: ["task-updated"],
+  emits: ["task-updated", "task-dates-changed", "task-reordered", "task-duration-changed", "task-clicked"],
   setup(__props, { emit: __emit }) {
     const props = __props;
     function darkenColor(hex, percent) {
@@ -9911,57 +9913,123 @@ const _sfc_main$1 = {
     };
     const emit2 = __emit;
     const isDragging = /* @__PURE__ */ ref(false);
+    const isResizing = /* @__PURE__ */ ref(false);
     const dragState = /* @__PURE__ */ ref({
+      mode: null,
+      // 'move' or 'resize'
+      edge: null,
+      // 'left' or 'right' for resize
       taskId: null,
       startX: 0,
+      startY: 0,
       initialStart: null,
       initialEnd: null,
+      initialIndex: 0,
       hasMoved: false
     });
     const startDrag = (event, task) => {
       if (event.button !== 0) return;
       event.preventDefault();
+      const taskIndex = props.tasks.findIndex((t) => t.id === task.id);
       isDragging.value = true;
       dragState.value = {
+        mode: "move",
+        edge: null,
         taskId: task.id,
         startX: event.clientX,
+        startY: event.clientY,
         initialStart: new Date(task.start),
         initialEnd: new Date(task.end),
+        initialIndex: taskIndex,
+        hasMoved: false
+      };
+      document.addEventListener("mousemove", onDrag);
+      document.addEventListener("mouseup", stopDrag);
+    };
+    const startResize = (event, task, edge) => {
+      if (event.button !== 0) return;
+      event.preventDefault();
+      event.stopPropagation();
+      isResizing.value = true;
+      dragState.value = {
+        mode: "resize",
+        edge,
+        taskId: task.id,
+        startX: event.clientX,
+        startY: event.clientY,
+        initialStart: new Date(task.start),
+        initialEnd: new Date(task.end),
+        initialIndex: 0,
         hasMoved: false
       };
       document.addEventListener("mousemove", onDrag);
       document.addEventListener("mouseup", stopDrag);
     };
     const onDrag = (event) => {
-      if (!isDragging.value) return;
+      if (!isDragging.value && !isResizing.value) return;
       const dx = event.clientX - dragState.value.startX;
-      const daysMoved = Math.round(dx / CELL_WIDTH);
-      if (Math.abs(dx) > 5) {
+      const dy = event.clientY - dragState.value.startY;
+      if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
         dragState.value.hasMoved = true;
       }
-      if (dragState.value.hasMoved && daysMoved !== 0) {
-        const task = props.tasks.find((t) => t.id === dragState.value.taskId);
-        if (task) {
+      if (!dragState.value.hasMoved) return;
+      const task = props.tasks.find((t) => t.id === dragState.value.taskId);
+      if (!task) return;
+      if (dragState.value.mode === "move") {
+        const daysMoved = Math.round(dx / CELL_WIDTH);
+        if (daysMoved !== 0) {
           const newStart = addDays(dragState.value.initialStart, daysMoved);
           const newEnd = addDays(dragState.value.initialEnd, daysMoved);
-          task.start = format(newStart, "yyyy-MM-dd");
-          task.end = format(newEnd, "yyyy-MM-dd");
+          emit2("task-dates-changed", {
+            taskId: task.id,
+            start: format(newStart, "yyyy-MM-dd"),
+            end: format(newEnd, "yyyy-MM-dd")
+          });
+        }
+        const rowsMoved = Math.round(dy / ROW_HEIGHT);
+        if (rowsMoved !== 0) {
+          const newIndex = Math.max(0, Math.min(props.tasks.length - 1, dragState.value.initialIndex + rowsMoved));
+          if (newIndex !== dragState.value.initialIndex) {
+            emit2("task-reordered", {
+              taskId: task.id,
+              oldIndex: dragState.value.initialIndex,
+              newIndex
+            });
+          }
+        }
+      } else if (dragState.value.mode === "resize") {
+        const daysDelta = Math.round(dx / CELL_WIDTH);
+        if (dragState.value.edge === "left") {
+          const newStart = addDays(dragState.value.initialStart, daysDelta);
+          if (newStart < dragState.value.initialEnd) {
+            emit2("task-duration-changed", {
+              taskId: task.id,
+              start: format(newStart, "yyyy-MM-dd"),
+              end: task.end
+            });
+          }
+        } else if (dragState.value.edge === "right") {
+          const newEnd = addDays(dragState.value.initialEnd, daysDelta);
+          if (newEnd > dragState.value.initialStart) {
+            emit2("task-duration-changed", {
+              taskId: task.id,
+              start: task.start,
+              end: format(newEnd, "yyyy-MM-dd")
+            });
+          }
         }
       }
     };
     const stopDrag = () => {
-      if (isDragging.value) {
+      if (isDragging.value || isResizing.value) {
         const task = props.tasks.find((t) => t.id === dragState.value.taskId);
-        if (task) {
-          if (dragState.value.hasMoved) {
-            emit2("task-updated", task);
-          } else {
-            emit2("task-clicked", task);
-          }
+        if (task && !dragState.value.hasMoved) {
+          emit2("task-clicked", task);
         }
       }
       isDragging.value = false;
-      dragState.value = { taskId: null, startX: 0, initialStart: null, initialEnd: null, hasMoved: false };
+      isResizing.value = false;
+      dragState.value = { mode: null, edge: null, taskId: null, startX: 0, startY: 0, initialStart: null, initialEnd: null, initialIndex: 0, hasMoved: false };
       document.removeEventListener("mousemove", onDrag);
       document.removeEventListener("mouseup", stopDrag);
     };
@@ -10051,12 +10119,22 @@ const _sfc_main$1 = {
                     })
                   }, null, 4),
                   createBaseVNode("span", _hoisted_10$1, toDisplayString(task.name), 1),
-                  hoveredTask.value && hoveredTask.value.id === task.id ? (openBlock(), createElementBlock("div", _hoisted_11$1, [
-                    createBaseVNode("div", _hoisted_12$1, toDisplayString(task.name), 1),
-                    createBaseVNode("div", _hoisted_13$1, toDisplayString(unref(format)(new Date(task.start), "yyyy-MM-dd")) + " - " + toDisplayString(unref(format)(new Date(task.end), "yyyy-MM-dd")), 1),
-                    createBaseVNode("div", _hoisted_14$1, [
-                      createBaseVNode("span", _hoisted_15$1, toDisplayString(task.status || "In Progress"), 1),
-                      createBaseVNode("span", _hoisted_16$1, toDisplayString(task.progress) + "%", 1)
+                  createBaseVNode("div", {
+                    class: "resize-handle resize-left",
+                    onMousedown: ($event) => startResize($event, task, "left"),
+                    title: "Resize start date"
+                  }, null, 40, _hoisted_11$1),
+                  createBaseVNode("div", {
+                    class: "resize-handle resize-right",
+                    onMousedown: ($event) => startResize($event, task, "right"),
+                    title: "Resize end date"
+                  }, null, 40, _hoisted_12$1),
+                  hoveredTask.value && hoveredTask.value.id === task.id ? (openBlock(), createElementBlock("div", _hoisted_13$1, [
+                    createBaseVNode("div", _hoisted_14$1, toDisplayString(task.name), 1),
+                    createBaseVNode("div", _hoisted_15$1, toDisplayString(unref(format)(new Date(task.start), "yyyy-MM-dd")) + " - " + toDisplayString(unref(format)(new Date(task.end), "yyyy-MM-dd")), 1),
+                    createBaseVNode("div", _hoisted_16$1, [
+                      createBaseVNode("span", _hoisted_17$1, toDisplayString(task.status || "In Progress"), 1),
+                      createBaseVNode("span", _hoisted_18$1, toDisplayString(task.progress) + "%", 1)
                     ])
                   ])) : createCommentVNode("", true)
                 ], 46, _hoisted_9$1)
@@ -10068,7 +10146,7 @@ const _sfc_main$1 = {
     };
   }
 };
-const GanttChart = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-5a983b97"]]);
+const GanttChart = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-2607b9f7"]]);
 const API_BASE = "/index.php/apps/deck/api/v1.0";
 const headers = {
   "OCS-APIRequest": "true",
@@ -10341,10 +10419,52 @@ ${original}` : meta;
         alert("Failed to save changes: " + err.message);
       }
     };
+    async function handleTaskDatesChanged(event) {
+      const task = tasks.value.find((t) => t.id === event.taskId);
+      if (!task) return;
+      task.start = event.start;
+      task.end = event.end;
+      try {
+        const updates = {
+          title: task.name,
+          type: task._deckMeta.type,
+          owner: task._deckMeta.owner,
+          duedate: event.end,
+          description: buildDescription(task)
+        };
+        await updateCard(task._deckMeta.boardId, task._deckMeta.stackId, task.id, updates);
+      } catch (err) {
+        console.error("Failed to update task dates:", err);
+      }
+    }
+    function handleTaskReordered(event) {
+      const { taskId, oldIndex, newIndex } = event;
+      const taskToMove = tasks.value[oldIndex];
+      tasks.value.splice(oldIndex, 1);
+      tasks.value.splice(newIndex, 0, taskToMove);
+    }
+    async function handleTaskDurationChanged(event) {
+      const task = tasks.value.find((t) => t.id === event.taskId);
+      if (!task) return;
+      if (event.start) task.start = event.start;
+      if (event.end) task.end = event.end;
+      try {
+        const updates = {
+          title: task.name,
+          type: task._deckMeta.type,
+          owner: task._deckMeta.owner,
+          duedate: event.end || task.end,
+          description: buildDescription(task)
+        };
+        await updateCard(task._deckMeta.boardId, task._deckMeta.stackId, task.id, updates);
+      } catch (err) {
+        console.error("Failed to update task duration:", err);
+      }
+    }
     return (_ctx, _cache) => {
       return openBlock(), createElementBlock("div", _hoisted_1, [
         createBaseVNode("header", _hoisted_2, [
-          _cache[10] || (_cache[10] = createStaticVNode('<div class="logo-area" data-v-debac7b1><div class="deck-icon" data-v-debac7b1><svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" data-v-debac7b1><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" data-v-debac7b1></path><line x1="12" y1="4" x2="12" y2="20" data-v-debac7b1></line></svg></div><span class="app-name" data-v-debac7b1>Deck</span><span class="nav-item" data-v-debac7b1>Projects <span class="chevron" data-v-debac7b1>▼</span></span></div>', 1)),
+          _cache[10] || (_cache[10] = createStaticVNode('<div class="logo-area" data-v-da05d051><div class="deck-icon" data-v-da05d051><svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" data-v-da05d051><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" data-v-da05d051></path><line x1="12" y1="4" x2="12" y2="20" data-v-da05d051></line></svg></div><span class="app-name" data-v-da05d051>Deck</span><span class="nav-item" data-v-da05d051>Projects <span class="chevron" data-v-da05d051>▼</span></span></div>', 1)),
           createBaseVNode("div", _hoisted_3, [
             createBaseVNode("div", _hoisted_4, [
               createVNode(unref(Search), { size: "16" }),
@@ -10392,7 +10512,10 @@ ${original}` : meta;
             ]),
             createVNode(GanttChart, {
               tasks: tasks.value,
-              onTaskClicked: openTaskModal
+              onTaskClicked: openTaskModal,
+              onTaskDatesChanged: handleTaskDatesChanged,
+              onTaskReordered: handleTaskReordered,
+              onTaskDurationChanged: handleTaskDurationChanged
             }, null, 8, ["tasks"])
           ])
         ]),
@@ -10401,7 +10524,7 @@ ${original}` : meta;
             createVNode(unref(Settings), { size: "14" }),
             _cache[15] || (_cache[15] = createTextVNode(" Deck Settings", -1))
           ]),
-          _cache[16] || (_cache[16] = createStaticVNode('<div class="lists-legend" data-v-debac7b1><span data-v-debac7b1>Lists: </span><span class="legend-item" data-v-debac7b1><span class="dot done" data-v-debac7b1></span> Done</span><span class="legend-item" data-v-debac7b1><span class="dot progress" data-v-debac7b1></span> In Progress</span><span class="legend-item" data-v-debac7b1><span class="dot review" data-v-debac7b1></span> Review</span><span class="legend-item" data-v-debac7b1><span class="dot todo" data-v-debac7b1></span> To Do</span></div>', 1))
+          _cache[16] || (_cache[16] = createStaticVNode('<div class="lists-legend" data-v-da05d051><span data-v-da05d051>Lists: </span><span class="legend-item" data-v-da05d051><span class="dot done" data-v-da05d051></span> Done</span><span class="legend-item" data-v-da05d051><span class="dot progress" data-v-da05d051></span> In Progress</span><span class="legend-item" data-v-da05d051><span class="dot review" data-v-da05d051></span> Review</span><span class="legend-item" data-v-da05d051><span class="dot todo" data-v-da05d051></span> To Do</span></div>', 1))
         ]),
         isModalOpen.value ? (openBlock(), createElementBlock("div", {
           key: 0,
@@ -10537,7 +10660,7 @@ ${original}` : meta;
     };
   }
 };
-const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-debac7b1"]]);
+const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-da05d051"]]);
 const mountApp = () => {
   const el = document.getElementById("nxc-gantt-root");
   if (el) {

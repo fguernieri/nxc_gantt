@@ -106,27 +106,40 @@ const getRowY = (taskId) => {
   return index * ROW_HEIGHT
 }
 
-const emit = defineEmits(['task-updated'])
+const emit = defineEmits(['task-updated', 'task-dates-changed', 'task-reordered', 'task-duration-changed', 'task-clicked'])
 
-// Dragging Logic
+
+// Enhanced Dragging & Resizing Logic
 const isDragging = ref(false)
+const isResizing = ref(false)
 const dragState = ref({
+  mode: null, // 'move' or 'resize'
+  edge: null, // 'left' or 'right' for resize
   taskId: null,
   startX: 0,
+  startY: 0,
   initialStart: null,
   initialEnd: null,
+  initialIndex: 0,
   hasMoved: false
 })
 
 const startDrag = (event, task) => {
   if (event.button !== 0) return // Left click only
   event.preventDefault() // prevent text selection
+  
+  const taskIndex = props.tasks.findIndex(t => t.id === task.id)
+  
   isDragging.value = true
   dragState.value = {
+    mode: 'move',
+    edge: null,
     taskId: task.id,
     startX: event.clientX,
+    startY: event.clientY,
     initialStart: new Date(task.start),
     initialEnd: new Date(task.end),
+    initialIndex: taskIndex,
     hasMoved: false
   }
   
@@ -135,42 +148,109 @@ const startDrag = (event, task) => {
   document.addEventListener('mouseup', stopDrag)
 }
 
+const startResize = (event, task, edge) => {
+  if (event.button !== 0) return
+  event.preventDefault()
+  event.stopPropagation() // Don't trigger drag
+  
+  isResizing.value = true
+  dragState.value = {
+    mode: 'resize',
+    edge: edge,
+    taskId: task.id,
+    startX: event.clientX,
+    startY: event.clientY,
+    initialStart: new Date(task.start),
+    initialEnd: new Date(task.end),
+    initialIndex: 0,
+    hasMoved: false
+  }
+  
+  document.addEventListener('mousemove', onDrag)
+  document.addEventListener('mouseup', stopDrag)
+}
+
 const onDrag = (event) => {
-  if (!isDragging.value) return
+  if (!isDragging.value && !isResizing.value) return
   
   const dx = event.clientX - dragState.value.startX
-  const daysMoved = Math.round(dx / CELL_WIDTH)
+  const dy = event.clientY - dragState.value.startY
   
-  if (Math.abs(dx) > 5) {
-      dragState.value.hasMoved = true
+  if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+    dragState.value.hasMoved = true
   }
-
-  if (dragState.value.hasMoved && daysMoved !== 0) {
-    const task = props.tasks.find(t => t.id === dragState.value.taskId)
-    if (task) {
+  
+  if (!dragState.value.hasMoved) return
+  
+  const task = props.tasks.find(t => t.id === dragState.value.taskId)
+  if (!task) return
+  
+  if (dragState.value.mode === 'move') {
+    // Horizontal: Update dates
+    const daysMoved = Math.round(dx / CELL_WIDTH)
+    if (daysMoved !== 0) {
       const newStart = addDays(dragState.value.initialStart, daysMoved)
       const newEnd = addDays(dragState.value.initialEnd, daysMoved)
       
-      task.start = format(newStart, 'yyyy-MM-dd')
-      task.end = format(newEnd, 'yyyy-MM-dd')
+      emit('task-dates-changed', {
+        taskId: task.id,
+        start: format(newStart, 'yyyy-MM-dd'),
+        end: format(newEnd, 'yyyy-MM-dd')
+      })
+    }
+    
+    // Vertical: Reorder tasks
+    const rowsMoved = Math.round(dy / ROW_HEIGHT)
+    if (rowsMoved !== 0) {
+      const newIndex = Math.max(0, Math.min(props.tasks.length - 1, dragState.value.initialIndex + rowsMoved))
+      if (newIndex !== dragState.value.initialIndex) {
+        emit('task-reordered', {
+          taskId: task.id,
+          oldIndex: dragState.value.initialIndex,
+          newIndex: newIndex
+        })
+      }
+    }
+  } else if (dragState.value.mode === 'resize') {
+    const daysDelta = Math.round(dx / CELL_WIDTH)
+    
+    if (dragState.value.edge === 'left') {
+      const newStart = addDays(dragState.value.initialStart, daysDelta)
+      // Don't allow start after end
+      if (newStart < dragState.value.initialEnd) {
+        emit('task-duration-changed', {
+          taskId: task.id,
+          start: format(newStart, 'yyyy-MM-dd'),
+          end: task.end
+        })
+      }
+    } else if (dragState.value.edge === 'right') {
+      const newEnd = addDays(dragState.value.initialEnd, daysDelta)
+      // Don't allow end before start
+      if (newEnd > dragState.value.initialStart) {
+        emit('task-duration-changed', {
+          taskId: task.id,
+          start: task.start,
+          end: format(newEnd, 'yyyy-MM-dd')
+        })
+      }
     }
   }
 }
 
 const stopDrag = () => {
-  if (isDragging.value) {
+  if (isDragging.value || isResizing.value) {
     const task = props.tasks.find(t => t.id === dragState.value.taskId)
     
-    if (task) {
-        if (dragState.value.hasMoved) {
-             emit('task-updated', task)
-        } else {
-             emit('task-clicked', task)
-        }
+    if (task && !dragState.value.hasMoved) {
+      // Click without drag - open modal
+      emit('task-clicked', task)
     }
   }
+  
   isDragging.value = false
-  dragState.value = { taskId: null, startX: 0, initialStart: null, initialEnd: null, hasMoved: false }
+  isResizing.value = false
+  dragState.value = { mode: null, edge: null, taskId: null, startX: 0, startY: 0, initialStart: null, initialEnd: null, initialIndex: 0, hasMoved: false }
   document.removeEventListener('mousemove', onDrag)
   document.removeEventListener('mouseup', stopDrag)
 }
@@ -251,6 +331,18 @@ const stopDrag = () => {
               background: darkenColor(task.color, 25)
             }"></div>
             <span class="task-label">{{ task.name }}</span>
+            
+            <!-- Resize Handles -->
+            <div 
+              class="resize-handle resize-left" 
+              @mousedown="startResize($event, task, 'left')"
+              title="Resize start date"
+            ></div>
+            <div 
+              class="resize-handle resize-right" 
+              @mousedown="startResize($event, task, 'right')"
+              title="Resize end date"
+            ></div>
             
             <!-- Tooltip -->
              <div v-if="hoveredTask && hoveredTask.id === task.id" class="tooltip">
@@ -370,6 +462,32 @@ const stopDrag = () => {
   z-index: 50;
   box-shadow: 0 8px 16px rgba(0,0,0,0.2);
   transition: none; /* remove transition during drag for responsiveness */
+}
+
+/* Resize Handles */
+.resize-handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 8px;
+  cursor: ew-resize;
+  z-index: 25;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.resize-left {
+  left: 0;
+  border-left: 3px solid rgba(255, 255, 255, 0.8);
+}
+
+.resize-right {
+  right: 0;
+  border-right: 3px solid rgba(255, 255, 255, 0.8);
+}
+
+.task-bar:hover .resize-handle {
+  opacity: 1;
 }
 
 .task-label {
