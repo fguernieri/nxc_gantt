@@ -6620,7 +6620,7 @@ const _sfc_main$2 = {
   }
 };
 const Sidebar = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-dddbfd75"]]);
-function toDate(argument) {
+function toDate$1(argument) {
   const argStr = Object.prototype.toString.call(argument);
   if (argument instanceof Date || typeof argument === "object" && argStr === "[object Date]") {
     return new argument.constructor(+argument);
@@ -6638,7 +6638,7 @@ function constructFrom(date, value) {
   }
 }
 function addDays(date, amount) {
-  const _date = toDate(date);
+  const _date = toDate$1(date);
   if (isNaN(amount)) return constructFrom(date, NaN);
   if (!amount) {
     return _date;
@@ -6648,15 +6648,17 @@ function addDays(date, amount) {
 }
 const millisecondsInWeek = 6048e5;
 const millisecondsInDay = 864e5;
+const millisecondsInMinute = 6e4;
+const millisecondsInHour = 36e5;
 let defaultOptions = {};
-function getDefaultOptions() {
+function getDefaultOptions$1() {
   return defaultOptions;
 }
 function startOfWeek(date, options) {
   var _a, _b, _c, _d;
-  const defaultOptions2 = getDefaultOptions();
+  const defaultOptions2 = getDefaultOptions$1();
   const weekStartsOn = (options == null ? void 0 : options.weekStartsOn) ?? ((_b = (_a = options == null ? void 0 : options.locale) == null ? void 0 : _a.options) == null ? void 0 : _b.weekStartsOn) ?? defaultOptions2.weekStartsOn ?? ((_d = (_c = defaultOptions2.locale) == null ? void 0 : _c.options) == null ? void 0 : _d.weekStartsOn) ?? 0;
-  const _date = toDate(date);
+  const _date = toDate$1(date);
   const day = _date.getDay();
   const diff = (day < weekStartsOn ? 7 : 0) + day - weekStartsOn;
   _date.setDate(_date.getDate() - diff);
@@ -6667,7 +6669,7 @@ function startOfISOWeek(date) {
   return startOfWeek(date, { weekStartsOn: 1 });
 }
 function getISOWeekYear(date) {
-  const _date = toDate(date);
+  const _date = toDate$1(date);
   const year = _date.getFullYear();
   const fourthOfJanuaryOfNextYear = constructFrom(date, 0);
   fourthOfJanuaryOfNextYear.setFullYear(year + 1, 0, 4);
@@ -6686,12 +6688,12 @@ function getISOWeekYear(date) {
   }
 }
 function startOfDay(date) {
-  const _date = toDate(date);
+  const _date = toDate$1(date);
   _date.setHours(0, 0, 0, 0);
   return _date;
 }
-function getTimezoneOffsetInMilliseconds(date) {
-  const _date = toDate(date);
+function getTimezoneOffsetInMilliseconds$1(date) {
+  const _date = toDate$1(date);
   const utcDate = new Date(
     Date.UTC(
       _date.getFullYear(),
@@ -6709,8 +6711,8 @@ function getTimezoneOffsetInMilliseconds(date) {
 function differenceInCalendarDays(dateLeft, dateRight) {
   const startOfDayLeft = startOfDay(dateLeft);
   const startOfDayRight = startOfDay(dateRight);
-  const timestampLeft = +startOfDayLeft - getTimezoneOffsetInMilliseconds(startOfDayLeft);
-  const timestampRight = +startOfDayRight - getTimezoneOffsetInMilliseconds(startOfDayRight);
+  const timestampLeft = +startOfDayLeft - getTimezoneOffsetInMilliseconds$1(startOfDayLeft);
+  const timestampRight = +startOfDayRight - getTimezoneOffsetInMilliseconds$1(startOfDayRight);
   return Math.round((timestampLeft - timestampRight) / millisecondsInDay);
 }
 function startOfISOWeekYear(date) {
@@ -6723,7 +6725,7 @@ function startOfISOWeekYear(date) {
 function max(dates) {
   let result;
   dates.forEach(function(dirtyDate) {
-    const currentDate = toDate(dirtyDate);
+    const currentDate = toDate$1(dirtyDate);
     if (result === void 0 || result < currentDate || isNaN(Number(currentDate))) {
       result = currentDate;
     }
@@ -6733,7 +6735,7 @@ function max(dates) {
 function min(dates) {
   let result;
   dates.forEach((dirtyDate) => {
-    const date = toDate(dirtyDate);
+    const date = toDate$1(dirtyDate);
     if (!result || result > date || isNaN(+date)) {
       result = date;
     }
@@ -6747,12 +6749,12 @@ function isValid(date) {
   if (!isDate(date) && typeof date !== "number") {
     return false;
   }
-  const _date = toDate(date);
+  const _date = toDate$1(date);
   return !isNaN(Number(_date));
 }
 function differenceInDays(dateLeft, dateRight) {
-  const _dateLeft = toDate(dateLeft);
-  const _dateRight = toDate(dateRight);
+  const _dateLeft = toDate$1(dateLeft);
+  const _dateRight = toDate$1(dateRight);
   const sign = compareLocalAsc(_dateLeft, _dateRight);
   const difference = Math.abs(differenceInCalendarDays(_dateLeft, _dateRight));
   _dateLeft.setDate(_dateLeft.getDate() - sign * difference);
@@ -6773,7 +6775,7 @@ function compareLocalAsc(dateLeft, dateRight) {
   }
 }
 function startOfYear(date) {
-  const cleanDate = toDate(date);
+  const cleanDate = toDate$1(date);
   const _date = constructFrom(date, 0);
   _date.setFullYear(cleanDate.getFullYear(), 0, 1);
   _date.setHours(0, 0, 0, 0);
@@ -7269,21 +7271,21 @@ const enUS = {
   }
 };
 function getDayOfYear(date) {
-  const _date = toDate(date);
+  const _date = toDate$1(date);
   const diff = differenceInCalendarDays(_date, startOfYear(_date));
   const dayOfYear = diff + 1;
   return dayOfYear;
 }
 function getISOWeek(date) {
-  const _date = toDate(date);
+  const _date = toDate$1(date);
   const diff = +startOfISOWeek(_date) - +startOfISOWeekYear(_date);
   return Math.round(diff / millisecondsInWeek) + 1;
 }
 function getWeekYear(date, options) {
   var _a, _b, _c, _d;
-  const _date = toDate(date);
+  const _date = toDate$1(date);
   const year = _date.getFullYear();
-  const defaultOptions2 = getDefaultOptions();
+  const defaultOptions2 = getDefaultOptions$1();
   const firstWeekContainsDate = (options == null ? void 0 : options.firstWeekContainsDate) ?? ((_b = (_a = options == null ? void 0 : options.locale) == null ? void 0 : _a.options) == null ? void 0 : _b.firstWeekContainsDate) ?? defaultOptions2.firstWeekContainsDate ?? ((_d = (_c = defaultOptions2.locale) == null ? void 0 : _c.options) == null ? void 0 : _d.firstWeekContainsDate) ?? 1;
   const firstWeekOfNextYear = constructFrom(date, 0);
   firstWeekOfNextYear.setFullYear(year + 1, 0, firstWeekContainsDate);
@@ -7303,7 +7305,7 @@ function getWeekYear(date, options) {
 }
 function startOfWeekYear(date, options) {
   var _a, _b, _c, _d;
-  const defaultOptions2 = getDefaultOptions();
+  const defaultOptions2 = getDefaultOptions$1();
   const firstWeekContainsDate = (options == null ? void 0 : options.firstWeekContainsDate) ?? ((_b = (_a = options == null ? void 0 : options.locale) == null ? void 0 : _a.options) == null ? void 0 : _b.firstWeekContainsDate) ?? defaultOptions2.firstWeekContainsDate ?? ((_d = (_c = defaultOptions2.locale) == null ? void 0 : _c.options) == null ? void 0 : _d.firstWeekContainsDate) ?? 1;
   const year = getWeekYear(date, options);
   const firstWeek = constructFrom(date, 0);
@@ -7313,11 +7315,11 @@ function startOfWeekYear(date, options) {
   return _date;
 }
 function getWeek(date, options) {
-  const _date = toDate(date);
+  const _date = toDate$1(date);
   const diff = +startOfWeek(_date, options) - +startOfWeekYear(_date, options);
   return Math.round(diff / millisecondsInWeek) + 1;
 }
-function addLeadingZeros(number, targetLength) {
+function addLeadingZeros$1(number, targetLength) {
   const sign = number < 0 ? "-" : "";
   const output = Math.abs(number).toString().padStart(targetLength, "0");
   return sign + output;
@@ -7327,16 +7329,16 @@ const lightFormatters = {
   y(date, token) {
     const signedYear = date.getFullYear();
     const year = signedYear > 0 ? signedYear : 1 - signedYear;
-    return addLeadingZeros(token === "yy" ? year % 100 : year, token.length);
+    return addLeadingZeros$1(token === "yy" ? year % 100 : year, token.length);
   },
   // Month
   M(date, token) {
     const month = date.getMonth();
-    return token === "M" ? String(month + 1) : addLeadingZeros(month + 1, 2);
+    return token === "M" ? String(month + 1) : addLeadingZeros$1(month + 1, 2);
   },
   // Day of the month
   d(date, token) {
-    return addLeadingZeros(date.getDate(), token.length);
+    return addLeadingZeros$1(date.getDate(), token.length);
   },
   // AM or PM
   a(date, token) {
@@ -7356,19 +7358,19 @@ const lightFormatters = {
   },
   // Hour [1-12]
   h(date, token) {
-    return addLeadingZeros(date.getHours() % 12 || 12, token.length);
+    return addLeadingZeros$1(date.getHours() % 12 || 12, token.length);
   },
   // Hour [0-23]
   H(date, token) {
-    return addLeadingZeros(date.getHours(), token.length);
+    return addLeadingZeros$1(date.getHours(), token.length);
   },
   // Minute
   m(date, token) {
-    return addLeadingZeros(date.getMinutes(), token.length);
+    return addLeadingZeros$1(date.getMinutes(), token.length);
   },
   // Second
   s(date, token) {
-    return addLeadingZeros(date.getSeconds(), token.length);
+    return addLeadingZeros$1(date.getSeconds(), token.length);
   },
   // Fraction of second
   S(date, token) {
@@ -7377,7 +7379,7 @@ const lightFormatters = {
     const fractionalSeconds = Math.trunc(
       milliseconds * Math.pow(10, numberOfDigits - 3)
     );
-    return addLeadingZeros(fractionalSeconds, token.length);
+    return addLeadingZeros$1(fractionalSeconds, token.length);
   }
 };
 const dayPeriodEnum = {
@@ -7388,7 +7390,7 @@ const dayPeriodEnum = {
   evening: "evening",
   night: "night"
 };
-const formatters = {
+const formatters$1 = {
   // Era
   G: function(date, token, localize2) {
     const era = date.getFullYear() > 0 ? 1 : 0;
@@ -7419,17 +7421,17 @@ const formatters = {
     const weekYear = signedWeekYear > 0 ? signedWeekYear : 1 - signedWeekYear;
     if (token === "YY") {
       const twoDigitYear = weekYear % 100;
-      return addLeadingZeros(twoDigitYear, 2);
+      return addLeadingZeros$1(twoDigitYear, 2);
     }
     if (token === "Yo") {
       return localize2.ordinalNumber(weekYear, { unit: "year" });
     }
-    return addLeadingZeros(weekYear, token.length);
+    return addLeadingZeros$1(weekYear, token.length);
   },
   // ISO week-numbering year
   R: function(date, token) {
     const isoWeekYear = getISOWeekYear(date);
-    return addLeadingZeros(isoWeekYear, token.length);
+    return addLeadingZeros$1(isoWeekYear, token.length);
   },
   // Extended year. This is a single number designating the year of this calendar system.
   // The main difference between `y` and `u` localizers are B.C. years:
@@ -7442,7 +7444,7 @@ const formatters = {
   // while `uu` pads single digit years to 2 characters and returns other years unchanged.
   u: function(date, token) {
     const year = date.getFullYear();
-    return addLeadingZeros(year, token.length);
+    return addLeadingZeros$1(year, token.length);
   },
   // Quarter
   Q: function(date, token, localize2) {
@@ -7451,7 +7453,7 @@ const formatters = {
       case "Q":
         return String(quarter);
       case "QQ":
-        return addLeadingZeros(quarter, 2);
+        return addLeadingZeros$1(quarter, 2);
       case "Qo":
         return localize2.ordinalNumber(quarter, { unit: "quarter" });
       case "QQQ":
@@ -7479,7 +7481,7 @@ const formatters = {
       case "q":
         return String(quarter);
       case "qq":
-        return addLeadingZeros(quarter, 2);
+        return addLeadingZeros$1(quarter, 2);
       case "qo":
         return localize2.ordinalNumber(quarter, { unit: "quarter" });
       case "qqq":
@@ -7531,7 +7533,7 @@ const formatters = {
       case "L":
         return String(month + 1);
       case "LL":
-        return addLeadingZeros(month + 1, 2);
+        return addLeadingZeros$1(month + 1, 2);
       case "Lo":
         return localize2.ordinalNumber(month + 1, { unit: "month" });
       case "LLL":
@@ -7555,7 +7557,7 @@ const formatters = {
     if (token === "wo") {
       return localize2.ordinalNumber(week, { unit: "week" });
     }
-    return addLeadingZeros(week, token.length);
+    return addLeadingZeros$1(week, token.length);
   },
   // ISO week of year
   I: function(date, token, localize2) {
@@ -7563,7 +7565,7 @@ const formatters = {
     if (token === "Io") {
       return localize2.ordinalNumber(isoWeek, { unit: "week" });
     }
-    return addLeadingZeros(isoWeek, token.length);
+    return addLeadingZeros$1(isoWeek, token.length);
   },
   // Day of the month
   d: function(date, token, localize2) {
@@ -7578,7 +7580,7 @@ const formatters = {
     if (token === "Do") {
       return localize2.ordinalNumber(dayOfYear, { unit: "dayOfYear" });
     }
-    return addLeadingZeros(dayOfYear, token.length);
+    return addLeadingZeros$1(dayOfYear, token.length);
   },
   // Day of week
   E: function(date, token, localize2) {
@@ -7617,7 +7619,7 @@ const formatters = {
       case "e":
         return String(localDayOfWeek);
       case "ee":
-        return addLeadingZeros(localDayOfWeek, 2);
+        return addLeadingZeros$1(localDayOfWeek, 2);
       case "eo":
         return localize2.ordinalNumber(localDayOfWeek, { unit: "day" });
       case "eee":
@@ -7651,7 +7653,7 @@ const formatters = {
       case "c":
         return String(localDayOfWeek);
       case "cc":
-        return addLeadingZeros(localDayOfWeek, token.length);
+        return addLeadingZeros$1(localDayOfWeek, token.length);
       case "co":
         return localize2.ordinalNumber(localDayOfWeek, { unit: "day" });
       case "ccc":
@@ -7685,7 +7687,7 @@ const formatters = {
       case "i":
         return String(isoDayOfWeek);
       case "ii":
-        return addLeadingZeros(isoDayOfWeek, token.length);
+        return addLeadingZeros$1(isoDayOfWeek, token.length);
       case "io":
         return localize2.ordinalNumber(isoDayOfWeek, { unit: "day" });
       case "iii":
@@ -7832,7 +7834,7 @@ const formatters = {
     if (token === "Ko") {
       return localize2.ordinalNumber(hours, { unit: "hour" });
     }
-    return addLeadingZeros(hours, token.length);
+    return addLeadingZeros$1(hours, token.length);
   },
   // Hour [1-24]
   k: function(date, token, localize2) {
@@ -7841,7 +7843,7 @@ const formatters = {
     if (token === "ko") {
       return localize2.ordinalNumber(hours, { unit: "hour" });
     }
-    return addLeadingZeros(hours, token.length);
+    return addLeadingZeros$1(hours, token.length);
   },
   // Minute
   m: function(date, token, localize2) {
@@ -7869,14 +7871,14 @@ const formatters = {
     }
     switch (token) {
       case "X":
-        return formatTimezoneWithOptionalMinutes(timezoneOffset);
+        return formatTimezoneWithOptionalMinutes$1(timezoneOffset);
       case "XXXX":
       case "XX":
-        return formatTimezone(timezoneOffset);
+        return formatTimezone$1(timezoneOffset);
       case "XXXXX":
       case "XXX":
       default:
-        return formatTimezone(timezoneOffset, ":");
+        return formatTimezone$1(timezoneOffset, ":");
     }
   },
   // Timezone (ISO-8601. If offset is 0, output is `'+00:00'` or equivalent)
@@ -7884,14 +7886,14 @@ const formatters = {
     const timezoneOffset = date.getTimezoneOffset();
     switch (token) {
       case "x":
-        return formatTimezoneWithOptionalMinutes(timezoneOffset);
+        return formatTimezoneWithOptionalMinutes$1(timezoneOffset);
       case "xxxx":
       case "xx":
-        return formatTimezone(timezoneOffset);
+        return formatTimezone$1(timezoneOffset);
       case "xxxxx":
       case "xxx":
       default:
-        return formatTimezone(timezoneOffset, ":");
+        return formatTimezone$1(timezoneOffset, ":");
     }
   },
   // Timezone (GMT)
@@ -7901,10 +7903,10 @@ const formatters = {
       case "O":
       case "OO":
       case "OOO":
-        return "GMT" + formatTimezoneShort(timezoneOffset, ":");
+        return "GMT" + formatTimezoneShort$1(timezoneOffset, ":");
       case "OOOO":
       default:
-        return "GMT" + formatTimezone(timezoneOffset, ":");
+        return "GMT" + formatTimezone$1(timezoneOffset, ":");
     }
   },
   // Timezone (specific non-location)
@@ -7914,24 +7916,24 @@ const formatters = {
       case "z":
       case "zz":
       case "zzz":
-        return "GMT" + formatTimezoneShort(timezoneOffset, ":");
+        return "GMT" + formatTimezoneShort$1(timezoneOffset, ":");
       case "zzzz":
       default:
-        return "GMT" + formatTimezone(timezoneOffset, ":");
+        return "GMT" + formatTimezone$1(timezoneOffset, ":");
     }
   },
   // Seconds timestamp
   t: function(date, token, _localize) {
     const timestamp = Math.trunc(date.getTime() / 1e3);
-    return addLeadingZeros(timestamp, token.length);
+    return addLeadingZeros$1(timestamp, token.length);
   },
   // Milliseconds timestamp
   T: function(date, token, _localize) {
     const timestamp = date.getTime();
-    return addLeadingZeros(timestamp, token.length);
+    return addLeadingZeros$1(timestamp, token.length);
   }
 };
-function formatTimezoneShort(offset, delimiter = "") {
+function formatTimezoneShort$1(offset, delimiter = "") {
   const sign = offset > 0 ? "-" : "+";
   const absOffset = Math.abs(offset);
   const hours = Math.trunc(absOffset / 60);
@@ -7939,20 +7941,20 @@ function formatTimezoneShort(offset, delimiter = "") {
   if (minutes === 0) {
     return sign + String(hours);
   }
-  return sign + String(hours) + delimiter + addLeadingZeros(minutes, 2);
+  return sign + String(hours) + delimiter + addLeadingZeros$1(minutes, 2);
 }
-function formatTimezoneWithOptionalMinutes(offset, delimiter) {
+function formatTimezoneWithOptionalMinutes$1(offset, delimiter) {
   if (offset % 60 === 0) {
     const sign = offset > 0 ? "-" : "+";
-    return sign + addLeadingZeros(Math.abs(offset) / 60, 2);
+    return sign + addLeadingZeros$1(Math.abs(offset) / 60, 2);
   }
-  return formatTimezone(offset, delimiter);
+  return formatTimezone$1(offset, delimiter);
 }
-function formatTimezone(offset, delimiter = "") {
+function formatTimezone$1(offset, delimiter = "") {
   const sign = offset > 0 ? "-" : "+";
   const absOffset = Math.abs(offset);
-  const hours = addLeadingZeros(Math.trunc(absOffset / 60), 2);
-  const minutes = addLeadingZeros(absOffset % 60, 2);
+  const hours = addLeadingZeros$1(Math.trunc(absOffset / 60), 2);
+  const minutes = addLeadingZeros$1(absOffset % 60, 2);
   return sign + hours + delimiter + minutes;
 }
 const dateLongFormatter = (pattern, formatLong2) => {
@@ -8033,13 +8035,13 @@ const longFormattingTokensRegExp = /P+p+|P+|p+|''|'(''|[^'])+('|$)|./g;
 const escapedStringRegExp = /^'([^]*?)'?$/;
 const doubleQuoteRegExp = /''/g;
 const unescapedLatinCharacterRegExp = /[a-zA-Z]/;
-function format(date, formatStr, options) {
+function format$1(date, formatStr, options) {
   var _a, _b, _c, _d, _e, _f, _g, _h;
-  const defaultOptions2 = getDefaultOptions();
+  const defaultOptions2 = getDefaultOptions$1();
   const locale = (options == null ? void 0 : options.locale) ?? defaultOptions2.locale ?? enUS;
   const firstWeekContainsDate = (options == null ? void 0 : options.firstWeekContainsDate) ?? ((_b = (_a = options == null ? void 0 : options.locale) == null ? void 0 : _a.options) == null ? void 0 : _b.firstWeekContainsDate) ?? defaultOptions2.firstWeekContainsDate ?? ((_d = (_c = defaultOptions2.locale) == null ? void 0 : _c.options) == null ? void 0 : _d.firstWeekContainsDate) ?? 1;
   const weekStartsOn = (options == null ? void 0 : options.weekStartsOn) ?? ((_f = (_e = options == null ? void 0 : options.locale) == null ? void 0 : _e.options) == null ? void 0 : _f.weekStartsOn) ?? defaultOptions2.weekStartsOn ?? ((_h = (_g = defaultOptions2.locale) == null ? void 0 : _g.options) == null ? void 0 : _h.weekStartsOn) ?? 0;
-  const originalDate = toDate(date);
+  const originalDate = toDate$1(date);
   if (!isValid(originalDate)) {
     throw new RangeError("Invalid time value");
   }
@@ -8058,7 +8060,7 @@ function format(date, formatStr, options) {
     if (firstCharacter === "'") {
       return { isToken: false, value: cleanEscapedString(substring) };
     }
-    if (formatters[firstCharacter]) {
+    if (formatters$1[firstCharacter]) {
       return { isToken: true, value: substring };
     }
     if (firstCharacter.match(unescapedLatinCharacterRegExp)) {
@@ -8082,7 +8084,7 @@ function format(date, formatStr, options) {
     if (!(options == null ? void 0 : options.useAdditionalWeekYearTokens) && isProtectedWeekYearToken(token) || !(options == null ? void 0 : options.useAdditionalDayOfYearTokens) && isProtectedDayOfYearToken(token)) {
       warnOrThrowProtectedError(token, formatStr, String(date));
     }
-    const formatter = formatters[token[0]];
+    const formatter = formatters$1[token[0]];
     return formatter(originalDate, token, locale.localize, formatterOptions);
   }).join("");
 }
@@ -8093,8 +8095,189 @@ function cleanEscapedString(input) {
   }
   return matched[1].replace(doubleQuoteRegExp, "'");
 }
+function getDefaultOptions() {
+  return Object.assign({}, getDefaultOptions$1());
+}
 function subDays(date, amount) {
   return addDays(date, -7);
+}
+function parseISO(argument, options) {
+  const additionalDigits = 2;
+  const dateStrings = splitDateString$1(argument);
+  let date;
+  if (dateStrings.date) {
+    const parseYearResult = parseYear$1(dateStrings.date, additionalDigits);
+    date = parseDate$1(parseYearResult.restDateString, parseYearResult.year);
+  }
+  if (!date || isNaN(date.getTime())) {
+    return /* @__PURE__ */ new Date(NaN);
+  }
+  const timestamp = date.getTime();
+  let time = 0;
+  let offset;
+  if (dateStrings.time) {
+    time = parseTime$1(dateStrings.time);
+    if (isNaN(time)) {
+      return /* @__PURE__ */ new Date(NaN);
+    }
+  }
+  if (dateStrings.timezone) {
+    offset = parseTimezone(dateStrings.timezone);
+    if (isNaN(offset)) {
+      return /* @__PURE__ */ new Date(NaN);
+    }
+  } else {
+    const dirtyDate = new Date(timestamp + time);
+    const result = /* @__PURE__ */ new Date(0);
+    result.setFullYear(
+      dirtyDate.getUTCFullYear(),
+      dirtyDate.getUTCMonth(),
+      dirtyDate.getUTCDate()
+    );
+    result.setHours(
+      dirtyDate.getUTCHours(),
+      dirtyDate.getUTCMinutes(),
+      dirtyDate.getUTCSeconds(),
+      dirtyDate.getUTCMilliseconds()
+    );
+    return result;
+  }
+  return new Date(timestamp + time + offset);
+}
+const patterns$2 = {
+  dateTimeDelimiter: /[T ]/,
+  timeZoneDelimiter: /[Z ]/i,
+  timezone: /([Z+-].*)$/
+};
+const dateRegex = /^-?(?:(\d{3})|(\d{2})(?:-?(\d{2}))?|W(\d{2})(?:-?(\d{1}))?|)$/;
+const timeRegex = /^(\d{2}(?:[.,]\d*)?)(?::?(\d{2}(?:[.,]\d*)?))?(?::?(\d{2}(?:[.,]\d*)?))?$/;
+const timezoneRegex = /^([+-])(\d{2})(?::?(\d{2}))?$/;
+function splitDateString$1(dateString) {
+  const dateStrings = {};
+  const array = dateString.split(patterns$2.dateTimeDelimiter);
+  let timeString;
+  if (array.length > 2) {
+    return dateStrings;
+  }
+  if (/:/.test(array[0])) {
+    timeString = array[0];
+  } else {
+    dateStrings.date = array[0];
+    timeString = array[1];
+    if (patterns$2.timeZoneDelimiter.test(dateStrings.date)) {
+      dateStrings.date = dateString.split(patterns$2.timeZoneDelimiter)[0];
+      timeString = dateString.substr(
+        dateStrings.date.length,
+        dateString.length
+      );
+    }
+  }
+  if (timeString) {
+    const token = patterns$2.timezone.exec(timeString);
+    if (token) {
+      dateStrings.time = timeString.replace(token[1], "");
+      dateStrings.timezone = token[1];
+    } else {
+      dateStrings.time = timeString;
+    }
+  }
+  return dateStrings;
+}
+function parseYear$1(dateString, additionalDigits) {
+  const regex = new RegExp(
+    "^(?:(\\d{4}|[+-]\\d{" + (4 + additionalDigits) + "})|(\\d{2}|[+-]\\d{" + (2 + additionalDigits) + "})$)"
+  );
+  const captures = dateString.match(regex);
+  if (!captures) return { year: NaN, restDateString: "" };
+  const year = captures[1] ? parseInt(captures[1]) : null;
+  const century = captures[2] ? parseInt(captures[2]) : null;
+  return {
+    year: century === null ? year : century * 100,
+    restDateString: dateString.slice((captures[1] || captures[2]).length)
+  };
+}
+function parseDate$1(dateString, year) {
+  if (year === null) return /* @__PURE__ */ new Date(NaN);
+  const captures = dateString.match(dateRegex);
+  if (!captures) return /* @__PURE__ */ new Date(NaN);
+  const isWeekDate = !!captures[4];
+  const dayOfYear = parseDateUnit(captures[1]);
+  const month = parseDateUnit(captures[2]) - 1;
+  const day = parseDateUnit(captures[3]);
+  const week = parseDateUnit(captures[4]);
+  const dayOfWeek = parseDateUnit(captures[5]) - 1;
+  if (isWeekDate) {
+    if (!validateWeekDate$1(year, week, dayOfWeek)) {
+      return /* @__PURE__ */ new Date(NaN);
+    }
+    return dayOfISOWeekYear$1(year, week, dayOfWeek);
+  } else {
+    const date = /* @__PURE__ */ new Date(0);
+    if (!validateDate$1(year, month, day) || !validateDayOfYearDate$1(year, dayOfYear)) {
+      return /* @__PURE__ */ new Date(NaN);
+    }
+    date.setUTCFullYear(year, month, Math.max(dayOfYear, day));
+    return date;
+  }
+}
+function parseDateUnit(value) {
+  return value ? parseInt(value) : 1;
+}
+function parseTime$1(timeString) {
+  const captures = timeString.match(timeRegex);
+  if (!captures) return NaN;
+  const hours = parseTimeUnit(captures[1]);
+  const minutes = parseTimeUnit(captures[2]);
+  const seconds = parseTimeUnit(captures[3]);
+  if (!validateTime$1(hours, minutes, seconds)) {
+    return NaN;
+  }
+  return hours * millisecondsInHour + minutes * millisecondsInMinute + seconds * 1e3;
+}
+function parseTimeUnit(value) {
+  return value && parseFloat(value.replace(",", ".")) || 0;
+}
+function parseTimezone(timezoneString) {
+  if (timezoneString === "Z") return 0;
+  const captures = timezoneString.match(timezoneRegex);
+  if (!captures) return 0;
+  const sign = captures[1] === "+" ? -1 : 1;
+  const hours = parseInt(captures[2]);
+  const minutes = captures[3] && parseInt(captures[3]) || 0;
+  if (!validateTimezone$1(hours, minutes)) {
+    return NaN;
+  }
+  return sign * (hours * millisecondsInHour + minutes * millisecondsInMinute);
+}
+function dayOfISOWeekYear$1(isoWeekYear, week, day) {
+  const date = /* @__PURE__ */ new Date(0);
+  date.setUTCFullYear(isoWeekYear, 0, 4);
+  const fourthOfJanuaryDay = date.getUTCDay() || 7;
+  const diff = (week - 1) * 7 + day + 1 - fourthOfJanuaryDay;
+  date.setUTCDate(date.getUTCDate() + diff);
+  return date;
+}
+const daysInMonths = [31, null, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+function isLeapYearIndex$1(year) {
+  return year % 400 === 0 || year % 4 === 0 && year % 100 !== 0;
+}
+function validateDate$1(year, month, date) {
+  return month >= 0 && month <= 11 && date >= 1 && date <= (daysInMonths[month] || (isLeapYearIndex$1(year) ? 29 : 28));
+}
+function validateDayOfYearDate$1(year, dayOfYear) {
+  return dayOfYear >= 1 && dayOfYear <= (isLeapYearIndex$1(year) ? 366 : 365);
+}
+function validateWeekDate$1(_year, week, day) {
+  return week >= 1 && week <= 53 && day >= 0 && day <= 6;
+}
+function validateTime$1(hours, minutes, seconds) {
+  if (hours === 24) {
+    return minutes === 0 && seconds === 0;
+  }
+  return seconds >= 0 && seconds < 60 && minutes >= 0 && minutes < 60 && hours >= 0 && hours < 25;
+}
+function validateTimezone$1(_hours, minutes) {
+  return minutes >= 0 && minutes <= 59;
 }
 const _hoisted_1$1 = { class: "gantt-container" };
 const _hoisted_2$1 = { class: "gantt-header-wrapper" };
@@ -8280,8 +8463,8 @@ const _sfc_main$1 = {
           emit2("task-dates-changed", {
             taskId: task.id,
             // Preserve time by using full format
-            start: format(newStart, "yyyy-MM-dd'T'HH:mm"),
-            end: format(newEnd, "yyyy-MM-dd'T'HH:mm")
+            start: format$1(newStart, "yyyy-MM-dd'T'HH:mm"),
+            end: format$1(newEnd, "yyyy-MM-dd'T'HH:mm")
           });
         }
         const rowsMoved = Math.round(dy / ROW_HEIGHT);
@@ -8302,7 +8485,7 @@ const _sfc_main$1 = {
           if (newStart < dragState.value.initialEnd) {
             emit2("task-duration-changed", {
               taskId: task.id,
-              start: format(newStart, "yyyy-MM-dd'T'HH:mm"),
+              start: format$1(newStart, "yyyy-MM-dd'T'HH:mm"),
               end: task.end
             });
           }
@@ -8312,7 +8495,7 @@ const _sfc_main$1 = {
             emit2("task-duration-changed", {
               taskId: task.id,
               start: task.start,
-              end: format(newEnd, "yyyy-MM-dd'T'HH:mm")
+              end: format$1(newEnd, "yyyy-MM-dd'T'HH:mm")
             });
           }
         }
@@ -8346,8 +8529,8 @@ const _sfc_main$1 = {
                   class: "day-cell",
                   style: normalizeStyle({ width: `${CELL_WIDTH}px` })
                 }, [
-                  createBaseVNode("span", _hoisted_4$1, toDisplayString(unref(format)(date, "EE")), 1),
-                  createBaseVNode("span", _hoisted_5$1, toDisplayString(unref(format)(date, "dd")), 1)
+                  createBaseVNode("span", _hoisted_4$1, toDisplayString(unref(format$1)(date, "EE")), 1),
+                  createBaseVNode("span", _hoisted_5$1, toDisplayString(unref(format$1)(date, "dd")), 1)
                 ], 4);
               }), 128))
             ])
@@ -8429,7 +8612,7 @@ const _sfc_main$1 = {
                   }, null, 40, _hoisted_12$1),
                   hoveredTask.value && hoveredTask.value.id === task.id ? (openBlock(), createElementBlock("div", _hoisted_13$1, [
                     createBaseVNode("div", _hoisted_14$1, toDisplayString(task.name), 1),
-                    createBaseVNode("div", _hoisted_15$1, toDisplayString(unref(format)(new Date(task.start), "yyyy-MM-dd")) + " - " + toDisplayString(unref(format)(new Date(task.end), "yyyy-MM-dd")), 1),
+                    createBaseVNode("div", _hoisted_15$1, toDisplayString(unref(format$1)(new Date(task.start), "yyyy-MM-dd")) + " - " + toDisplayString(unref(format$1)(new Date(task.end), "yyyy-MM-dd")), 1),
                     createBaseVNode("div", _hoisted_16$1, [
                       createBaseVNode("span", _hoisted_17$1, toDisplayString(task.status || "In Progress"), 1),
                       createBaseVNode("span", _hoisted_18$1, toDisplayString(task.progress) + "%", 1)
@@ -8480,6 +8663,648 @@ ${errorBody}`);
   }
   return await response.json();
 }
+function tzIntlTimeZoneName(length, date, options) {
+  const defaultOptions2 = getDefaultOptions();
+  const dtf = getDTF(length, options.timeZone, options.locale ?? defaultOptions2.locale);
+  return "formatToParts" in dtf ? partsTimeZone(dtf, date) : hackyTimeZone(dtf, date);
+}
+function partsTimeZone(dtf, date) {
+  const formatted = dtf.formatToParts(date);
+  for (let i = formatted.length - 1; i >= 0; --i) {
+    if (formatted[i].type === "timeZoneName") {
+      return formatted[i].value;
+    }
+  }
+  return void 0;
+}
+function hackyTimeZone(dtf, date) {
+  const formatted = dtf.format(date).replace(/\u200E/g, "");
+  const tzNameMatch = / [\w-+ ]+$/.exec(formatted);
+  return tzNameMatch ? tzNameMatch[0].substr(1) : "";
+}
+function getDTF(length, timeZone, locale) {
+  return new Intl.DateTimeFormat(locale ? [locale.code, "en-US"] : void 0, {
+    timeZone,
+    timeZoneName: length
+  });
+}
+function tzTokenizeDate(date, timeZone) {
+  const dtf = getDateTimeFormat(timeZone);
+  return "formatToParts" in dtf ? partsOffset(dtf, date) : hackyOffset(dtf, date);
+}
+const typeToPos = {
+  year: 0,
+  month: 1,
+  day: 2,
+  hour: 3,
+  minute: 4,
+  second: 5
+};
+function partsOffset(dtf, date) {
+  try {
+    const formatted = dtf.formatToParts(date);
+    const filled = [];
+    for (let i = 0; i < formatted.length; i++) {
+      const pos = typeToPos[formatted[i].type];
+      if (pos !== void 0) {
+        filled[pos] = parseInt(formatted[i].value, 10);
+      }
+    }
+    return filled;
+  } catch (error) {
+    if (error instanceof RangeError) {
+      return [NaN];
+    }
+    throw error;
+  }
+}
+function hackyOffset(dtf, date) {
+  const formatted = dtf.format(date);
+  const parsed = /(\d+)\/(\d+)\/(\d+),? (\d+):(\d+):(\d+)/.exec(formatted);
+  return [
+    parseInt(parsed[3], 10),
+    parseInt(parsed[1], 10),
+    parseInt(parsed[2], 10),
+    parseInt(parsed[4], 10),
+    parseInt(parsed[5], 10),
+    parseInt(parsed[6], 10)
+  ];
+}
+const dtfCache = {};
+const testDateFormatted = new Intl.DateTimeFormat("en-US", {
+  hourCycle: "h23",
+  timeZone: "America/New_York",
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+  second: "2-digit"
+}).format(/* @__PURE__ */ new Date("2014-06-25T04:00:00.123Z"));
+const hourCycleSupported = testDateFormatted === "06/25/2014, 00:00:00" || testDateFormatted === "‎06‎/‎25‎/‎2014‎ ‎00‎:‎00‎:‎00";
+function getDateTimeFormat(timeZone) {
+  if (!dtfCache[timeZone]) {
+    dtfCache[timeZone] = hourCycleSupported ? new Intl.DateTimeFormat("en-US", {
+      hourCycle: "h23",
+      timeZone,
+      year: "numeric",
+      month: "numeric",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit"
+    }) : new Intl.DateTimeFormat("en-US", {
+      hour12: false,
+      timeZone,
+      year: "numeric",
+      month: "numeric",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit"
+    });
+  }
+  return dtfCache[timeZone];
+}
+function newDateUTC(fullYear, month, day, hour, minute, second, millisecond) {
+  const utcDate = /* @__PURE__ */ new Date(0);
+  utcDate.setUTCFullYear(fullYear, month, day);
+  utcDate.setUTCHours(hour, minute, second, millisecond);
+  return utcDate;
+}
+const MILLISECONDS_IN_HOUR$1 = 36e5;
+const MILLISECONDS_IN_MINUTE$2 = 6e4;
+const patterns$1 = {
+  timezoneZ: /^(Z)$/,
+  timezoneHH: /^([+-]\d{2})$/,
+  timezoneHHMM: /^([+-])(\d{2}):?(\d{2})$/
+};
+function tzParseTimezone(timezoneString, date, isUtcDate) {
+  if (!timezoneString) {
+    return 0;
+  }
+  let token = patterns$1.timezoneZ.exec(timezoneString);
+  if (token) {
+    return 0;
+  }
+  let hours;
+  let absoluteOffset;
+  token = patterns$1.timezoneHH.exec(timezoneString);
+  if (token) {
+    hours = parseInt(token[1], 10);
+    if (!validateTimezone(hours)) {
+      return NaN;
+    }
+    return -(hours * MILLISECONDS_IN_HOUR$1);
+  }
+  token = patterns$1.timezoneHHMM.exec(timezoneString);
+  if (token) {
+    hours = parseInt(token[2], 10);
+    const minutes = parseInt(token[3], 10);
+    if (!validateTimezone(hours, minutes)) {
+      return NaN;
+    }
+    absoluteOffset = Math.abs(hours) * MILLISECONDS_IN_HOUR$1 + minutes * MILLISECONDS_IN_MINUTE$2;
+    return token[1] === "+" ? -absoluteOffset : absoluteOffset;
+  }
+  if (isValidTimezoneIANAString(timezoneString)) {
+    date = new Date(date || Date.now());
+    const utcDate = isUtcDate ? date : toUtcDate(date);
+    const offset = calcOffset(utcDate, timezoneString);
+    const fixedOffset = isUtcDate ? offset : fixOffset(date, offset, timezoneString);
+    return -fixedOffset;
+  }
+  return NaN;
+}
+function toUtcDate(date) {
+  return newDateUTC(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds(), date.getMilliseconds());
+}
+function calcOffset(date, timezoneString) {
+  const tokens = tzTokenizeDate(date, timezoneString);
+  const asUTC = newDateUTC(tokens[0], tokens[1] - 1, tokens[2], tokens[3] % 24, tokens[4], tokens[5], 0).getTime();
+  let asTS = date.getTime();
+  const over = asTS % 1e3;
+  asTS -= over >= 0 ? over : 1e3 + over;
+  return asUTC - asTS;
+}
+function fixOffset(date, offset, timezoneString) {
+  const localTS = date.getTime();
+  let utcGuess = localTS - offset;
+  const o2 = calcOffset(new Date(utcGuess), timezoneString);
+  if (offset === o2) {
+    return offset;
+  }
+  utcGuess -= o2 - offset;
+  const o3 = calcOffset(new Date(utcGuess), timezoneString);
+  if (o2 === o3) {
+    return o2;
+  }
+  return Math.max(o2, o3);
+}
+function validateTimezone(hours, minutes) {
+  return -23 <= hours && hours <= 23 && (minutes == null || 0 <= minutes && minutes <= 59);
+}
+const validIANATimezoneCache = {};
+function isValidTimezoneIANAString(timeZoneString) {
+  if (validIANATimezoneCache[timeZoneString])
+    return true;
+  try {
+    new Intl.DateTimeFormat(void 0, { timeZone: timeZoneString });
+    validIANATimezoneCache[timeZoneString] = true;
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+const MILLISECONDS_IN_MINUTE$1 = 60 * 1e3;
+const formatters = {
+  // Timezone (ISO-8601. If offset is 0, output is always `'Z'`)
+  X: function(date, token, options) {
+    const timezoneOffset = getTimeZoneOffset(options.timeZone, date);
+    if (timezoneOffset === 0) {
+      return "Z";
+    }
+    switch (token) {
+      case "X":
+        return formatTimezoneWithOptionalMinutes(timezoneOffset);
+      case "XXXX":
+      case "XX":
+        return formatTimezone(timezoneOffset);
+      case "XXXXX":
+      case "XXX":
+      default:
+        return formatTimezone(timezoneOffset, ":");
+    }
+  },
+  // Timezone (ISO-8601. If offset is 0, output is `'+00:00'` or equivalent)
+  x: function(date, token, options) {
+    const timezoneOffset = getTimeZoneOffset(options.timeZone, date);
+    switch (token) {
+      case "x":
+        return formatTimezoneWithOptionalMinutes(timezoneOffset);
+      case "xxxx":
+      case "xx":
+        return formatTimezone(timezoneOffset);
+      case "xxxxx":
+      case "xxx":
+      default:
+        return formatTimezone(timezoneOffset, ":");
+    }
+  },
+  // Timezone (GMT)
+  O: function(date, token, options) {
+    const timezoneOffset = getTimeZoneOffset(options.timeZone, date);
+    switch (token) {
+      case "O":
+      case "OO":
+      case "OOO":
+        return "GMT" + formatTimezoneShort(timezoneOffset, ":");
+      case "OOOO":
+      default:
+        return "GMT" + formatTimezone(timezoneOffset, ":");
+    }
+  },
+  // Timezone (specific non-location)
+  z: function(date, token, options) {
+    switch (token) {
+      case "z":
+      case "zz":
+      case "zzz":
+        return tzIntlTimeZoneName("short", date, options);
+      case "zzzz":
+      default:
+        return tzIntlTimeZoneName("long", date, options);
+    }
+  }
+};
+function getTimeZoneOffset(timeZone, originalDate) {
+  const timeZoneOffset = timeZone ? tzParseTimezone(timeZone, originalDate, true) / MILLISECONDS_IN_MINUTE$1 : (originalDate == null ? void 0 : originalDate.getTimezoneOffset()) ?? 0;
+  if (Number.isNaN(timeZoneOffset)) {
+    throw new RangeError("Invalid time zone specified: " + timeZone);
+  }
+  return timeZoneOffset;
+}
+function addLeadingZeros(number, targetLength) {
+  const sign = number < 0 ? "-" : "";
+  let output = Math.abs(number).toString();
+  while (output.length < targetLength) {
+    output = "0" + output;
+  }
+  return sign + output;
+}
+function formatTimezone(offset, delimiter = "") {
+  const sign = offset > 0 ? "-" : "+";
+  const absOffset = Math.abs(offset);
+  const hours = addLeadingZeros(Math.floor(absOffset / 60), 2);
+  const minutes = addLeadingZeros(Math.floor(absOffset % 60), 2);
+  return sign + hours + delimiter + minutes;
+}
+function formatTimezoneWithOptionalMinutes(offset, delimiter) {
+  if (offset % 60 === 0) {
+    const sign = offset > 0 ? "-" : "+";
+    return sign + addLeadingZeros(Math.abs(offset) / 60, 2);
+  }
+  return formatTimezone(offset, delimiter);
+}
+function formatTimezoneShort(offset, delimiter = "") {
+  const sign = offset > 0 ? "-" : "+";
+  const absOffset = Math.abs(offset);
+  const hours = Math.floor(absOffset / 60);
+  const minutes = absOffset % 60;
+  if (minutes === 0) {
+    return sign + String(hours);
+  }
+  return sign + String(hours) + delimiter + addLeadingZeros(minutes, 2);
+}
+function getTimezoneOffsetInMilliseconds(date) {
+  const utcDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds(), date.getMilliseconds()));
+  utcDate.setUTCFullYear(date.getFullYear());
+  return +date - +utcDate;
+}
+const tzPattern = /(Z|[+-]\d{2}(?::?\d{2})?| UTC| [a-zA-Z]+\/[a-zA-Z_]+(?:\/[a-zA-Z_]+)?)$/;
+const MILLISECONDS_IN_HOUR = 36e5;
+const MILLISECONDS_IN_MINUTE = 6e4;
+const DEFAULT_ADDITIONAL_DIGITS = 2;
+const patterns = {
+  dateTimePattern: /^([0-9W+-]+)(T| )(.*)/,
+  datePattern: /^([0-9W+-]+)(.*)/,
+  // year tokens
+  YY: /^(\d{2})$/,
+  YYY: [
+    /^([+-]\d{2})$/,
+    // 0 additional digits
+    /^([+-]\d{3})$/,
+    // 1 additional digit
+    /^([+-]\d{4})$/
+    // 2 additional digits
+  ],
+  YYYY: /^(\d{4})/,
+  YYYYY: [
+    /^([+-]\d{4})/,
+    // 0 additional digits
+    /^([+-]\d{5})/,
+    // 1 additional digit
+    /^([+-]\d{6})/
+    // 2 additional digits
+  ],
+  // date tokens
+  MM: /^-(\d{2})$/,
+  DDD: /^-?(\d{3})$/,
+  MMDD: /^-?(\d{2})-?(\d{2})$/,
+  Www: /^-?W(\d{2})$/,
+  WwwD: /^-?W(\d{2})-?(\d{1})$/,
+  HH: /^(\d{2}([.,]\d*)?)$/,
+  HHMM: /^(\d{2}):?(\d{2}([.,]\d*)?)$/,
+  HHMMSS: /^(\d{2}):?(\d{2}):?(\d{2}([.,]\d*)?)$/,
+  // time zone tokens (to identify the presence of a tz)
+  timeZone: tzPattern
+};
+function toDate(argument, options = {}) {
+  if (arguments.length < 1) {
+    throw new TypeError("1 argument required, but only " + arguments.length + " present");
+  }
+  if (argument === null) {
+    return /* @__PURE__ */ new Date(NaN);
+  }
+  const additionalDigits = options.additionalDigits == null ? DEFAULT_ADDITIONAL_DIGITS : Number(options.additionalDigits);
+  if (additionalDigits !== 2 && additionalDigits !== 1 && additionalDigits !== 0) {
+    throw new RangeError("additionalDigits must be 0, 1 or 2");
+  }
+  if (argument instanceof Date || typeof argument === "object" && Object.prototype.toString.call(argument) === "[object Date]") {
+    return new Date(argument.getTime());
+  } else if (typeof argument === "number" || Object.prototype.toString.call(argument) === "[object Number]") {
+    return new Date(argument);
+  } else if (!(Object.prototype.toString.call(argument) === "[object String]")) {
+    return /* @__PURE__ */ new Date(NaN);
+  }
+  const dateStrings = splitDateString(argument);
+  const { year, restDateString } = parseYear(dateStrings.date, additionalDigits);
+  const date = parseDate(restDateString, year);
+  if (date === null || isNaN(date.getTime())) {
+    return /* @__PURE__ */ new Date(NaN);
+  }
+  if (date) {
+    const timestamp = date.getTime();
+    let time = 0;
+    let offset;
+    if (dateStrings.time) {
+      time = parseTime(dateStrings.time);
+      if (time === null || isNaN(time)) {
+        return /* @__PURE__ */ new Date(NaN);
+      }
+    }
+    if (dateStrings.timeZone || options.timeZone) {
+      offset = tzParseTimezone(dateStrings.timeZone || options.timeZone, new Date(timestamp + time));
+      if (isNaN(offset)) {
+        return /* @__PURE__ */ new Date(NaN);
+      }
+    } else {
+      offset = getTimezoneOffsetInMilliseconds(new Date(timestamp + time));
+      offset = getTimezoneOffsetInMilliseconds(new Date(timestamp + time + offset));
+    }
+    return new Date(timestamp + time + offset);
+  } else {
+    return /* @__PURE__ */ new Date(NaN);
+  }
+}
+function splitDateString(dateString) {
+  const dateStrings = {};
+  let parts = patterns.dateTimePattern.exec(dateString);
+  let timeString;
+  if (!parts) {
+    parts = patterns.datePattern.exec(dateString);
+    if (parts) {
+      dateStrings.date = parts[1];
+      timeString = parts[2];
+    } else {
+      dateStrings.date = null;
+      timeString = dateString;
+    }
+  } else {
+    dateStrings.date = parts[1];
+    timeString = parts[3];
+  }
+  if (timeString) {
+    const token = patterns.timeZone.exec(timeString);
+    if (token) {
+      dateStrings.time = timeString.replace(token[1], "");
+      dateStrings.timeZone = token[1].trim();
+    } else {
+      dateStrings.time = timeString;
+    }
+  }
+  return dateStrings;
+}
+function parseYear(dateString, additionalDigits) {
+  if (dateString) {
+    const patternYYY = patterns.YYY[additionalDigits];
+    const patternYYYYY = patterns.YYYYY[additionalDigits];
+    let token = patterns.YYYY.exec(dateString) || patternYYYYY.exec(dateString);
+    if (token) {
+      const yearString = token[1];
+      return {
+        year: parseInt(yearString, 10),
+        restDateString: dateString.slice(yearString.length)
+      };
+    }
+    token = patterns.YY.exec(dateString) || patternYYY.exec(dateString);
+    if (token) {
+      const centuryString = token[1];
+      return {
+        year: parseInt(centuryString, 10) * 100,
+        restDateString: dateString.slice(centuryString.length)
+      };
+    }
+  }
+  return {
+    year: null
+  };
+}
+function parseDate(dateString, year) {
+  if (year === null) {
+    return null;
+  }
+  let date;
+  let month;
+  let week;
+  if (!dateString || !dateString.length) {
+    date = /* @__PURE__ */ new Date(0);
+    date.setUTCFullYear(year);
+    return date;
+  }
+  let token = patterns.MM.exec(dateString);
+  if (token) {
+    date = /* @__PURE__ */ new Date(0);
+    month = parseInt(token[1], 10) - 1;
+    if (!validateDate(year, month)) {
+      return /* @__PURE__ */ new Date(NaN);
+    }
+    date.setUTCFullYear(year, month);
+    return date;
+  }
+  token = patterns.DDD.exec(dateString);
+  if (token) {
+    date = /* @__PURE__ */ new Date(0);
+    const dayOfYear = parseInt(token[1], 10);
+    if (!validateDayOfYearDate(year, dayOfYear)) {
+      return /* @__PURE__ */ new Date(NaN);
+    }
+    date.setUTCFullYear(year, 0, dayOfYear);
+    return date;
+  }
+  token = patterns.MMDD.exec(dateString);
+  if (token) {
+    date = /* @__PURE__ */ new Date(0);
+    month = parseInt(token[1], 10) - 1;
+    const day = parseInt(token[2], 10);
+    if (!validateDate(year, month, day)) {
+      return /* @__PURE__ */ new Date(NaN);
+    }
+    date.setUTCFullYear(year, month, day);
+    return date;
+  }
+  token = patterns.Www.exec(dateString);
+  if (token) {
+    week = parseInt(token[1], 10) - 1;
+    if (!validateWeekDate(week)) {
+      return /* @__PURE__ */ new Date(NaN);
+    }
+    return dayOfISOWeekYear(year, week);
+  }
+  token = patterns.WwwD.exec(dateString);
+  if (token) {
+    week = parseInt(token[1], 10) - 1;
+    const dayOfWeek = parseInt(token[2], 10) - 1;
+    if (!validateWeekDate(week, dayOfWeek)) {
+      return /* @__PURE__ */ new Date(NaN);
+    }
+    return dayOfISOWeekYear(year, week, dayOfWeek);
+  }
+  return null;
+}
+function parseTime(timeString) {
+  let hours;
+  let minutes;
+  let token = patterns.HH.exec(timeString);
+  if (token) {
+    hours = parseFloat(token[1].replace(",", "."));
+    if (!validateTime(hours)) {
+      return NaN;
+    }
+    return hours % 24 * MILLISECONDS_IN_HOUR;
+  }
+  token = patterns.HHMM.exec(timeString);
+  if (token) {
+    hours = parseInt(token[1], 10);
+    minutes = parseFloat(token[2].replace(",", "."));
+    if (!validateTime(hours, minutes)) {
+      return NaN;
+    }
+    return hours % 24 * MILLISECONDS_IN_HOUR + minutes * MILLISECONDS_IN_MINUTE;
+  }
+  token = patterns.HHMMSS.exec(timeString);
+  if (token) {
+    hours = parseInt(token[1], 10);
+    minutes = parseInt(token[2], 10);
+    const seconds = parseFloat(token[3].replace(",", "."));
+    if (!validateTime(hours, minutes, seconds)) {
+      return NaN;
+    }
+    return hours % 24 * MILLISECONDS_IN_HOUR + minutes * MILLISECONDS_IN_MINUTE + seconds * 1e3;
+  }
+  return null;
+}
+function dayOfISOWeekYear(isoWeekYear, week, day) {
+  week = week || 0;
+  day = day || 0;
+  const date = /* @__PURE__ */ new Date(0);
+  date.setUTCFullYear(isoWeekYear, 0, 4);
+  const fourthOfJanuaryDay = date.getUTCDay() || 7;
+  const diff = week * 7 + day + 1 - fourthOfJanuaryDay;
+  date.setUTCDate(date.getUTCDate() + diff);
+  return date;
+}
+const DAYS_IN_MONTH = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+const DAYS_IN_MONTH_LEAP_YEAR = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+function isLeapYearIndex(year) {
+  return year % 400 === 0 || year % 4 === 0 && year % 100 !== 0;
+}
+function validateDate(year, month, date) {
+  if (month < 0 || month > 11) {
+    return false;
+  }
+  if (date != null) {
+    if (date < 1) {
+      return false;
+    }
+    const isLeapYear = isLeapYearIndex(year);
+    if (isLeapYear && date > DAYS_IN_MONTH_LEAP_YEAR[month]) {
+      return false;
+    }
+    if (!isLeapYear && date > DAYS_IN_MONTH[month]) {
+      return false;
+    }
+  }
+  return true;
+}
+function validateDayOfYearDate(year, dayOfYear) {
+  if (dayOfYear < 1) {
+    return false;
+  }
+  const isLeapYear = isLeapYearIndex(year);
+  if (isLeapYear && dayOfYear > 366) {
+    return false;
+  }
+  if (!isLeapYear && dayOfYear > 365) {
+    return false;
+  }
+  return true;
+}
+function validateWeekDate(week, day) {
+  if (week < 0 || week > 52) {
+    return false;
+  }
+  if (day != null && (day < 0 || day > 6)) {
+    return false;
+  }
+  return true;
+}
+function validateTime(hours, minutes, seconds) {
+  if (hours < 0 || hours >= 25) {
+    return false;
+  }
+  if (minutes != null && (minutes < 0 || minutes >= 60)) {
+    return false;
+  }
+  if (seconds != null && (seconds < 0 || seconds >= 60)) {
+    return false;
+  }
+  return true;
+}
+const tzFormattingTokensRegExp = /([xXOz]+)|''|'(''|[^'])+('|$)/g;
+function format(date, formatStr, options = {}) {
+  formatStr = String(formatStr);
+  const matches = formatStr.match(tzFormattingTokensRegExp);
+  if (matches) {
+    const d = toDate(options.originalDate || date, options);
+    formatStr = matches.reduce(function(result, token) {
+      if (token[0] === "'") {
+        return result;
+      }
+      const pos = result.indexOf(token);
+      const precededByQuotedSection = result[pos - 1] === "'";
+      const replaced = result.replace(token, "'" + formatters[token[0]](d, token, options) + "'");
+      return precededByQuotedSection ? replaced.substring(0, pos - 1) + replaced.substring(pos + 1) : replaced;
+    }, formatStr);
+  }
+  return format$1(date, formatStr, options);
+}
+function toZonedTime(date, timeZone, options) {
+  date = toDate(date, options);
+  const offsetMilliseconds = tzParseTimezone(timeZone, date, true);
+  const d = new Date(date.getTime() - offsetMilliseconds);
+  const resultDate = /* @__PURE__ */ new Date(0);
+  resultDate.setFullYear(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+  resultDate.setHours(d.getUTCHours(), d.getUTCMinutes(), d.getUTCSeconds(), d.getUTCMilliseconds());
+  return resultDate;
+}
+function formatInTimeZone(date, timeZone, formatStr, options) {
+  options = {
+    ...options,
+    timeZone,
+    originalDate: date
+  };
+  return format(toZonedTime(date, timeZone, { timeZone: options.timeZone }), formatStr, options);
+}
+function fromZonedTime(date, timeZone, options) {
+  if (typeof date === "string" && !date.match(tzPattern)) {
+    return toDate(date, { ...options, timeZone });
+  }
+  date = toDate(date, options);
+  const utc = newDateUTC(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds(), date.getMilliseconds()).getTime();
+  const offsetMilliseconds = tzParseTimezone(timeZone, new Date(utc));
+  return new Date(utc + offsetMilliseconds);
+}
 const _hoisted_1 = { class: "app-layout" };
 const _hoisted_2 = { class: "top-bar" };
 const _hoisted_3 = { class: "top-actions" };
@@ -8514,6 +9339,7 @@ const _hoisted_28 = { class: "add-dep-row" };
 const _hoisted_29 = ["value"];
 const _hoisted_30 = ["disabled"];
 const _hoisted_31 = { class: "modal-footer" };
+const TIMEZONE = "America/Sao_Paulo";
 const _sfc_main = {
   __name: "App",
   setup(__props) {
@@ -8784,7 +9610,7 @@ ${original}` : meta;
     return (_ctx, _cache) => {
       return openBlock(), createElementBlock("div", _hoisted_1, [
         createBaseVNode("header", _hoisted_2, [
-          _cache[10] || (_cache[10] = createStaticVNode('<div class="logo-area" data-v-b159bc39><div class="deck-icon" data-v-b159bc39><svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" data-v-b159bc39><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" data-v-b159bc39></path><line x1="12" y1="4" x2="12" y2="20" data-v-b159bc39></line></svg></div><span class="app-name" data-v-b159bc39>Deck</span><span class="nav-item" data-v-b159bc39>Projects <span class="chevron" data-v-b159bc39>▼</span></span></div>', 1)),
+          _cache[10] || (_cache[10] = createStaticVNode('<div class="logo-area" data-v-4eba8ef9><div class="deck-icon" data-v-4eba8ef9><svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" data-v-4eba8ef9><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" data-v-4eba8ef9></path><line x1="12" y1="4" x2="12" y2="20" data-v-4eba8ef9></line></svg></div><span class="app-name" data-v-4eba8ef9>Deck</span><span class="nav-item" data-v-4eba8ef9>Projects <span class="chevron" data-v-4eba8ef9>▼</span></span></div>', 1)),
           createBaseVNode("div", _hoisted_3, [
             createBaseVNode("div", _hoisted_4, [
               createVNode(unref(Search), { size: "16" }),
@@ -8844,7 +9670,7 @@ ${original}` : meta;
             createVNode(unref(Settings), { size: "14" }),
             _cache[15] || (_cache[15] = createTextVNode(" Deck Settings", -1))
           ]),
-          _cache[16] || (_cache[16] = createStaticVNode('<div class="lists-legend" data-v-b159bc39><span data-v-b159bc39>Lists: </span><span class="legend-item" data-v-b159bc39><span class="dot done" data-v-b159bc39></span> Done</span><span class="legend-item" data-v-b159bc39><span class="dot progress" data-v-b159bc39></span> In Progress</span><span class="legend-item" data-v-b159bc39><span class="dot review" data-v-b159bc39></span> Review</span><span class="legend-item" data-v-b159bc39><span class="dot todo" data-v-b159bc39></span> To Do</span></div>', 1))
+          _cache[16] || (_cache[16] = createStaticVNode('<div class="lists-legend" data-v-4eba8ef9><span data-v-4eba8ef9>Lists: </span><span class="legend-item" data-v-4eba8ef9><span class="dot done" data-v-4eba8ef9></span> Done</span><span class="legend-item" data-v-4eba8ef9><span class="dot progress" data-v-4eba8ef9></span> In Progress</span><span class="legend-item" data-v-4eba8ef9><span class="dot review" data-v-4eba8ef9></span> Review</span><span class="legend-item" data-v-4eba8ef9><span class="dot todo" data-v-4eba8ef9></span> To Do</span></div>', 1))
         ]),
         isModalOpen.value ? (openBlock(), createElementBlock("div", {
           key: 0,
@@ -8980,7 +9806,7 @@ ${original}` : meta;
     };
   }
 };
-const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-b159bc39"]]);
+const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-4eba8ef9"]]);
 const mountApp = () => {
   const el = document.getElementById("nxc-gantt-root");
   if (el) {

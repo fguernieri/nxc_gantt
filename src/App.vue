@@ -4,7 +4,10 @@ import Sidebar from './components/Sidebar.vue'
 import GanttChart from './components/GanttChart.vue'
 import { Search, Bell, Settings, Calendar, User, X } from 'lucide-vue-next'
 import { fetchBoards, fetchBoardStacks, updateCard } from './services/deckApi.js'
-import { format, subDays, parse } from 'date-fns'
+import { format, subDays, parse, parseISO } from 'date-fns'
+import { formatInTimeZone, fromZonedTime } from 'date-fns-tz'
+
+const TIMEZONE = 'America/Sao_Paulo'
 
 const selectedBoardId = ref(null)
 const isModalOpen = ref(false)
