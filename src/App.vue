@@ -5,9 +5,6 @@ import GanttChart from './components/GanttChart.vue'
 import { Search, Bell, Settings, Calendar, User, X } from 'lucide-vue-next'
 import { fetchBoards, fetchBoardStacks, updateCard } from './services/deckApi.js'
 import { format, subDays, parse, parseISO } from 'date-fns'
-import { formatInTimeZone, fromZonedTime } from 'date-fns-tz'
-
-const TIMEZONE = 'America/Sao_Paulo'
 
 const selectedBoardId = ref(null)
 const isModalOpen = ref(false)
@@ -19,15 +16,16 @@ const error = ref(null)
 const boards = ref([])
 const tasks = ref([])
 
-// Helper to convert any date input to our target timezone ISO string preserving hours
-// Used for displaying in datetime-local inputs
-const formatToZone = (date) => {
-    return formatInTimeZone(date, TIMEZONE, "yyyy-MM-dd'T'HH:mm")
+// Helper to convert any date input to ISO string "YYYY-MM-DDTHH:mm" for datetime-local input
+// Uses Browser Local Time
+const formatToLocalForInput = (date) => {
+    return format(date, "yyyy-MM-dd'T'HH:mm")
 }
 
-// Helper to parse from datetime-local input back to Date object in target timezone
-const parseFromZone = (dateString) => {
-    return fromZonedTime(dateString, TIMEZONE)
+// Helper to parse from datetime-local input back to Date object
+// Uses Browser Local Time
+const parseFromLocalInput = (dateString) => {
+    return new Date(dateString)
 }
 
 // Computed for Modal
@@ -126,9 +124,9 @@ function mapCardToTask(card, stackId) {
     return {
         id: card.id,
         name: card.title,
-        // formatted for datetime-local (Sao Paulo Time)
-        start: formatToZone(startDate),
-        end: formatToZone(endDate),
+        // formatted for datetime-local (Browser Local Time)
+        start: formatToLocalForInput(startDate),
+        end: formatToLocalForInput(endDate),
         color: color,
         progress: progress,
         status: status,
@@ -266,8 +264,8 @@ const saveTask = async () => {
     
     try {
         // Prepare API updates
-        // Convert SP Time String from input -> UTC ISO for API
-        const apiDueDate = parseFromZone(editingTask.value.end).toISOString()
+        // Parse Local Time String from input -> Date Object -> UTC ISO for API
+        const apiDueDate = parseFromLocalInput(editingTask.value.end).toISOString()
         
         const updates = {
             title: editingTask.value.name,
@@ -315,8 +313,8 @@ async function handleTaskDatesChanged(event) {
             title: task.name,
             type: task._deckMeta.type,
             owner: task._deckMeta.owner,
-            // Convert the Sao Paulo Time String -> UTC ISO for API
-            duedate: parseFromZone(event.end).toISOString(),
+            // Convert Local Time String -> UTC ISO for API
+            duedate: parseFromLocalInput(event.end).toISOString(),
             description: buildDescription(task)
         }
         
@@ -349,8 +347,8 @@ async function handleTaskDurationChanged(event) {
     // Save to API
     try {
         // Use current task values which are now updated
-        // Convert SP Time String -> UTC ISO
-        const duedateISO = parseFromZone(task.end).toISOString()
+        // Convert Local Time String -> UTC ISO
+        const duedateISO = parseFromLocalInput(task.end).toISOString()
         
         const updates = {
             title: task.name,
