@@ -12,7 +12,7 @@ export default defineConfig({
       output: {
         entryFileNames: 'js/nxc_gantt.js',
         assetFileNames: (assetInfo) => {
-          if (assetInfo.name === 'style.css') return 'css/style.css';
+          if (assetInfo.name === 'style.css') return 'css/main.css';
           return `css/[name][extname]`;
         },
         chunkFileNames: 'js/[name].js',
