@@ -13,6 +13,18 @@ const CELL_WIDTH = 50
 const ROW_HEIGHT = 50
 const HEADER_HEIGHT = 60
 
+// Helper to parse YYYY-MM-DD as local start of day
+const parseDateLocal = (dateStr) => {
+  if (!dateStr) return new Date()
+  // If it's already a Date
+  if (dateStr instanceof Date) return dateStr
+  // If provided as YYYY-MM-DD, append time to force Local
+  if (typeof dateStr === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+     return new Date(dateStr + 'T00:00:00')
+  }
+  return new Date(dateStr)
+}
+
 // Helper to darken a hex color
 function darkenColor(hex, percent) {
   // Remove # if present
@@ -35,14 +47,14 @@ const hoveredTask = ref(null)
 // Calculate timeline range
 const startDate = computed(() => {
   if (!props.tasks.length) return new Date()
-  const dates = props.tasks.map(t => new Date(t.start))
+  const dates = props.tasks.map(t => parseDateLocal(t.start))
   const minDate = min(dates)
   return addDays(minDate, -5) // buffer
 })
 
 const endDate = computed(() => {
   if (!props.tasks.length) return addDays(new Date(), 30)
-  const dates = props.tasks.map(t => new Date(t.end))
+  const dates = props.tasks.map(t => parseDateLocal(t.end))
   const maxDate = max(dates)
   return addDays(maxDate, 10) // buffer
 })
@@ -63,14 +75,15 @@ const timelineDates = computed(() => {
 
 // Helper to get X position
 const getX = (date) => {
-  const d = new Date(date)
-  const diff = differenceInDays(d, startDate.value)
+  const d = parseDateLocal(date)
+  const start = startDate.value
+  const diff = differenceInDays(d, start)
   return diff * CELL_WIDTH
 }
 
 const getWidth = (start, end) => {
-  const s = new Date(start)
-  const e = new Date(end)
+  const s = parseDateLocal(start)
+  const e = parseDateLocal(end)
   return (differenceInDays(e, s) + 1) * CELL_WIDTH
 }
 
@@ -137,8 +150,8 @@ const startDrag = (event, task) => {
     taskId: task.id,
     startX: event.clientX,
     startY: event.clientY,
-    initialStart: new Date(task.start),
-    initialEnd: new Date(task.end),
+    initialStart: parseDateLocal(task.start),
+    initialEnd: parseDateLocal(task.end),
     initialIndex: taskIndex,
     hasMoved: false
   }
@@ -160,8 +173,8 @@ const startResize = (event, task, edge) => {
     taskId: task.id,
     startX: event.clientX,
     startY: event.clientY,
-    initialStart: new Date(task.start),
-    initialEnd: new Date(task.end),
+    initialStart: parseDateLocal(task.start),
+    initialEnd: parseDateLocal(task.end),
     initialIndex: 0,
     hasMoved: false
   }

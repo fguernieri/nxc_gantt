@@ -9842,6 +9842,14 @@ const _sfc_main$1 = {
   emits: ["task-updated", "task-dates-changed", "task-reordered", "task-duration-changed", "task-clicked"],
   setup(__props, { emit: __emit }) {
     const props = __props;
+    const parseDateLocal = (dateStr) => {
+      if (!dateStr) return /* @__PURE__ */ new Date();
+      if (dateStr instanceof Date) return dateStr;
+      if (typeof dateStr === "string" && /^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+        return /* @__PURE__ */ new Date(dateStr + "T00:00:00");
+      }
+      return new Date(dateStr);
+    };
     function darkenColor(hex, percent) {
       const cleanHex = hex.replace("#", "");
       const num = parseInt(cleanHex, 16);
@@ -9854,13 +9862,13 @@ const _sfc_main$1 = {
     const hoveredTask = /* @__PURE__ */ ref(null);
     const startDate = computed(() => {
       if (!props.tasks.length) return /* @__PURE__ */ new Date();
-      const dates = props.tasks.map((t) => new Date(t.start));
+      const dates = props.tasks.map((t) => parseDateLocal(t.start));
       const minDate = min(dates);
       return addDays(minDate, -5);
     });
     const endDate = computed(() => {
       if (!props.tasks.length) return addDays(/* @__PURE__ */ new Date(), 30);
-      const dates = props.tasks.map((t) => new Date(t.end));
+      const dates = props.tasks.map((t) => parseDateLocal(t.end));
       const maxDate = max(dates);
       return addDays(maxDate, 10);
     });
@@ -9877,13 +9885,14 @@ const _sfc_main$1 = {
       return dates;
     });
     const getX = (date) => {
-      const d = new Date(date);
-      const diff = differenceInDays(d, startDate.value);
+      const d = parseDateLocal(date);
+      const start = startDate.value;
+      const diff = differenceInDays(d, start);
       return diff * CELL_WIDTH;
     };
     const getWidth = (start, end) => {
-      const s = new Date(start);
-      const e = new Date(end);
+      const s = parseDateLocal(start);
+      const e = parseDateLocal(end);
       return (differenceInDays(e, s) + 1) * CELL_WIDTH;
     };
     const connections = computed(() => {
@@ -9938,8 +9947,8 @@ const _sfc_main$1 = {
         taskId: task.id,
         startX: event.clientX,
         startY: event.clientY,
-        initialStart: new Date(task.start),
-        initialEnd: new Date(task.end),
+        initialStart: parseDateLocal(task.start),
+        initialEnd: parseDateLocal(task.end),
         initialIndex: taskIndex,
         hasMoved: false
       };
@@ -9957,8 +9966,8 @@ const _sfc_main$1 = {
         taskId: task.id,
         startX: event.clientX,
         startY: event.clientY,
-        initialStart: new Date(task.start),
-        initialEnd: new Date(task.end),
+        initialStart: parseDateLocal(task.start),
+        initialEnd: parseDateLocal(task.end),
         initialIndex: 0,
         hasMoved: false
       };
@@ -10146,7 +10155,7 @@ const _sfc_main$1 = {
     };
   }
 };
-const GanttChart = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-2607b9f7"]]);
+const GanttChart = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-d0e6a3c5"]]);
 const API_BASE = "/index.php/apps/deck/api/v1.0";
 const headers = {
   "OCS-APIRequest": "true",
