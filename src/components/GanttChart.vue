@@ -117,14 +117,42 @@ const connections = computed(() => {
   return lines
 })
 
-const getRowY = (taskId) => {
-  const index = props.tasks.findIndex(t => t.id === taskId)
-  return index * ROW_HEIGHT
-}
+// Month rendering logic
+const timelineMonths = computed(() => {
+    if (!props.tasks.length) return []
+    
+    const months = []
+    let currentDate = startDate.value
+    const end = endDate.value
+    
+    while (currentDate < end) {
+        const monthStart = startOfDay(currentDate)
+        // Find end of month or end of timeline
+        let nextMonth = addDays(monthStart, 1)
+        while (nextMonth < end && nextMonth.getDate() !== 1) {
+             nextMonth = addDays(nextMonth, 1)
+        }
+        
+        // Calculate days in this segment
+        const days = differenceInDays(nextMonth < end ? nextMonth : end, monthStart)
+        
+        months.push({
+            key: format(monthStart, 'yyyy-MM'),
+            label: format(monthStart, 'MMMM yyyy'),
+            width: days * CELL_WIDTH.value,
+            days: days
+        })
+        
+        currentDate = nextMonth
+    }
+    return months
+})
 
+// ... (existing code) ...
+
+// Restore Drag Logic
 const emit = defineEmits(['task-updated', 'task-dates-changed', 'task-reordered', 'task-duration-changed', 'task-clicked'])
 
-// Dragging logic ... (keep largely same but verify usages of CELL_WIDTH) ...
 // Enhanced Dragging & Resizing Logic
 const isDragging = ref(false)
 const isResizing = ref(false)
@@ -201,7 +229,7 @@ const onDrag = (event) => {
   if (!task) return
   
   if (dragState.value.mode === 'move') {
-    // USE CELL_WIDTH.value HERE
+    // USE CELL_WIDTH.value HERE because we are in script
     const daysMoved = Math.round(dx / CELL_WIDTH.value)
     if (daysMoved !== 0) {
       const newStart = addDays(dragState.value.initialStart, daysMoved)
@@ -281,31 +309,39 @@ const centerOnDate = (date) => {
 defineExpose({
     centerOnDate
 })
-
 </script>
 
 <template>
   <div class="gantt-container">
     <div class="gantt-header-wrapper" ref="headerRef">
-      <div class="gantt-header" :style="{ width: `${totalDays * CELL_WIDTH.value}px` }">
-         <div class="month-row"></div>
+      <div class="gantt-header" :style="{ width: `${totalDays * CELL_WIDTH}px` }">
+         <div class="month-row">
+            <div 
+                v-for="month in timelineMonths" 
+                :key="month.key"
+                class="month-cell"
+                :style="{ width: `${month.width}px` }"
+            >
+                {{ month.label }}
+            </div>
+         </div>
          <div class="days-row">
            <div 
              v-for="date in timelineDates" 
              :key="date" 
              class="day-cell"
-             :style="{ width: `${CELL_WIDTH.value}px` }"
+             :style="{ width: `${CELL_WIDTH}px` }"
              :class="{ 'weekend': date.getDay() === 0 || date.getDay() === 6 }"
            >
-             <span class="day-name" v-if="CELL_WIDTH.value > 20">{{ format(date, 'EE') }}</span>
-             <span class="day-num" v-if="CELL_WIDTH.value > 10">{{ format(date, 'dd') }}</span>
+             <span class="day-name" v-if="CELL_WIDTH > 20">{{ format(date, 'EE') }}</span>
+             <span class="day-num" v-if="CELL_WIDTH > 10">{{ format(date, 'dd') }}</span>
            </div>
          </div>
       </div>
     </div>
 
     <div class="gantt-body-scroll" ref="elementRef" @scroll="$refs.headerRef.scrollLeft = $event.target.scrollLeft">
-      <div class="gantt-body" :style="{ width: `${totalDays * CELL_WIDTH.value}px`, height: `${tasks.length * ROW_HEIGHT}px` }">
+      <div class="gantt-body" :style="{ width: `${totalDays * CELL_WIDTH}px`, height: `${tasks.length * ROW_HEIGHT}px` }">
         
         <!-- Grid Background -->
         <div 

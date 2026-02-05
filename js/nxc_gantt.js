@@ -8265,30 +8265,31 @@ const _hoisted_2$1 = {
   class: "gantt-header-wrapper",
   ref: "headerRef"
 };
-const _hoisted_3$1 = { class: "days-row" };
-const _hoisted_4$1 = {
+const _hoisted_3$1 = { class: "month-row" };
+const _hoisted_4$1 = { class: "days-row" };
+const _hoisted_5$1 = {
   key: 0,
   class: "day-name"
 };
-const _hoisted_5$1 = {
+const _hoisted_6$1 = {
   key: 1,
   class: "day-num"
 };
-const _hoisted_6$1 = { class: "connections-layer" };
-const _hoisted_7$1 = ["d"];
-const _hoisted_8$1 = ["onMouseenter", "onMousedown"];
-const _hoisted_9$1 = { class: "task-label" };
-const _hoisted_10$1 = ["onMousedown"];
+const _hoisted_7$1 = { class: "connections-layer" };
+const _hoisted_8$1 = ["d"];
+const _hoisted_9$1 = ["onMouseenter", "onMousedown"];
+const _hoisted_10$1 = { class: "task-label" };
 const _hoisted_11$1 = ["onMousedown"];
-const _hoisted_12$1 = {
+const _hoisted_12$1 = ["onMousedown"];
+const _hoisted_13$1 = {
   key: 0,
   class: "tooltip"
 };
-const _hoisted_13$1 = { class: "tooltip-header" };
-const _hoisted_14$1 = { class: "tooltip-dates" };
-const _hoisted_15$1 = { class: "tooltip-status" };
-const _hoisted_16$1 = { class: "status-badge" };
-const _hoisted_17$1 = { class: "progress-text" };
+const _hoisted_14$1 = { class: "tooltip-header" };
+const _hoisted_15$1 = { class: "tooltip-dates" };
+const _hoisted_16$1 = { class: "tooltip-status" };
+const _hoisted_17$1 = { class: "status-badge" };
+const _hoisted_18$1 = { class: "progress-text" };
 const ROW_HEIGHT = 50;
 const _sfc_main$1 = {
   __name: "GanttChart",
@@ -8392,10 +8393,28 @@ const _sfc_main$1 = {
       });
       return lines;
     });
-    const getRowY = (taskId) => {
-      const index = props.tasks.findIndex((t) => t.id === taskId);
-      return index * ROW_HEIGHT;
-    };
+    const timelineMonths = computed(() => {
+      if (!props.tasks.length) return [];
+      const months = [];
+      let currentDate = startDate.value;
+      const end = endDate.value;
+      while (currentDate < end) {
+        const monthStart = startOfDay(currentDate);
+        let nextMonth = addDays(monthStart, 1);
+        while (nextMonth < end && nextMonth.getDate() !== 1) {
+          nextMonth = addDays(nextMonth, 1);
+        }
+        const days = differenceInDays(nextMonth < end ? nextMonth : end, monthStart);
+        months.push({
+          key: format(monthStart, "yyyy-MM"),
+          label: format(monthStart, "MMMM yyyy"),
+          width: days * CELL_WIDTH.value,
+          days
+        });
+        currentDate = nextMonth;
+      }
+      return months;
+    });
     const emit2 = __emit;
     const isDragging = /* @__PURE__ */ ref(false);
     const isResizing = /* @__PURE__ */ ref(false);
@@ -8530,18 +8549,26 @@ const _sfc_main$1 = {
         createBaseVNode("div", _hoisted_2$1, [
           createBaseVNode("div", {
             class: "gantt-header",
-            style: normalizeStyle({ width: `${totalDays.value * CELL_WIDTH.value.value}px` })
+            style: normalizeStyle({ width: `${totalDays.value * CELL_WIDTH.value}px` })
           }, [
-            _cache[2] || (_cache[2] = createBaseVNode("div", { class: "month-row" }, null, -1)),
             createBaseVNode("div", _hoisted_3$1, [
+              (openBlock(true), createElementBlock(Fragment, null, renderList(timelineMonths.value, (month) => {
+                return openBlock(), createElementBlock("div", {
+                  key: month.key,
+                  class: "month-cell",
+                  style: normalizeStyle({ width: `${month.width}px` })
+                }, toDisplayString(month.label), 5);
+              }), 128))
+            ]),
+            createBaseVNode("div", _hoisted_4$1, [
               (openBlock(true), createElementBlock(Fragment, null, renderList(timelineDates.value, (date) => {
                 return openBlock(), createElementBlock("div", {
                   key: date,
                   class: normalizeClass(["day-cell", { "weekend": date.getDay() === 0 || date.getDay() === 6 }]),
-                  style: normalizeStyle({ width: `${CELL_WIDTH.value.value}px` })
+                  style: normalizeStyle({ width: `${CELL_WIDTH.value}px` })
                 }, [
-                  CELL_WIDTH.value.value > 20 ? (openBlock(), createElementBlock("span", _hoisted_4$1, toDisplayString(unref(format)(date, "EE")), 1)) : createCommentVNode("", true),
-                  CELL_WIDTH.value.value > 10 ? (openBlock(), createElementBlock("span", _hoisted_5$1, toDisplayString(unref(format)(date, "dd")), 1)) : createCommentVNode("", true)
+                  CELL_WIDTH.value > 20 ? (openBlock(), createElementBlock("span", _hoisted_5$1, toDisplayString(unref(format)(date, "EE")), 1)) : createCommentVNode("", true),
+                  CELL_WIDTH.value > 10 ? (openBlock(), createElementBlock("span", _hoisted_6$1, toDisplayString(unref(format)(date, "dd")), 1)) : createCommentVNode("", true)
                 ], 6);
               }), 128))
             ])
@@ -8555,7 +8582,7 @@ const _sfc_main$1 = {
         }, [
           createBaseVNode("div", {
             class: "gantt-body",
-            style: normalizeStyle({ width: `${totalDays.value * CELL_WIDTH.value.value}px`, height: `${__props.tasks.length * ROW_HEIGHT}px` })
+            style: normalizeStyle({ width: `${totalDays.value * CELL_WIDTH.value}px`, height: `${__props.tasks.length * ROW_HEIGHT}px` })
           }, [
             (openBlock(true), createElementBlock(Fragment, null, renderList(timelineDates.value, (date) => {
               return openBlock(), createElementBlock("div", {
@@ -8564,8 +8591,8 @@ const _sfc_main$1 = {
                 style: normalizeStyle({ left: `${getX(date)}px`, width: `${CELL_WIDTH.value.value}px` })
               }, null, 6);
             }), 128)),
-            (openBlock(), createElementBlock("svg", _hoisted_6$1, [
-              _cache[3] || (_cache[3] = createBaseVNode("defs", null, [
+            (openBlock(), createElementBlock("svg", _hoisted_7$1, [
+              _cache[2] || (_cache[2] = createBaseVNode("defs", null, [
                 createBaseVNode("marker", {
                   id: "arrowhead",
                   markerWidth: "10",
@@ -8588,7 +8615,7 @@ const _sfc_main$1 = {
                   "stroke-width": "2",
                   fill: "none",
                   "marker-end": "url(#arrowhead)"
-                }, null, 8, _hoisted_7$1);
+                }, null, 8, _hoisted_8$1);
               }), 128))
             ])),
             (openBlock(true), createElementBlock(Fragment, null, renderList(__props.tasks, (task, index) => {
@@ -8615,26 +8642,26 @@ const _sfc_main$1 = {
                       background: darkenColor(task.color, 25)
                     })
                   }, null, 4),
-                  createBaseVNode("span", _hoisted_9$1, toDisplayString(task.name), 1),
+                  createBaseVNode("span", _hoisted_10$1, toDisplayString(task.name), 1),
                   createBaseVNode("div", {
                     class: "resize-handle resize-left",
                     onMousedown: ($event) => startResize($event, task, "left"),
                     title: "Resize start date"
-                  }, null, 40, _hoisted_10$1),
+                  }, null, 40, _hoisted_11$1),
                   createBaseVNode("div", {
                     class: "resize-handle resize-right",
                     onMousedown: ($event) => startResize($event, task, "right"),
                     title: "Resize end date"
-                  }, null, 40, _hoisted_11$1),
-                  hoveredTask.value && hoveredTask.value.id === task.id ? (openBlock(), createElementBlock("div", _hoisted_12$1, [
-                    createBaseVNode("div", _hoisted_13$1, toDisplayString(task.name), 1),
-                    createBaseVNode("div", _hoisted_14$1, toDisplayString(unref(format)(new Date(task.start), "yyyy-MM-dd")) + " - " + toDisplayString(unref(format)(new Date(task.end), "yyyy-MM-dd")), 1),
-                    createBaseVNode("div", _hoisted_15$1, [
-                      createBaseVNode("span", _hoisted_16$1, toDisplayString(task.status || "In Progress"), 1),
-                      createBaseVNode("span", _hoisted_17$1, toDisplayString(task.progress) + "%", 1)
+                  }, null, 40, _hoisted_12$1),
+                  hoveredTask.value && hoveredTask.value.id === task.id ? (openBlock(), createElementBlock("div", _hoisted_13$1, [
+                    createBaseVNode("div", _hoisted_14$1, toDisplayString(task.name), 1),
+                    createBaseVNode("div", _hoisted_15$1, toDisplayString(unref(format)(new Date(task.start), "yyyy-MM-dd")) + " - " + toDisplayString(unref(format)(new Date(task.end), "yyyy-MM-dd")), 1),
+                    createBaseVNode("div", _hoisted_16$1, [
+                      createBaseVNode("span", _hoisted_17$1, toDisplayString(task.status || "In Progress"), 1),
+                      createBaseVNode("span", _hoisted_18$1, toDisplayString(task.progress) + "%", 1)
                     ])
                   ])) : createCommentVNode("", true)
-                ], 46, _hoisted_8$1)
+                ], 46, _hoisted_9$1)
               ], 4);
             }), 128))
           ], 4)
@@ -8643,7 +8670,7 @@ const _sfc_main$1 = {
     };
   }
 };
-const GanttChart = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-233a9c1b"]]);
+const GanttChart = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-e80aad37"]]);
 const API_BASE = "/index.php/apps/deck/api/v1.0";
 const headers = {
   "OCS-APIRequest": "true",
