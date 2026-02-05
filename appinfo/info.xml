@@ -17,6 +17,6 @@
     <navigation>
         <name>Deck Gantt</name>
         <route>nxc_gantt.page.index</route>
-        <icon>img/app.svg</icon>
+        <icon>app.svg</icon>
     </navigation>
 </info>
