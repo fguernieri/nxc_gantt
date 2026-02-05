@@ -107,6 +107,7 @@ function mapCardToTask(card, stackId) {
             boardId: selectedBoardId.value,
             stackId: stackId,
             type: card.type || 'plain',
+            owner: card.owner || 'unknown',
             originalDescription: card.description || ''
         }
     }
@@ -224,6 +225,7 @@ const saveTask = async () => {
         const updates = {
             title: editingTask.value.name,
             type: _deckMeta.type,
+            owner: _deckMeta.owner,
             duedate: editingTask.value.end,
             description: buildDescription(editingTask.value)
         }
