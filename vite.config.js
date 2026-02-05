@@ -4,6 +4,11 @@ import { resolve } from 'path'
 
 export default defineConfig({
   plugins: [vue()],
+  define: {
+    appName: JSON.stringify('nxc_gantt'),
+    appVersion: JSON.stringify('0.1.1'),
+  },
+
   build: {
     outDir: '.',
     emptyOutDir: false,
