@@ -1,17 +1,10 @@
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
-:root {
-  --color-main-background: #ffffff;
-  --color-main-text: #222222;
-  --color-primary: #0082c9;
-  --color-primary-text: #ffffff;
-  --color-border: #dbdbdb;
-  --color-background-hover: #f5f5f5;
-  --border-radius-large: 12px;
-  --border-radius-pill: 100px;
-}
+/* Removed local :root variables to allow Nextcloud global theming */
 
 body {
   margin: 0;
@@ -27,14 +20,46 @@ body {
 }
 
 /* Utilities */
-.flex { display: flex; }
-.flex-col { flex-direction: column; }
-.h-full { height: 100%; }
-.w-full { width: 100%; }
-.items-center { align-items: center; }
-.justify-between { justify-content: space-between; }
-.p-4 { padding: 1rem; }
-.gap-4 { gap: 1rem; }
-.font-bold { font-weight: bold; }
-.text-sm { font-size: 0.875rem; }
-.text-gray { color: #888; }
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.h-full {
+  height: 100%;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.p-4 {
+  padding: 1rem;
+}
+
+.gap-4 {
+  gap: 1rem;
+}
+
+.font-bold {
+  font-weight: bold;
+}
+
+.text-sm {
+  font-size: 0.875rem;
+}
+
+.text-gray {
+  color: #888;
+}

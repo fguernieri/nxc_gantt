@@ -361,14 +361,14 @@ defineExpose({
         <svg class="connections-layer">
           <defs>
             <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-              <polygon points="0 0, 10 3.5, 0 7" fill="#666" />
+              <polygon points="0 0, 10 3.5, 0 7" fill="var(--color-text-light)" />
             </marker>
           </defs>
           <path 
             v-for="conn in connections" 
             :key="conn.id" 
             :d="conn.path" 
-            stroke="#666" 
+            stroke="var(--color-text-light)" 
             stroke-width="2" 
             fill="none" 
             marker-end="url(#arrowhead)"
@@ -435,13 +435,13 @@ defineExpose({
   flex-direction: column;
   flex: 1;
   overflow: hidden;
-  background-color: #f9f9f9;
+  background-color: var(--color-main-background);
 }
 
 .gantt-header-wrapper {
   overflow: hidden; /* Sync with body scroll in real app */
-  border-bottom: 1px solid #ddd;
-  background: white;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-main-background);
 }
 
 .gantt-header {
@@ -453,8 +453,8 @@ defineExpose({
 .month-row {
     height: 30px;
     display: flex;
-    border-bottom: 1px solid #eee;
-    background: #fcfcfc;
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-main-background);
 }
 
 .month-cell {
@@ -462,9 +462,9 @@ defineExpose({
     align-items: center;
     padding-left: 8px;
     font-weight: bold;
-    color: #555;
+    color: var(--color-text-maxcontrast);
     font-size: 0.9rem;
-    border-right: 1px solid #eee;
+    border-right: 1px solid var(--color-border);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -477,18 +477,18 @@ defineExpose({
 }
 
 .day-cell {
-  border-right: 1px solid #f0f0f0;
+  border-right: 1px solid var(--color-border);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   font-size: 0.8rem;
-  color: #666;
+  color: var(--color-text-light);
 }
 
 .day-num {
   font-weight: bold;
-  color: #333;
+  color: var(--color-main-text);
 }
 
 .gantt-body-scroll {
@@ -499,7 +499,7 @@ defineExpose({
 
 .gantt-body {
   position: relative;
-  background-image: linear-gradient(to right, transparent 49px, #f0f0f0 50px);
+  background-image: linear-gradient(to right, transparent 49px, var(--color-border) 50px);
   background-size: 50px 100%; /* Matches CELL_WIDTH */
 }
 
@@ -525,8 +525,8 @@ defineExpose({
   height: 36px;
   top: 7px; /* (ROW_HEIGHT - 36) / 2 */
   border-radius: 6px;
-  background: #4a90e2; /* Default */
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  background: var(--color-primary); /* Default */
+  box-shadow: 0 2px 4px var(--color-box-shadow);
   display: flex;
   align-items: center;
   padding: 0 10px;
@@ -544,14 +544,14 @@ defineExpose({
 
 .task-bar:hover {
   transform: scaleY(1.05);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 8px var(--color-box-shadow);
   z-index: 30;
 }
 
 .task-bar.is-dragging {
   cursor: grabbing;
   z-index: 50;
-  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+  box-shadow: 0 8px 16px var(--color-box-shadow);
   transition: none; /* remove transition during drag for responsiveness */
 }
 
@@ -603,11 +603,11 @@ defineExpose({
   top: 100%; /* Below */
   left: 50%;
   transform: translateX(-50%);
-  background: white;
-  color: #333;
+  background: var(--color-main-background);
+  color: var(--color-main-text);
   padding: 12px;
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 12px var(--color-box-shadow);
   width: 200px;
   z-index: 100;
   margin-top: 8px;
@@ -621,7 +621,7 @@ defineExpose({
 
 .tooltip-dates {
   font-size: 0.8rem;
-  color: #666;
+  color: var(--color-text-light);
   margin-bottom: 8px;
 }
 
@@ -632,7 +632,7 @@ defineExpose({
 }
 
 .status-badge {
-  background: #eee;
+  background: var(--color-background-dark);
   padding: 2px 8px;
   border-radius: 10px;
   font-size: 0.75rem;

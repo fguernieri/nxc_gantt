@@ -548,12 +548,12 @@ const jumpToToday = () => {
 
 .content-header {
   height: 50px;
-  border-bottom: 1px solid var(--color-border, #eee);
+  border-bottom: 1px solid var(--color-border);
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 1rem;
-  background: var(--color-main-background, #fff);
+  background: var(--color-main-background);
   position: sticky;
   top: 0;
   z-index: 50;
@@ -563,18 +563,18 @@ const jumpToToday = () => {
 .board-title {
   font-weight: bold;
   font-size: 1.1rem;
-  color: var(--color-main-text, #222);
+  color: var(--color-main-text);
 }
 
 
 .sep {
   margin: 0 8px;
-  color: var(--color-text-maxcontrast, #555);
+  color: var(--color-text-maxcontrast);
 }
 
 
 .view-title {
-  color: var(--color-text-light, #888);
+  color: var(--color-text-light);
 }
 
 
@@ -587,8 +587,8 @@ const jumpToToday = () => {
 
 .btn-group {
   display: flex;
-  background: var(--color-background-dark, #eee);
-  border-radius: var(--border-radius, 4px);
+  background: var(--color-background-dark);
+  border-radius: var(--border-radius);
   padding: 2px;
 }
 
@@ -597,17 +597,17 @@ const jumpToToday = () => {
   border: none;
   background: none;
   padding: 4px 12px;
-  border-radius: var(--border-radius, 4px);
+  border-radius: var(--border-radius);
   font-size: 13px;
   cursor: pointer;
-  color: var(--color-text-light, #888);
+  color: var(--color-text-light);
 }
 
 
 .btn-group button.active {
-  background: var(--color-main-background, #fff);
-  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-  color: var(--color-main-text, #222);
+  background: var(--color-main-background);
+  box-shadow: 0 1px 2px var(--color-box-shadow);
+  color: var(--color-main-text);
 }
 
 
@@ -617,22 +617,22 @@ const jumpToToday = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid var(--color-border-dark, #dbdbdb);
-  background: var(--color-background-dark, #f5f5f5);
-  border-radius: var(--border-radius, 4px);
+  border: 1px solid var(--color-border);
+  background: var(--color-main-background);
+  border-radius: var(--border-radius);
   cursor: pointer;
-  color: var(--color-text-maxcontrast, #444);
+  color: var(--color-text-light);
 }
 
 
 .icon-only.active {
-  background: var(--color-primary, #0082c9);
-  border-color: var(--color-primary, #0082c9);
-  color: var(--color-primary-text, #fff);
+  background: var(--color-primary-light);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
 }
 
 .icon-only:hover:not(.active) {
-    background-color: var(--color-background-hover, #efefef);
+    background-color: var(--color-background-hover);
 }
 
 
@@ -668,14 +668,14 @@ const jumpToToday = () => {
 
 .footer-bar {
   height: 40px;
-  border-top: 1px solid var(--color-border, #eee);
+  border-top: 1px solid var(--color-border);
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 1rem;
   font-size: 0.85rem;
-  background: var(--color-main-background, #fff);
-  color: var(--color-text-light, #888);
+  background: var(--color-main-background);
+  color: var(--color-text-light);
 }
 
 .deck-settings {
@@ -741,7 +741,7 @@ const jumpToToday = () => {
 }
 
 .no-deps {
-  color: var(--color-text-light, #888);
+  color: var(--color-text-light);
   font-style: italic;
   font-size: 0.8rem;
 }
@@ -752,10 +752,10 @@ const jumpToToday = () => {
 }
 
 .btn-add-dep {
-  background: var(--color-background-dark, #eee);
+  background: var(--color-background-dark);
   border: none;
   padding: 0 12px;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   cursor: pointer;
 }
 
@@ -778,17 +778,17 @@ const jumpToToday = () => {
 }
 
 .modal {
-    background: var(--color-main-background, #fff);
-    border-radius: var(--border-radius-large, 8px);
+    background: var(--color-main-background);
+    border-radius: var(--border-radius-large);
     width: 400px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 20px var(--color-box-shadow);
     overflow: hidden;
-    color: var(--color-main-text, #000);
+    color: var(--color-main-text);
 }
 
 .modal-header {
     padding: 16px;
-    border-bottom: 1px solid var(--color-border, #eee);
+    border-bottom: 1px solid var(--color-border);
     display: flex;
     justify-content: space-between;
     align-items: center;
