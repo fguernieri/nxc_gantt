@@ -12,7 +12,7 @@ export default defineConfig({
   build: {
     outDir: '.',
     emptyOutDir: false,
-    minify: false, // Disable minification to avoid variable name conflicts
+    minify: true,
     rollupOptions: {
       input: resolve(__dirname, 'src/main.js'),
       output: {
